@@ -28,7 +28,6 @@ class UpdateUserService {
     };
 
     user.name = name;
-    user.username = username;
     user.bio = bio;
     user.birth_date = new Date(birth_date); // TODO, funciona?
 

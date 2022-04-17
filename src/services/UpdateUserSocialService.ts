@@ -8,14 +8,12 @@ import Social from '../models/Social';
 interface Request {
   id_user: string;
   social_network: string;
-  username: string;
 }
 
 class UpdateUserSocialService {
   public async execute({
     id_user,
     social_network,
-    username,
   }: Request): Promise<Social> {
     const usersRepository = getRepository(User);
     const socialRepository = getRepository(Social);
@@ -36,16 +34,16 @@ class UpdateUserSocialService {
 
     switch (social_network) {
       case 'telegram':
-        social.telegram = username;
+        social.telegram = "";
         break;
       case 'facebook':
-        social.facebook = username;
+        social.facebook = "";
         break;
       case 'twitter':
-        social.twitter = username;
+        social.twitter = "";
         break;
       case 'twitch':
-        social.twitch = username;
+        social.twitch = "";
         break;
 
       default:

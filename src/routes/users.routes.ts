@@ -8,13 +8,10 @@ import FindUserSocialService from '../services/FindUserSocialService';
 import UpdateUserSocialService from '../services/UpdateUserSocialService';
 import UpdateUserService from '../services/UpdateUserService';
 import UpdateUserAvatarService from '../services/UpdateUserAvatarService';
-import UpdateUserBackgroundService from '../services/UpdateUserBackgroundService';
 import UpdateUserPasswordService from '../services/UpdateUserPasswordService';
 import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 import ensureAdmin from '../middlewares/ensureAdmin';
 import AuthenticateUserService from '../services/AuthenticateUserService';
-import UpdateUserCoinsService from '../services/UpdateUserCoinsService';
-import FindUserColocationsService from '../services/FindUserColocationsService';
 
 const usersRouter = Router();
 
@@ -119,19 +116,6 @@ usersRouter.patch('/edit/avatar', ensureAuthenticated, async (request, response)
   return response.json({ message: 'Avatar atualizado com sucesso !' });
 });
 
-usersRouter.patch('/edit/background', ensureAuthenticated, async (request, response) => {
-  const { background_image } = request.body;
-
-  const updateUserBackgroundService = new UpdateUserBackgroundService();
-
-  await updateUserBackgroundService.execute({
-    id_user: request.user.id_user,
-    background_image,
-  });
-
-  return response.json({ message: 'Background atualizado com sucesso !' });
-});
-
 usersRouter.get(
   '/social/:id',
   ensureAuthenticated,
@@ -157,7 +141,6 @@ usersRouter.patch(
     await updateUserSocialService.execute({
       id_user: request.user.id_user,
       social_network,
-      username,
     });
 
     return response.json({ message: 'Social info sucessfully updated.' });
@@ -179,58 +162,6 @@ usersRouter.patch(
     });
 
     return response.json({ message: 'Password sucessfully updated.' });
-  },
-);
-
-usersRouter.patch(
-  '/coins/add',
-  ensureAuthenticated,
-  async (request, response) => {
-    const { id_user, quantity } = request.body;
-
-    const updateUserCoins = new UpdateUserCoinsService();
-
-    await updateUserCoins.execute({
-      id_user,
-      quantity,
-      operation: 'add',
-    });
-
-    return response.json({ message: quantity + ' coins were given.' });
-  },
-);
-
-usersRouter.patch(
-  '/coins/remove',
-  ensureAuthenticated,
-  async (request, response) => {
-    const { id_user, quantity } = request.body;
-
-    const updateUserCoins = new UpdateUserCoinsService();
-
-    await updateUserCoins.execute({
-      id_user,
-      quantity,
-      operation: 'remove',
-    });
-
-    return response.json({ message: quantity + ' coins were taken.' });
-  },
-);
-
-// vai retornar as colocações de um usuário
-usersRouter.get(
-  '/colocations/:id',
-  // TODO, voltar
-  // ensureAuthenticated,
-  async (request, response) => {
-    const { id } = request.params;
-
-    const findUserColocationsService = new FindUserColocationsService();
-
-    const userColocations = await findUserColocationsService.execute(id);
-
-    return response.json({ data: userColocations });
   },
 );
 
