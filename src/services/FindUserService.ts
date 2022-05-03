@@ -13,7 +13,7 @@ class CreateUserService {
     });
 
     if (!user) {
-      throw new AppError('User does not exist.');
+      throw new AppError('Usuário não existe.');
     }
 
     return user;

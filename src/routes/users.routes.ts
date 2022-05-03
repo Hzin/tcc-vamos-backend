@@ -57,8 +57,8 @@ usersRouter.get('/:id', ensureAuthenticated, async (request, response) => {
     birth_date: user.birth_date,
     avatar_image: user.avatar_image,
     bio: user.bio,
-    created_at: user.created_at,
-    updated_at: user.updated_at,
+    // created_at: user.created_at,
+    // updated_at: user.updated_at,
   };
 
   return response.json({ data: userWithoutPassword });
