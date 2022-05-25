@@ -9,13 +9,14 @@ import Social from '../models/Social';
 
 interface Request {
   name: string;
+  lastname: string;
   email: string;
   birth_date: string;
   password: string;
 }
 
 class CreateUserService {
-  public async execute({ name, email, birth_date, password }: Request): Promise<User> {
+  public async execute({ name, lastname, email, birth_date, password }: Request): Promise<User> {
     const usersRepository = getRepository(User);
     const socialsRepository = getRepository(Social);
 
@@ -33,8 +34,9 @@ class CreateUserService {
     // TODO, arrumar o formato das datas e padronizar com a equipe
 
     const user = usersRepository.create({
-      id_user: v4(), name, email, birth_date, password: hashedPassword, avatar_image: "", bio: ""
+      id_user: v4(), name, lastname, email, birth_date, password: hashedPassword, avatar_image: "", bio: ""
     });
+
     await usersRepository.save(user);
 
     // já criar registro na tabela Socials para evitar inconsistências
