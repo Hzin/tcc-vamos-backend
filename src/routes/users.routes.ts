@@ -59,8 +59,6 @@ usersRouter.get('/:id', ensureAuthenticated, async (request, response) => {
 
   const finalDate = `${date}/${month}/${year}`
 
-  console.log(finalDate)
-
   const userWithoutPassword = {
     id_user: user.id_user,
     name: user.name,
