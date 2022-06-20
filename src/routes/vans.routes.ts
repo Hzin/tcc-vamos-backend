@@ -20,25 +20,33 @@ vansRouter.get('/list', async (request, response) => {
   return response.json({ data: vans });
 });
 
-vansRouter.get('/plate/:plate', ensureAuthenticated, async (request, response) => {
-  const { plate } = request.params;
+vansRouter.get(
+  '/plate/:plate',
+  ensureAuthenticated,
+  async (request, response) => {
+    const { plate } = request.params;
 
-  const findVanService = new FindVanService();
+    const findVanService = new FindVanService();
 
-  const van = await findVanService.execute(plate);
+    const van = await findVanService.execute(plate);
 
-  return response.json({ data: van });
-});
+    return response.json({ data: van });
+  },
+);
 
-vansRouter.get('/user/:id_user', ensureAuthenticated, async (request, response) => {
-  const { id_user } = request.params;
+vansRouter.get(
+  '/user/:id_user',
+  // ensureAuthenticated,
+  async (request, response) => {
+    const { id_user } = request.params;
 
-  const findVanByUserIdService = new FindVanByUserIdService();
+    const findVanByUserIdService = new FindVanByUserIdService();
 
-  const vans = await findVanByUserIdService.execute(id_user);
+    const vans = await findVanByUserIdService.execute(id_user);
 
-  return response.json({ data: vans });
-});
+    return response.json({ data: vans });
+  },
+);
 
 vansRouter.post('/', ensureAuthenticated, async (request, response) => {
   const {
@@ -55,8 +63,8 @@ vansRouter.post('/', ensureAuthenticated, async (request, response) => {
 
   const createVanService = new CreateVanService();
 
-  console.log('aaaaaaaaaaaaaaa')
-  console.log(request.user)
+  console.log('aaaaaaaaaaaaaaa');
+  console.log(request.user);
 
   const van = await createVanService.execute({
     id_user: request.user.id_user,
