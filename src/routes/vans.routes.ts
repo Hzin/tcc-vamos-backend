@@ -42,7 +42,6 @@ vansRouter.get('/user/:id_user', ensureAuthenticated, async (request, response) 
 
 vansRouter.post('/', async (request, response) => {
   const {
-    id_user,
     plate,
     brand,
     model,
@@ -57,7 +56,7 @@ vansRouter.post('/', async (request, response) => {
   const createVanService = new CreateVanService();
 
   const van = await createVanService.execute({
-    id_user,
+    id_user: request.user.id_user,
     plate,
     brand,
     model,
