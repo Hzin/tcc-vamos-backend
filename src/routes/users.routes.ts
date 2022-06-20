@@ -117,7 +117,7 @@ usersRouter.patch('/edit', ensureAuthenticated, async (request, response) => {
     document
   });
 
-  return response.json({ message: 'User info sucessfully updated.' });
+  return response.json({ message: 'Perfil atualizado com sucesso.' });
 });
 
 usersRouter.patch('/edit/avatar', ensureAuthenticated, async (request, response) => {

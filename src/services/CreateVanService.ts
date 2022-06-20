@@ -1,10 +1,12 @@
 import { getRepository } from 'typeorm';
 
 import AppError from '../errors/AppError';
+import User from '../models/User';
 
 import Van from '../models/Van';
 
 interface Request {
+  id_user: string;
   plate: string;
   brand: string;
   model: string;
@@ -18,6 +20,7 @@ interface Request {
 
 class CreateVanService {
   public async execute({
+    id_user,
     plate,
     brand,
     model,
@@ -29,6 +32,18 @@ class CreateVanService {
     locator_state,
   }: Request): Promise<Van> {
     const vansRepository = getRepository(Van);
+    const usersRepository = getRepository(User);
+
+    const user = await usersRepository.findOne({
+      where: { id_user },
+    });
+
+    if (!user) {
+      throw new AppError(
+        'O usuário informado não foi encontrado.',
+        404,
+      );
+    }
 
     const vanExists = await vansRepository.findOne({
       where: { plate },
@@ -42,6 +57,7 @@ class CreateVanService {
     }
 
     const van = vansRepository.create({
+      user,
       plate,
       brand,
       model,

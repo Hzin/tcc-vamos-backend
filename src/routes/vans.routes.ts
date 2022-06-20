@@ -8,6 +8,7 @@ import FindVanService from '../services/FindVanService';
 import CreateVanService from '../services/CreateVanService';
 import UpdateVanService from '../services/UpdateVanService';
 import UpdateVanPlateService from '../services/UpdateVanPlateService';
+import FindVanByUserIdService from '../services/FindVansByUserIdService';
 
 const vansRouter = Router();
 
@@ -19,7 +20,7 @@ vansRouter.get('/list', async (request, response) => {
   return response.json({ data: vans });
 });
 
-vansRouter.get('/:plate', ensureAuthenticated, async (request, response) => {
+vansRouter.get('/plate/:plate', ensureAuthenticated, async (request, response) => {
   const { plate } = request.params;
 
   const findVanService = new FindVanService();
@@ -29,8 +30,19 @@ vansRouter.get('/:plate', ensureAuthenticated, async (request, response) => {
   return response.json({ data: van });
 });
 
+vansRouter.get('/user/:id_user', ensureAuthenticated, async (request, response) => {
+  const { id_user } = request.params;
+
+  const findVanByUserIdService = new FindVanByUserIdService();
+
+  const vans = await findVanByUserIdService.execute(id_user);
+
+  return response.json({ data: vans });
+});
+
 vansRouter.post('/', async (request, response) => {
   const {
+    id_user,
     plate,
     brand,
     model,
@@ -45,6 +57,7 @@ vansRouter.post('/', async (request, response) => {
   const createVanService = new CreateVanService();
 
   const van = await createVanService.execute({
+    id_user,
     plate,
     brand,
     model,

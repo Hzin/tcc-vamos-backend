@@ -23,18 +23,29 @@ class UpdateUserService {
     const socialRepository = getRepository(Social);
 
     const user = await usersRepository.findOne({
-      where: { id_user: id_user }
+      where: { id_user }
     });
 
     if (!user) {
-      throw new AppError('O usuário informado não existe.');
+      throw new AppError('O usuário informado não existe.', 404);
     };
 
     if (name) user.name = name
     if (lastname) user.lastname = lastname
     if (bio) user.bio = bio
     if (email) user.email = email
-    if (phone_number) user.phone_number = phone_number
+
+    if (phone_number) {
+      const phoneAlreadyExists = await usersRepository.findOne({
+        where: { phone_number }
+      });
+
+      if (phoneAlreadyExists) {
+        throw new AppError('O telefone informado já está em uso por outra conta!', 409);
+      }
+    }
+    
+    user.phone_number = phone_number
 
     if (document_type) user.document_type = document_type
     if (document) user.document = document

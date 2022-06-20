@@ -5,15 +5,15 @@ import AppError from '../errors/AppError';
 import Van from '../models/Van';
 
 class FindVanService {
-  public async execute(id_van: string): Promise<Van> {
+  public async execute(plate: string): Promise<Van> {
     const vansRepository = getRepository(Van);
 
     const van = await vansRepository.findOne({
-      where: { id_van }
+      where: { plate }
     });
 
     if (!van) {
-      throw new AppError('Van does not exist.');
+      throw new AppError('A van informada não existe.');
     };
 
     return van;

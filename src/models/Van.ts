@@ -7,7 +7,10 @@ import {
   JoinColumn,
   OneToOne,
   PrimaryColumn,
+  OneToMany,
+  ManyToOne,
 } from 'typeorm';
+import User from './User';
 
 @Entity('vans')
 class Van {
@@ -40,6 +43,10 @@ class Van {
 
   @Column()
   locator_state: string;
+
+  @ManyToOne(() => User, user => user.van)
+  @JoinColumn({ name: 'user_id' })
+  user: User;
 
   @CreateDateColumn()
   created_at: Date;

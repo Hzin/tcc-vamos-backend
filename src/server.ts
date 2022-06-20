@@ -20,8 +20,9 @@ createConnection();
 
 app.use((err: Error, request: Request, response: Response, _: NextFunction) => {
   if (err instanceof AppError) {
-    return response.status(err.statusCode).json({
+    return response.status(202).json({
       status: 'error',
+      httpCode: err.statusCode,
       message: err.message,
     });
   }
