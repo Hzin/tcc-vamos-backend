@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { getRepository } from 'typeorm';
+import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 import UserSearching from '../models/UsersSearching';
 import CalculateDistanceBetweenCoords from '../services/CalculateDistanceBetweenCoords';
 import CreateUserSearchingService from '../services/CreateUserSearchingService';
@@ -33,8 +34,8 @@ searchRoutes.get('/list', async (request, response) => {
   return response.json({ data: searches });
 });
 
-searchRoutes.post('/', async (request, response) => {
-  const { id_user, latitude_from, longitude_from, address_to } = request.body;
+searchRoutes.post('/', ensureAuthenticated, async (request, response) => {
+  const { latitude_from, longitude_from, address_to } = request.body;
 
   const getCoordinates = new GetCoordinatesByAddress();
 
@@ -46,7 +47,7 @@ searchRoutes.post('/', async (request, response) => {
   const createUserSearching = new CreateUserSearchingService();
 
   const search = await createUserSearching.execute({
-    id_user,
+    id_user:request.user.id_user,
     latitude_from,
     longitude_from,
     latitude_to,
