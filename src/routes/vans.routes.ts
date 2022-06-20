@@ -40,7 +40,7 @@ vansRouter.get('/user/:id_user', ensureAuthenticated, async (request, response) 
   return response.json({ data: vans });
 });
 
-vansRouter.post('/', async (request, response) => {
+vansRouter.post('/', ensureAuthenticated, async (request, response) => {
   const {
     plate,
     brand,
@@ -54,6 +54,9 @@ vansRouter.post('/', async (request, response) => {
   } = request.body;
 
   const createVanService = new CreateVanService();
+
+  console.log('aaaaaaaaaaaaaaa')
+  console.log(request.user)
 
   const van = await createVanService.execute({
     id_user: request.user.id_user,
