@@ -132,7 +132,7 @@ usersRouter.patch('/edit', ensureAuthenticated, async (request, response) => {
 
 usersRouter.get(
   '/isDriver/:id_user',
-  // ensureAuthenticated,
+  ensureAuthenticated,
   async (request, response) => {
     const { id_user } = request.params;
 

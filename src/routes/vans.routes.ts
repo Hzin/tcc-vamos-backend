@@ -36,7 +36,6 @@ vansRouter.get(
 
 vansRouter.get(
   '/user/:id_user',
-  // ensureAuthenticated,
   async (request, response) => {
     const { id_user } = request.params;
 
