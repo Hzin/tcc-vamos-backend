@@ -39,10 +39,6 @@ class CreateUserService {
 
     await usersRepository.save(user);
 
-    // já criar registro na tabela Socials para evitar inconsistências
-    const social = socialInformationRepository.create({ user, phone: "", whatsapp: "", facebook: "", telegram: "" });
-    await socialInformationRepository.save(social);
-
     return user;
   }
 }

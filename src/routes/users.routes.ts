@@ -42,8 +42,6 @@ usersRouter.get('/list', async (request, response) => {
   return response.json({ data: users });
 });
 
-// TODO, criar middleware ensureIsOwnUser é necessário?
-// usar browserAgent, Encrypted Local Storage ou algo do tipo
 usersRouter.get('/:id', ensureAuthenticated, async (request, response) => {
   const { id } = request.params;
 
