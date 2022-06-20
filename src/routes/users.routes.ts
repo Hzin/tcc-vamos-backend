@@ -29,16 +29,16 @@ usersRouter.get('/list', async (request, response) => {
 
   let usersWithoutSensitiveInfo: userWithoutSensitiveInfo[] = [];
 
-  users.map(user => {
-    usersWithoutSensitiveInfo.push({
-      id_user: user.id_user,
-      name: user.name,
-      email: user.email,
-      avatar_image: user.avatar_image,
-    });
-  });
+  // users.map(user => {
+  //   usersWithoutSensitiveInfo.push({
+  //     id_user: user.id_user,
+  //     name: user.name,
+  //     email: user.email,
+  //     avatar_image: user.avatar_image,
+  //   });
+  // });
 
-  return response.json({ data: usersWithoutSensitiveInfo });
+  return response.json({ data: users });
 });
 
 // TODO, criar middleware ensureIsOwnUser é necessário?
@@ -64,11 +64,12 @@ usersRouter.get('/:id', ensureAuthenticated, async (request, response) => {
     name: user.name,
     lastname: user.lastname,
     email: user.email,
+    phone_number: user.phone_number,
     birth_date: finalDate,
     avatar_image: user.avatar_image,
     bio: user.bio,
-    cpf: user.cpf,
-    cnpj: user.cnpj,
+    document_type: user.document_type,
+    document: user.document
     // created_at: user.created_at,
     // updated_at: user.updated_at,
   };
@@ -100,7 +101,7 @@ usersRouter.post('/', async (request, response) => {
 });
 
 usersRouter.patch('/edit', ensureAuthenticated, async (request, response) => {
-  const { name, lastname, username, bio, email, birth_date, cpf, cnpj } = request.body;
+  const { name, lastname, bio, email, phone_number, birth_date, document_type, document } = request.body;
 
   const updateUserService = new UpdateUserService();
 
@@ -108,12 +109,12 @@ usersRouter.patch('/edit', ensureAuthenticated, async (request, response) => {
     id_user: request.user.id_user,
     name,
     lastname,
-    username,
     bio,
     email,
+    phone_number,
     birth_date,
-    cpf,
-    cnpj
+    document_type,
+    document
   });
 
   return response.json({ message: 'User info sucessfully updated.' });

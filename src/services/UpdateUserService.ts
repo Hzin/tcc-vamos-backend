@@ -9,16 +9,16 @@ interface Request {
   id_user: string;
   name: string;
   lastname: string;
-  username: string;
   bio: string;
   email: string;
+  phone_number: string;
   birth_date: string;
-  cpf: string;
-  cnpj: string;
+  document_type: string;
+  document: string;
 }
 
 class UpdateUserService {
-  public async execute({ id_user, name, lastname, username, bio, email, birth_date, cpf, cnpj }: Request): Promise<User> {
+  public async execute({ id_user, name, lastname,  bio, email, phone_number, birth_date, document_type, document }: Request): Promise<User> {
     const usersRepository = getRepository(User);
     const socialRepository = getRepository(Social);
 
@@ -27,16 +27,17 @@ class UpdateUserService {
     });
 
     if (!user) {
-      throw new AppError('User does not exist.');
+      throw new AppError('O usuário informado não existe.');
     };
 
     if (name) user.name = name
     if (lastname) user.lastname = lastname
     if (bio) user.bio = bio
     if (email) user.email = email
+    if (phone_number) user.phone_number = phone_number
 
-    if (cpf) user.cpf = cpf
-    if (cnpj) user.cnpj = cnpj
+    if (document_type) user.document_type = document_type
+    if (document) user.document = document
     
     // user.birth_date = new Date(birth_date); // TODO, funciona?
 

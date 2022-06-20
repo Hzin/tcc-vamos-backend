@@ -39,10 +39,10 @@ class User {
   star_rating: number;
 
   @Column()
-  cpf: string;
+  document_type: string;
 
   @Column()
-  cnpj: string;
+  document: string;
 
   @CreateDateColumn()
   created_at: Date;
