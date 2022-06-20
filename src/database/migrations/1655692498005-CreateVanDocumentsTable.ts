@@ -9,11 +9,9 @@ export class CreateVanDocumentsTable1655692498005
         name: 'vanDocuments',
         columns: [
           {
-            name: 'id_vanDocuments',
-            type: 'uuid',
+            name: 'document_van',
+            type: 'varchar',
             isPrimary: true,
-            generationStrategy: 'uuid',
-            default: 'uuid_generate_v4()',
           },
           {
             name: 'vanLocator_id',

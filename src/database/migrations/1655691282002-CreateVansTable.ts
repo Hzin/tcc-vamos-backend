@@ -30,6 +30,11 @@ export class CreateVansTable1655691282002 implements MigrationInterface {
             type: 'numeric',
           },
           {
+            name: 'document',
+            type: 'varchar',
+            isNullable: true
+          },
+          {
             name: 'created_at',
             type: 'timestamp',
             default: 'now()',

@@ -7,6 +7,7 @@ import {
   JoinColumn,
   OneToOne,
 } from 'typeorm';
+import VanDocuments from './VanDocuments';
 import VanLocator from './VanLocator';
 
 @Entity('vans')
@@ -27,8 +28,8 @@ class Van {
   seats_number: number;
 
   @OneToOne(() => VanLocator, { eager: true })
-  @JoinColumn({ name: 'vanLocator_id' })
-  vanLocator: VanLocator;
+  @JoinColumn({ name: 'document' })
+  locator: VanLocator;
 
   @CreateDateColumn()
   created_at: Date;
