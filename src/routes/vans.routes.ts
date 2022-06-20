@@ -7,10 +7,7 @@ import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 import FindVanService from '../services/FindVanService';
 import CreateVanService from '../services/CreateVanService';
 import UpdateVanService from '../services/UpdateVanService';
-import VanLocator from '../models/VanLocator';
-import FindVanLocatorService from '../services/FindVanLocatorService';
-import CreateVanLocatorService from '../services/CreateVanLocatorService';
-import UpdateVanLocatorService from '../services/UpdateVanLocatorService';
+import UpdateVanPlateService from '../services/UpdateVanPlateService';
 
 const vansRouter = Router();
 
@@ -22,18 +19,28 @@ vansRouter.get('/list', async (request, response) => {
   return response.json({ data: vans });
 });
 
-vansRouter.get('/:id', ensureAuthenticated, async (request, response) => {
-  const { id } = request.params;
+vansRouter.get('/:plate', ensureAuthenticated, async (request, response) => {
+  const { plate } = request.params;
 
   const findVanService = new FindVanService();
 
-  const van = await findVanService.execute(id);
+  const van = await findVanService.execute(plate);
 
   return response.json({ data: van });
 });
 
 vansRouter.post('/', async (request, response) => {
-  const { plate, brand, model, seats_number } = request.body;
+  const {
+    plate,
+    brand,
+    model,
+    seats_number,
+    locator_name,
+    locator_address,
+    locator_complement,
+    locator_city,
+    locator_state,
+  } = request.body;
 
   const createVanService = new CreateVanService();
 
@@ -42,6 +49,11 @@ vansRouter.post('/', async (request, response) => {
     brand,
     model,
     seats_number,
+    locator_name,
+    locator_address,
+    locator_complement,
+    locator_city,
+    locator_state,
   });
 
   return response.json({ message: 'Van criada com sucesso.', data: van });
@@ -51,17 +63,31 @@ vansRouter.patch(
   '/edit/:plate',
   ensureAuthenticated,
   async (request, response) => {
-    const { brand, model, seats_number } = request.body;
+    const {
+      brand,
+      model,
+      seats_number,
+      locator_name,
+      locator_address,
+      locator_complement,
+      locator_city,
+      locator_state,
+    } = request.body;
 
     const { plate } = request.params;
 
-    const updateUserService = new UpdateVanService();
+    const updateVanService = new UpdateVanService();
 
-    await updateUserService.execute({
+    await updateVanService.execute({
       plate,
       brand,
       model,
       seats_number,
+      locator_name,
+      locator_address,
+      locator_complement,
+      locator_city,
+      locator_state,
     });
 
     return response.json({
@@ -69,73 +95,24 @@ vansRouter.patch(
     });
   },
 );
-
-// locadores de van
-vansRouter.get('/locator/list', async (request, response) => {
-  const vanLocatorsRepository = getRepository(VanLocator);
-
-  const vansLocators = await vanLocatorsRepository.find();
-
-  return response.json({ data: vansLocators });
-});
-
-vansRouter.get(
-  '/locator/:id',
-  ensureAuthenticated,
-  async (request, response) => {
-    const { id } = request.params;
-
-    const findVanLocatorService = new FindVanLocatorService();
-
-    const vanLocator = await findVanLocatorService.execute(id);
-
-    return response.json({ data: vanLocator });
-  },
-);
-
-vansRouter.post('/locator/:id_van', async (request, response) => {
-  const { name, address, complement, city, state } = request.body;
-
-  const { id_van } = request.params;
-
-  const createVanLocatorService = new CreateVanLocatorService();
-
-  const vanLocator = await createVanLocatorService.execute({
-    id_van,
-    name,
-    address,
-    complement,
-    city,
-    state,
-  });
-
-  return response.json({
-    message: 'Locador da van configurado com sucesso.',
-    data: vanLocator,
-  });
-});
 
 vansRouter.patch(
-  '/locator/edit/:id_van',
+  '/edit/plate/:plate',
   ensureAuthenticated,
   async (request, response) => {
-    const { name, address, complement, city, state } = request.body;
+    const { newPlate } = request.body;
 
-    const { id_van } = request.params;
+    const { plate } = request.params;
 
-    const updateVanLocatorService = new UpdateVanLocatorService();
+    const updateVanPlateService = new UpdateVanPlateService();
 
-    await updateVanLocatorService.execute({
-      id_van,
-      name,
-      address,
-      complement,
-      city,
-      state,
+    await updateVanPlateService.execute({
+      oldPlate: plate,
+      newPlate,
     });
 
     return response.json({
-      message: 'Informações da van atualizadas com sucesso.',
+      message: 'Placa da van atualizada com sucesso.',
     });
   },
 );

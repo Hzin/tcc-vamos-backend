@@ -1,6 +1,4 @@
 import { getRepository } from 'typeorm';
-import { v4 } from 'uuid';
-import { hash } from 'bcryptjs';
 
 import AppError from '../errors/AppError';
 
@@ -11,6 +9,11 @@ interface Request {
   brand: string;
   model: string;
   seats_number: string;
+  locator_name: string;
+  locator_address: string;
+  locator_complement: string;
+  locator_city: string;
+  locator_state: string;
 }
 
 class CreateVanService {
@@ -19,23 +22,36 @@ class CreateVanService {
     brand,
     model,
     seats_number,
+    locator_name,
+    locator_address,
+    locator_complement,
+    locator_city,
+    locator_state,
   }: Request): Promise<Van> {
     const vansRepository = getRepository(Van);
 
-    const checkVanPlateExists = await vansRepository.findOne({
+    const vanExists = await vansRepository.findOne({
       where: { plate },
     });
 
-    if (checkVanPlateExists) {
-      throw new AppError('Placa do veículo já cadastrado!', 409);
+    if (vanExists) {
+      throw new AppError(
+        'Uma van com a placa informada já foi cadastrada.',
+        409,
+      );
     }
 
     const van = vansRepository.create({
-      id_van: v4(),
       plate,
       brand,
       model,
-      seats_number: (Number)(seats_number),
+      seats_number,
+      document_status: false,
+      locator_name,
+      locator_address,
+      locator_complement,
+      locator_city,
+      locator_state,
     });
 
     await vansRepository.save(van);

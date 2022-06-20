@@ -6,16 +6,12 @@ import {
   UpdateDateColumn,
   JoinColumn,
   OneToOne,
+  PrimaryColumn,
 } from 'typeorm';
-import VanDocuments from './VanDocuments';
-import VanLocator from './VanLocator';
 
 @Entity('vans')
 class Van {
-  @PrimaryGeneratedColumn('uuid')
-  id_van: string;
-
-  @Column()
+  @PrimaryColumn()
   plate: string;
 
   @Column()
@@ -25,11 +21,25 @@ class Van {
   model: string;
 
   @Column()
-  seats_number: number;
+  seats_number: string;
 
-  @OneToOne(() => VanLocator, { eager: true })
-  @JoinColumn({ name: 'document' })
-  locator: VanLocator;
+  @Column()
+  document_status: boolean
+
+  @Column()
+  locator_name: string;
+  
+  @Column()
+  locator_address: string;
+  
+  @Column()
+  locator_complement: string;
+  
+  @Column()
+  locator_city: string;
+
+  @Column()
+  locator_state: string;
 
   @CreateDateColumn()
   created_at: Date;

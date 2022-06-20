@@ -7,15 +7,9 @@ export class CreateVansTable1655691282002 implements MigrationInterface {
         name: 'vans',
         columns: [
           {
-            name: 'id_van',
-            type: 'uuid',
-            isPrimary: true,
-            generationStrategy: 'uuid',
-            default: 'uuid_generate_v4()',
-          },
-          {
             name: 'plate',
             type: 'varchar',
+            isPrimary: true,
           },
           {
             name: 'brand',
@@ -30,7 +24,32 @@ export class CreateVansTable1655691282002 implements MigrationInterface {
             type: 'numeric',
           },
           {
-            name: 'document',
+            name: 'document_status',
+            type: 'boolean',
+            isNullable: true
+          },
+          {
+            name: 'locator_name',
+            type: 'varchar',
+            isNullable: true
+          },
+          {
+            name: 'locator_address',
+            type: 'varchar',
+            isNullable: true
+          },
+          {
+            name: 'locator_complement',
+            type: 'varchar',
+            isNullable: true
+          },
+          {
+            name: 'locator_city',
+            type: 'varchar',
+            isNullable: true
+          },
+          {
+            name: 'locator_state',
             type: 'varchar',
             isNullable: true
           },
