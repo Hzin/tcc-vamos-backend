@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { getRepository } from 'typeorm';
 import UserSearching from '../models/UsersSearching';
+import CalculateDistanceBetweenCoords from '../services/CalculateDistanceBetweenCoords';
 import CreateUserSearchingService from '../services/CreateUserSearchingService';
 import GetCoordinatesByAddress from '../services/GetCoordinatesByAddress';
 
@@ -37,10 +38,10 @@ searchRoutes.post('/', async (request, response) => {
 
   const getCoordinates = new GetCoordinatesByAddress();
 
-  const coordinates = await getCoordinates.execute({address_to})
+  const coordinates = await getCoordinates.execute({ address_to });
 
-  const latitude_to = coordinates.lat;
-  const longitude_to = coordinates.lon;
+  const latitude_to = coordinates[0].lat;
+  const longitude_to = coordinates[0].lon;
 
   const createUserSearching = new CreateUserSearchingService();
 
@@ -49,7 +50,7 @@ searchRoutes.post('/', async (request, response) => {
     latitude_from,
     longitude_from,
     latitude_to,
-    longitude_to
+    longitude_to,
   });
 
   return response.json({ message: 'Busca de usuário criada.' });
@@ -57,27 +58,25 @@ searchRoutes.post('/', async (request, response) => {
 
 export default searchRoutes;
 
-//TODO: Arrumar calculo da busca no raio
 //TODO: Arrumar tipo das colunas latitude e longitude que está numeric no banco mas vem como string
 searchRoutes.post('/inraio', async (request, response) => {
   const { latitude, longitude } = request.body;
   const usersSearchingRepository = getRepository(UserSearching);
-  console.log(request.body)
   const searches = await usersSearchingRepository.find();
   var searchesFiltered;
-  for(let i in searches){
-    searchesFiltered = searches.filter(x =>{
-      let distance = (6371 * Math.acos(
-        Math.cos(Math.atan(latitude)) *
-        Math.cos(Math.atan(x.latitude_from)) *
-        Math.cos(Math.atan(longitude) - Math.atan(x.longitude_from)) +
-        Math.sin(Math.atan(latitude)) *
-        Math.sin(Math.atan(x.latitude_from))
-      ))
-      // console.log(distance)
-      return distance <= 0.1
-    })
-  }
-  // console.log(searches)
-  return response.json({ allRecords: searchesFiltered, center:{latitude, longitude} });
+  
+  let lat1:number = +latitude;
+  let lng1:number = +longitude;
+
+  searchesFiltered = searches.filter(x => {
+    let lat2:number = +x.latitude_from;
+    let lng2:number = +x.longitude_from;
+    let distance = CalculateDistanceBetweenCoords({lat1, lng1, lat2, lng2});
+    return distance <= 2.75;
+  });
+
+  return response.json({
+    allRecords: searchesFiltered,
+    center: { latitude, longitude },
+  });
 });

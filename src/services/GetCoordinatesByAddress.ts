@@ -22,5 +22,23 @@ class GetCoordinatesByAddress{
     return response.data;
   }
 }
+// class GetCoordinatesByAddress{
+//   public async execute({ address_to }: Request): Promise<any> {
+// // let endereco = address_to.replace(/[^a-z0-9+ ]/gi,'')
+//     let endereco = address_to.replace(/[^a-z0-9+áàâãéèêíïóôõöúçñ ]/gi,'')
+//     // console.log(endereco)
+//     endereco = endereco.replace(/ /gi,'+')
+//     endereco = endereco.replace(/\+\+/g, '+')
+//     // console.log(endereco)
+//     const querystring = require('querystring');
+//     const response = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${querystring.stringify(endereco)}key=`)
+//     console.log(response.data)
+//     if (!response.data || !response.data.length) {
+//       throw new AppError('Não foi possível encontrar coordenadas para o endereço informado!', 400);
+//     }
+    
+//     return response.data;
+//   }
+// }
 
 export default GetCoordinatesByAddress;

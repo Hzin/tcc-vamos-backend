@@ -9,10 +9,10 @@ import {
 
 import User from './User';
 
-@Entity('users_searching')
+@Entity('transport_offers')
 class UserSearching {
   @PrimaryGeneratedColumn('increment')
-  id_search: string;
+  id_offer: string;
 
   @ManyToOne(() => User, {eager: true})
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id_user' })
@@ -29,9 +29,6 @@ class UserSearching {
 
   @Column()
   longitude_to: number;
-  
-  @Column()
-  address_to: string;
 
   @CreateDateColumn()
   created_at: Date;

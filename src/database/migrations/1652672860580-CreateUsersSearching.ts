@@ -35,6 +35,10 @@ export class CreateUsersSearching1652672860580 implements MigrationInterface {
                   type: 'numeric',
                 },
                 {
+                  name: 'address_to',
+                  type: 'varchar',
+                },
+                {
                   name: 'created_at',
                   type: 'timestamp',
                   default: 'now()',
