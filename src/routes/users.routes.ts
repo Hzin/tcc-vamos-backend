@@ -46,9 +46,9 @@ usersRouter.get('/list', async (request, response) => {
 usersRouter.get('/:id', ensureAuthenticated, async (request, response) => {
   const { id } = request.params;
 
-  const findUser = new FindUserService();
+  const findUserService = new FindUserService();
 
-  const user = await findUser.execute(id);
+  const user = await findUserService.execute(id);
 
   // converting ISO 8601 date to normal date
   let birth_date = new Date(user.birth_date)
@@ -79,9 +79,9 @@ usersRouter.get('/:id', ensureAuthenticated, async (request, response) => {
 usersRouter.post('/', async (request, response) => {
   const { name, lastname, email, birth_date, password } = request.body;
 
-  const createUser = new CreateUserService();
+  const createUserService = new CreateUserService();
 
-  const user = await createUser.execute({
+  const user = await createUserService.execute({
     name,
     lastname,
     email,
@@ -138,9 +138,9 @@ usersRouter.get(
   async (request, response) => {
     const { id } = request.params;
 
-    const findUserSocial = new FindUserSocialService();
+    const findUserSocialService = new FindUserSocialService();
 
-    const social = await findUserSocial.execute(id);
+    const social = await findUserSocialService.execute(id);
 
     return response.json({ data: social });
   },
@@ -187,9 +187,9 @@ usersRouter.get(
   async (request, response) => {
     const { id_user } = request.params;
 
-    const findUserSocial = new FindUserSocialService();
+    const findUserSocialService = new FindUserSocialService();
 
-    const social = await findUserSocial.execute(id_user);
+    const social = await findUserSocialService.execute(id_user);
 
     return response.json({ data: social });
   },

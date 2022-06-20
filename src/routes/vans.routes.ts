@@ -25,9 +25,9 @@ vansRouter.get('/list', async (request, response) => {
 vansRouter.get('/:id', ensureAuthenticated, async (request, response) => {
   const { id } = request.params;
 
-  const findVan = new FindVanService();
+  const findVanService = new FindVanService();
 
-  const van = await findVan.execute(id);
+  const van = await findVanService.execute(id);
 
   return response.json({ data: van });
 });
@@ -35,9 +35,9 @@ vansRouter.get('/:id', ensureAuthenticated, async (request, response) => {
 vansRouter.post('/', async (request, response) => {
   const { plate, brand, model, seats_number } = request.body;
 
-  const createVan = new CreateVanService();
+  const createVanService = new CreateVanService();
 
-  const van = await createVan.execute({
+  const van = await createVanService.execute({
     plate,
     brand,
     model,
@@ -85,9 +85,9 @@ vansRouter.get(
   async (request, response) => {
     const { id } = request.params;
 
-    const findVanLocator = new FindVanLocatorService();
+    const findVanLocatorService = new FindVanLocatorService();
 
-    const vanLocator = await findVanLocator.execute(id);
+    const vanLocator = await findVanLocatorService.execute(id);
 
     return response.json({ data: vanLocator });
   },
@@ -98,9 +98,9 @@ vansRouter.post('/locator/:id_van', async (request, response) => {
 
   const { id_van } = request.params;
 
-  const createVanLocator = new CreateVanLocatorService();
+  const createVanLocatorService = new CreateVanLocatorService();
 
-  const vanLocator = await createVanLocator.execute({
+  const vanLocator = await createVanLocatorService.execute({
     id_van,
     name,
     address,
