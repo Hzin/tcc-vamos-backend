@@ -3,7 +3,7 @@ import { getRepository } from 'typeorm';
 import AppError from '../errors/AppError';
 
 import User from '../models/User';
-import Social from '../models/Social';
+import Social from '../models/SocialInformation';
 
 interface Request {
   id_user: string;
@@ -13,10 +13,12 @@ interface Request {
   bio: string;
   email: string;
   birth_date: string;
+  cpf: string;
+  cnpj: string;
 }
 
 class UpdateUserService {
-  public async execute({ id_user, name, lastname, username, bio, email, birth_date }: Request): Promise<User> {
+  public async execute({ id_user, name, lastname, username, bio, email, birth_date, cpf, cnpj }: Request): Promise<User> {
     const usersRepository = getRepository(User);
     const socialRepository = getRepository(Social);
 
@@ -28,10 +30,13 @@ class UpdateUserService {
       throw new AppError('User does not exist.');
     };
 
-    user.name = name
-    user.lastname = lastname
-    user.bio = bio
-    user.email = email
+    if (name) user.name = name
+    if (lastname) user.lastname = lastname
+    if (bio) user.bio = bio
+    if (email) user.email = email
+
+    if (cpf) user.cpf = cpf
+    if (cnpj) user.cnpj = cnpj
     
     // user.birth_date = new Date(birth_date); // TODO, funciona?
 

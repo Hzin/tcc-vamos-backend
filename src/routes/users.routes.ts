@@ -67,6 +67,8 @@ usersRouter.get('/:id', ensureAuthenticated, async (request, response) => {
     birth_date: finalDate,
     avatar_image: user.avatar_image,
     bio: user.bio,
+    cpf: user.cpf,
+    cnpj: user.cnpj,
     // created_at: user.created_at,
     // updated_at: user.updated_at,
   };
@@ -98,7 +100,7 @@ usersRouter.post('/', async (request, response) => {
 });
 
 usersRouter.patch('/edit', ensureAuthenticated, async (request, response) => {
-  const { name, lastname, username, bio, email, birth_date } = request.body;
+  const { name, lastname, username, bio, email, birth_date, cpf, cnpj } = request.body;
 
   const updateUserService = new UpdateUserService();
 
@@ -110,6 +112,8 @@ usersRouter.patch('/edit', ensureAuthenticated, async (request, response) => {
     bio,
     email,
     birth_date,
+    cpf,
+    cnpj
   });
 
   return response.json({ message: 'User info sucessfully updated.' });
@@ -174,6 +178,43 @@ usersRouter.patch(
     });
 
     return response.json({ message: 'Password sucessfully updated.' });
+  },
+);
+
+usersRouter.get(
+  '/social/:id_user',
+  ensureAuthenticated,
+  async (request, response) => {
+    const { id_user } = request.params;
+
+    const findUserSocial = new FindUserSocialService();
+
+    const social = await findUserSocial.execute(id_user);
+
+    return response.json({ data: social });
+  },
+);
+
+usersRouter.patch(
+  '/social',
+  ensureAuthenticated,
+  async (request, response) => {
+    const { id_user, phone, whatsapp, facebook, telegram } = request.body;
+
+    const social_network = {
+      phone,
+      whatsapp,
+      facebook,
+      telegram
+    }
+
+    const updateUserSocialService = new UpdateUserSocialService();
+    const social = await updateUserSocialService.execute({
+      id_user,
+      social_network
+    });
+
+    return response.json({ data: social });
   },
 );
 

@@ -38,6 +38,12 @@ class User {
   @Column()
   star_rating: number;
 
+  @Column()
+  cpf: string;
+
+  @Column()
+  cnpj: string;
+
   @CreateDateColumn()
   created_at: Date;
 
