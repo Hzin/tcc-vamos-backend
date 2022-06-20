@@ -8,6 +8,7 @@ import Social from '../models/Social';
 interface Request {
   id_user: string;
   name: string;
+  lastname: string;
   username: string;
   bio: string;
   email: string;
@@ -15,7 +16,7 @@ interface Request {
 }
 
 class UpdateUserService {
-  public async execute({ id_user, name, username, bio, email, birth_date }: Request): Promise<User> {
+  public async execute({ id_user, name, lastname, username, bio, email, birth_date }: Request): Promise<User> {
     const usersRepository = getRepository(User);
     const socialRepository = getRepository(Social);
 
@@ -27,9 +28,12 @@ class UpdateUserService {
       throw new AppError('User does not exist.');
     };
 
-    user.name = name;
-    user.bio = bio;
-    user.birth_date = new Date(birth_date); // TODO, funciona?
+    user.name = name
+    user.lastname = lastname
+    user.bio = bio
+    user.email = email
+    
+    // user.birth_date = new Date(birth_date); // TODO, funciona?
 
     await usersRepository.save(user);
 

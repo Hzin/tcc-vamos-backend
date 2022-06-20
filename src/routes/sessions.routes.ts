@@ -1,8 +1,18 @@
 import { Router } from 'express';
+import { sign, verify } from 'jsonwebtoken';
+
+import authConfig from '../config/auth';
+import AppError from '../errors/AppError';
 
 import AuthenticateUserService from '../services/AuthenticateUserService';
 
 const sessionsRouter = Router();
+
+interface TokenPayload {
+  iat: number;
+  exp: number;
+  sub: string;
+}
 
 // login pode ser: email ou username
 sessionsRouter.post('/', async (request, response) => {
@@ -15,7 +25,24 @@ sessionsRouter.post('/', async (request, response) => {
     password,
   });
 
-  return response.json({ message: 'User logged in sucessfully', token: token });
+  return response.json({ message: 'Usuário autenticado com sucesso!', token: token });
 });
+
+sessionsRouter.post('/refresh', async(request, response) => {
+  const { token } = request.body;
+
+  let sub = null;
+  let decoded = null;
+
+  try {
+    decoded = verify(token, authConfig.jwt.secret);
+  } catch (error) {
+    throw new AppError('Token de autenticação inválido.', 401);
+  }
+
+  sub = decoded as TokenPayload;
+
+  return response.json({ "status": "success", "userId": sub.sub });
+})
 
 export default sessionsRouter;

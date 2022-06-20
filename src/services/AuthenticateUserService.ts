@@ -17,6 +17,8 @@ interface Response {
   id_user: string;
 }
 
+const failedLoginMessage = { message: 'Combinação incorreta de login e senha.', statusCode: 200 }
+
 class AuthenticateUserService {
   public async execute({ login, password }: Request): Promise<Response> {
     const usersRepository = getRepository(User);
@@ -28,7 +30,7 @@ class AuthenticateUserService {
     // TODO, ajeitar todos os HTTP status code
     // Por que tem que deixar 200 para funcionar?
     if (!user) {
-      throw new AppError('Incorrect login/password combination.', 200);
+      throw new AppError(failedLoginMessage.message, failedLoginMessage.statusCode);
     }
 
     // user.password -> senha criptografada
@@ -37,7 +39,7 @@ class AuthenticateUserService {
     const passwordMatched = await compare(password, user.password);
 
     if (!passwordMatched) {
-      throw new AppError('Incorrect login/password combination.', 200);
+      throw new AppError(failedLoginMessage.message, failedLoginMessage.statusCode);
     }
 
     // usuário autenticado

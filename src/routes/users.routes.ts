@@ -50,27 +50,38 @@ usersRouter.get('/:id', ensureAuthenticated, async (request, response) => {
 
   const user = await findUser.execute(id);
 
+  // converting ISO 8601 date to normal date
+  let birth_date = new Date(user.birth_date)
+
+  let year = birth_date.getFullYear()
+  let month = birth_date.getMonth()+1
+  let date = birth_date.getDate()
+
+  const finalDate = `${date}/${month}/${year}`
+
   const userWithoutPassword = {
     id_user: user.id_user,
     name: user.name,
+    lastname: user.lastname,
     email: user.email,
-    birth_date: user.birth_date,
+    birth_date: finalDate,
     avatar_image: user.avatar_image,
     bio: user.bio,
-    created_at: user.created_at,
-    updated_at: user.updated_at,
+    // created_at: user.created_at,
+    // updated_at: user.updated_at,
   };
 
   return response.json({ data: userWithoutPassword });
 });
 
 usersRouter.post('/', async (request, response) => {
-  const { name, email, birth_date, password } = request.body;
+  const { name, lastname, email, birth_date, password } = request.body;
 
   const createUser = new CreateUserService();
 
   const user = await createUser.execute({
     name,
+    lastname,
     email,
     birth_date,
     password,
@@ -87,13 +98,14 @@ usersRouter.post('/', async (request, response) => {
 });
 
 usersRouter.patch('/edit', ensureAuthenticated, async (request, response) => {
-  const { name, username, bio, email, birth_date } = request.body;
+  const { name, lastname, username, bio, email, birth_date } = request.body;
 
   const updateUserService = new UpdateUserService();
 
   await updateUserService.execute({
     id_user: request.user.id_user,
     name,
+    lastname,
     username,
     bio,
     email,

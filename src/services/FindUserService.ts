@@ -8,12 +8,12 @@ class CreateUserService {
   public async execute(id: string): Promise<User> {
     const usersRepository = getRepository(User);
 
-    const user = await usersRepository.findOne({
+    let user = await usersRepository.findOne({
       where: { id_user: id },
     });
 
     if (!user) {
-      throw new AppError('User does not exist.');
+      throw new AppError('Usuário não existe.');
     }
 
     return user;
