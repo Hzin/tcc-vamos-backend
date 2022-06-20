@@ -21,6 +21,15 @@ export class CreateUsers1617210132141 implements MigrationInterface {
           {
             name: 'email',
             type: 'varchar',
+            length: '255',
+            isUnique: true,
+          },
+          {
+            name: 'phone_number',
+            type: 'varchar',
+            length: '14',
+            isUnique: true,
+            isNullable: true,
           },
           {
             name: 'birth_date',
@@ -38,6 +47,13 @@ export class CreateUsers1617210132141 implements MigrationInterface {
           {
             name: 'bio',
             type: 'varchar',
+            isNullable: true
+          },
+          {
+            name: 'star_rating',
+            type: 'numeric',
+            precision: 3,
+            scale: 2,
             isNullable: true
           },
           {

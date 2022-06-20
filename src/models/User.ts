@@ -19,6 +19,9 @@ class User {
 
   @Column()
   email: string;
+  
+  @Column()
+  phone_number: string;
 
   @Column()
   birth_date: Date;
@@ -31,6 +34,9 @@ class User {
 
   @Column()
   bio: string;
+  
+  @Column()
+  star_rating: number;
 
   @CreateDateColumn()
   created_at: Date;
