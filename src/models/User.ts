@@ -4,7 +4,9 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
+import Van from './Van';
 
 @Entity('users')
 class User {
@@ -37,6 +39,15 @@ class User {
   
   @Column()
   star_rating: number;
+
+  @Column()
+  document_type: string;
+
+  @Column()
+  document: string;
+
+  @OneToMany(() => Van, van => van.user)
+  van: Van[];
 
   @CreateDateColumn()
   created_at: Date;

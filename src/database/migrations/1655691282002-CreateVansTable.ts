@@ -1,58 +1,56 @@
-import { MigrationInterface, QueryRunner, Table } from "typeorm";
+import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
-export class CreateUsers1617210132141 implements MigrationInterface {
+export class CreateVansTable1655691282002 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'users',
+        name: 'vans',
         columns: [
           {
-            name: 'id_user',
-            type: 'uuid',
+            name: 'plate',
+            type: 'varchar',
             isPrimary: true,
-            generationStrategy: 'uuid',
-            default: 'uuid_generate_v4()',
           },
           {
-            name: 'name',
+            name: 'brand',
             type: 'varchar',
           },
           {
-            name: 'email',
-            type: 'varchar',
-            length: '255',
-            isUnique: true,
-          },
-          {
-            name: 'phone_number',
-            type: 'varchar',
-            length: '14',
-            isUnique: true,
-            isNullable: true,
-          },
-          {
-            name: 'birth_date',
-            type: 'date',
-          },
-          {
-            name: 'password',
+            name: 'model',
             type: 'varchar',
           },
           {
-            name: 'avatar_image',
-            type: 'varchar',
-            isNullable: true
-          },
-          {
-            name: 'bio',
-            type: 'varchar',
-            isNullable: true
-          },
-          {
-            name: 'star_rating',
+            name: 'seats_number',
             type: 'numeric',
-            precision: 3,
-            scale: 2,
+          },
+          {
+            name: 'document_status',
+            type: 'boolean',
+            isNullable: true
+          },
+          {
+            name: 'locator_name',
+            type: 'varchar',
+            isNullable: true
+          },
+          {
+            name: 'locator_address',
+            type: 'varchar',
+            isNullable: true
+          },
+          {
+            name: 'locator_complement',
+            type: 'varchar',
+            isNullable: true
+          },
+          {
+            name: 'locator_city',
+            type: 'varchar',
+            isNullable: true
+          },
+          {
+            name: 'locator_state',
+            type: 'varchar',
             isNullable: true
           },
           {
@@ -71,6 +69,6 @@ export class CreateUsers1617210132141 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('users');
+    await queryRunner.dropTable('vans');
   }
 }

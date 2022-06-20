@@ -11,7 +11,7 @@ import {
 
 import User from './User';
 
-@Entity('socials')
+@Entity('socialInformation')
 class Social {
   @PrimaryGeneratedColumn('increment')
   id_social: string;
@@ -21,16 +21,16 @@ class Social {
   user: User;
 
   @Column()
-  telegram: string;
+  phone: string;
+
+  @Column()
+  whatsapp: string;
 
   @Column()
   facebook: string;
 
   @Column()
-  twitter: string;
-
-  @Column()
-  twitch: string;
+  telegram: string;
 
   @CreateDateColumn()
   created_at: Date;

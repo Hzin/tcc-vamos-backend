@@ -2,6 +2,8 @@ import { Router } from 'express';
 import { getRepository } from 'typeorm';
 import User from '../models/User';
 
+import ensureAuthenticated from '../middlewares/ensureAuthenticated';
+
 import CreateUserService from '../services/CreateUserService';
 import FindUserService from '../services/FindUserService';
 import FindUserSocialService from '../services/FindUserSocialService';
@@ -9,9 +11,8 @@ import UpdateUserSocialService from '../services/UpdateUserSocialService';
 import UpdateUserService from '../services/UpdateUserService';
 import UpdateUserAvatarService from '../services/UpdateUserAvatarService';
 import UpdateUserPasswordService from '../services/UpdateUserPasswordService';
-import ensureAuthenticated from '../middlewares/ensureAuthenticated';
-import ensureAdmin from '../middlewares/ensureAdmin';
 import AuthenticateUserService from '../services/AuthenticateUserService';
+import CheckIfUserHasVansService from '../services/CheckIfUserHasVansService';
 
 const usersRouter = Router();
 
@@ -29,44 +30,45 @@ usersRouter.get('/list', async (request, response) => {
 
   let usersWithoutSensitiveInfo: userWithoutSensitiveInfo[] = [];
 
-  users.map(user => {
-    usersWithoutSensitiveInfo.push({
-      id_user: user.id_user,
-      name: user.name,
-      email: user.email,
-      avatar_image: user.avatar_image,
-    });
-  });
+  // users.map(user => {
+  //   usersWithoutSensitiveInfo.push({
+  //     id_user: user.id_user,
+  //     name: user.name,
+  //     email: user.email,
+  //     avatar_image: user.avatar_image,
+  //   });
+  // });
 
-  return response.json({ data: usersWithoutSensitiveInfo });
+  return response.json({ data: users });
 });
 
-// TODO, criar middleware ensureIsOwnUser é necessário?
-// usar browserAgent, Encrypted Local Storage ou algo do tipo
 usersRouter.get('/:id', ensureAuthenticated, async (request, response) => {
   const { id } = request.params;
 
-  const findUser = new FindUserService();
+  const findUserService = new FindUserService();
 
-  const user = await findUser.execute(id);
+  const user = await findUserService.execute(id);
 
   // converting ISO 8601 date to normal date
-  let birth_date = new Date(user.birth_date)
+  let birth_date = new Date(user.birth_date);
 
-  let year = birth_date.getFullYear()
-  let month = birth_date.getMonth()+1
-  let date = birth_date.getDate()
+  let year = birth_date.getFullYear();
+  let month = birth_date.getMonth() + 1;
+  let date = birth_date.getDate();
 
-  const finalDate = `${date}/${month}/${year}`
+  const finalDate = `${date}/${month}/${year}`;
 
   const userWithoutPassword = {
     id_user: user.id_user,
     name: user.name,
     lastname: user.lastname,
     email: user.email,
+    phone_number: user.phone_number,
     birth_date: finalDate,
     avatar_image: user.avatar_image,
     bio: user.bio,
+    document_type: user.document_type,
+    document: user.document,
     // created_at: user.created_at,
     // updated_at: user.updated_at,
   };
@@ -77,9 +79,9 @@ usersRouter.get('/:id', ensureAuthenticated, async (request, response) => {
 usersRouter.post('/', async (request, response) => {
   const { name, lastname, email, birth_date, password } = request.body;
 
-  const createUser = new CreateUserService();
+  const createUserService = new CreateUserService();
 
-  const user = await createUser.execute({
+  const user = await createUserService.execute({
     name,
     lastname,
     email,
@@ -98,7 +100,16 @@ usersRouter.post('/', async (request, response) => {
 });
 
 usersRouter.patch('/edit', ensureAuthenticated, async (request, response) => {
-  const { name, lastname, username, bio, email, birth_date } = request.body;
+  const {
+    name,
+    lastname,
+    bio,
+    email,
+    phone_number,
+    birth_date,
+    document_type,
+    document,
+  } = request.body;
 
   const updateUserService = new UpdateUserService();
 
@@ -106,27 +117,49 @@ usersRouter.patch('/edit', ensureAuthenticated, async (request, response) => {
     id_user: request.user.id_user,
     name,
     lastname,
-    username,
     bio,
     email,
+    phone_number,
     birth_date,
+    document_type,
+    document,
   });
 
-  return response.json({ message: 'User info sucessfully updated.' });
+  return response.json({ message: 'Perfil atualizado com sucesso.' });
 });
 
-usersRouter.patch('/edit/avatar', ensureAuthenticated, async (request, response) => {
-  const { avatar_image } = request.body;
+usersRouter.get(
+  '/isDriver/:id_user',
+  ensureAuthenticated,
+  async (request, response) => {
+    const { id_user } = request.params;
 
-  const updateUserAvatarService = new UpdateUserAvatarService();
+    const checkIfUserHasVansService = new CheckIfUserHasVansService();
 
-  await updateUserAvatarService.execute({
-    id_user: request.user.id_user,
-    avatar_image,
-  });
+    const userHasVans = await checkIfUserHasVansService.execute({
+      id_user,
+    });
 
-  return response.json({ message: 'Avatar atualizado com sucesso !' });
-});
+    return response.json({ result: userHasVans });
+  },
+);
+
+usersRouter.patch(
+  '/edit/avatar',
+  ensureAuthenticated,
+  async (request, response) => {
+    const { avatar_image } = request.body;
+
+    const updateUserAvatarService = new UpdateUserAvatarService();
+
+    await updateUserAvatarService.execute({
+      id_user: request.user.id_user,
+      avatar_image,
+    });
+
+    return response.json({ message: 'Avatar atualizado com sucesso !' });
+  },
+);
 
 usersRouter.get(
   '/social/:id',
@@ -134,9 +167,9 @@ usersRouter.get(
   async (request, response) => {
     const { id } = request.params;
 
-    const findUserSocial = new FindUserSocialService();
+    const findUserSocialService = new FindUserSocialService();
 
-    const social = await findUserSocial.execute(id);
+    const social = await findUserSocialService.execute(id);
 
     return response.json({ data: social });
   },
@@ -176,5 +209,38 @@ usersRouter.patch(
     return response.json({ message: 'Password sucessfully updated.' });
   },
 );
+
+usersRouter.get(
+  '/social/:id_user',
+  ensureAuthenticated,
+  async (request, response) => {
+    const { id_user } = request.params;
+
+    const findUserSocialService = new FindUserSocialService();
+
+    const social = await findUserSocialService.execute(id_user);
+
+    return response.json({ data: social });
+  },
+);
+
+usersRouter.patch('/social', ensureAuthenticated, async (request, response) => {
+  const { id_user, phone, whatsapp, facebook, telegram } = request.body;
+
+  const social_network = {
+    phone,
+    whatsapp,
+    facebook,
+    telegram,
+  };
+
+  const updateUserSocialService = new UpdateUserSocialService();
+  const social = await updateUserSocialService.execute({
+    id_user,
+    social_network,
+  });
+
+  return response.json({ data: social });
+});
 
 export default usersRouter;

@@ -5,7 +5,7 @@ import { hash } from 'bcryptjs';
 import AppError from '../errors/AppError';
 
 import User from '../models/User';
-import Social from '../models/Social';
+import Social from '../models/SocialInformation';
 
 interface Request {
   name: string;
@@ -18,7 +18,7 @@ interface Request {
 class CreateUserService {
   public async execute({ name, lastname, email, birth_date, password }: Request): Promise<User> {
     const usersRepository = getRepository(User);
-    const socialsRepository = getRepository(Social);
+    const socialInformationRepository = getRepository(Social);
 
     const checkUserEmailExists = await usersRepository.findOne({
       where: { email },
@@ -38,10 +38,6 @@ class CreateUserService {
     });
 
     await usersRepository.save(user);
-
-    // já criar registro na tabela Socials para evitar inconsistências
-    // const social = socialsRepository.create({ user, telegram: "", facebook: "", twitter: "", twitch: "" });
-    // await socialsRepository.save(social);
 
     return user;
   }

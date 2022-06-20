@@ -4,7 +4,7 @@ import { hash, compare } from 'bcryptjs';
 import AppError from '../errors/AppError';
 
 import User from '../models/User';
-import Social from '../models/Social';
+import Social from '../models/SocialInformation';
 
 interface Request {
   id_user: string;
