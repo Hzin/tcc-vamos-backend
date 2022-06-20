@@ -1,7 +1,6 @@
 import {
   Entity,
   Column,
-  PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
   JoinColumn,
@@ -15,7 +14,7 @@ class VanDocuments {
   @PrimaryColumn()
   @OneToOne(() => VanDocuments, { eager: true })
   @JoinColumn({ name: 'document' })
-  vanDocuments: VanDocuments;
+  vanDocuments: string;
 
   @OneToOne(() => VanLocator, { eager: true })
   @JoinColumn({ name: 'vanLocator_id' })
