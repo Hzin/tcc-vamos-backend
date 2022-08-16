@@ -14,7 +14,7 @@ export class CreateDestinations1660009323138 implements MigrationInterface {
             generationStrategy: 'increment',
           },
           {
-            name: 'route_id',
+            name: 'itinerary_id',
             type: 'integer',
           },
           {
@@ -36,10 +36,10 @@ export class CreateDestinations1660009323138 implements MigrationInterface {
     await queryRunner.createForeignKey(
       'destinations',
       new TableForeignKey({
-        name: 'destinations_route_id_fk', // nome da FK, serve para referenciar numa exclusão pelo QueryRunner se necessário
-        columnNames: ['route_id'], // coluna que vai virar FK
-        referencedColumnNames: ['id_route'], // coluna PK da tabela referenciada
-        referencedTableName: 'routes', // nome da tabela que possui a PK
+        name: 'destinations_itinerary_id_fk', // nome da FK, serve para referenciar numa exclusão pelo QueryRunner se necessário
+        columnNames: ['itinerary_id'], // coluna que vai virar FK
+        referencedColumnNames: ['id_itinerary'], // coluna PK da tabela referenciada
+        referencedTableName: 'itineraries', // nome da tabela que possui a PK
         onDelete: 'SET NULL',
         onUpdate: 'CASCADE',
       }),
@@ -48,6 +48,6 @@ export class CreateDestinations1660009323138 implements MigrationInterface {
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.dropTable('destinations');
-    await queryRunner.dropForeignKey('destinations', 'destinations_route_id_fk');
+    await queryRunner.dropForeignKey('destinations', 'destinations_itinerary_id_fk');
   }
 }

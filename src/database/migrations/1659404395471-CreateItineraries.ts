@@ -1,13 +1,13 @@
 import { MigrationInterface, QueryRunner, Table, TableForeignKey, TableIndex } from 'typeorm';
 
-export class CreateRoutes1659404395471 implements MigrationInterface {
+export class CreateItineraries1659404395471 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
         name: 'routes',
         columns: [
           {
-            name: 'id_route',
+            name: 'id_itinerary',
             type: 'integer',
             isPrimary: true,
             isGenerated: true,
@@ -42,6 +42,10 @@ export class CreateRoutes1659404395471 implements MigrationInterface {
           {
             name: 'available_seats',
             type: 'integer',
+          },
+          {
+            name: 'itinerary_nickname',
+            type: 'varchar',
           },
           {
             name: 'created_at',

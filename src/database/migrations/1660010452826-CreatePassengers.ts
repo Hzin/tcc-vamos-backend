@@ -14,7 +14,7 @@ export class CreatePassengers1660010452826 implements MigrationInterface {
             generationStrategy: 'increment',
           },
           {
-            name: 'route_id',
+            name: 'itinerary_id',
             type: 'integer',
           },
           {
@@ -28,10 +28,10 @@ export class CreatePassengers1660010452826 implements MigrationInterface {
     await queryRunner.createForeignKey(
       'passengers',
       new TableForeignKey({
-        name: 'passengers_route_id_fk', // nome da FK, serve para referenciar numa exclusão pelo QueryRunner se necessário
-        columnNames: ['route_id'], // coluna que vai virar FK
-        referencedColumnNames: ['id_route'], // coluna PK da tabela referenciada
-        referencedTableName: 'routes', // nome da tabela que possui a PK
+        name: 'passengers_itinerary_id_fk', // nome da FK, serve para referenciar numa exclusão pelo QueryRunner se necessário
+        columnNames: ['itinerary_id'], // coluna que vai virar FK
+        referencedColumnNames: ['id_itinerary'], // coluna PK da tabela referenciada
+        referencedTableName: 'itineraries', // nome da tabela que possui a PK
         onDelete: 'SET NULL',
         onUpdate: 'CASCADE',
       }),
@@ -52,8 +52,8 @@ export class CreatePassengers1660010452826 implements MigrationInterface {
     await queryRunner.createIndex(
       'passengers', 
       new TableIndex({
-        name: 'passengers_route_user_idx',
-        columnNames: ['route_id', 'user_id'],
+        name: 'passengers_itinerary_user_idx',
+        columnNames: ['itinerary_id', 'user_id'],
         isUnique: true,
       }),
     );
@@ -61,8 +61,8 @@ export class CreatePassengers1660010452826 implements MigrationInterface {
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.dropTable('passengers');
-    await queryRunner.dropForeignKey('passengers', 'passengers_route_id_fk');
+    await queryRunner.dropForeignKey('passengers', 'passengers_itinerary_id_fk');
     await queryRunner.dropForeignKey('passengers', 'passengers_user_id_fk');
-    await queryRunner.dropIndex('passengers', 'passengers_route_user_idx');
+    await queryRunner.dropIndex('passengers', 'passengers_itinerary_user_idx');
   }
 }

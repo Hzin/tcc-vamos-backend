@@ -16,7 +16,7 @@ export class CreateNeighborhoodsServed1660009211327
             generationStrategy: 'increment',
           },
           {
-            name: 'route_id',
+            name: 'itinerary_id',
             type: 'integer',
           },
           {
@@ -38,10 +38,10 @@ export class CreateNeighborhoodsServed1660009211327
     await queryRunner.createForeignKey(
       'neighborhoods_served',
       new TableForeignKey({
-        name: 'neighborhoods_served_route_id_fk', // nome da FK, serve para referenciar numa exclusão pelo QueryRunner se necessário
-        columnNames: ['route_id'], // coluna que vai virar FK
-        referencedColumnNames: ['id_route'], // coluna PK da tabela referenciada
-        referencedTableName: 'routes', // nome da tabela que possui a PK
+        name: 'neighborhoods_served_itinerary_id_fk', // nome da FK, serve para referenciar numa exclusão pelo QueryRunner se necessário
+        columnNames: ['itinerary_id'], // coluna que vai virar FK
+        referencedColumnNames: ['id_itinerary'], // coluna PK da tabela referenciada
+        referencedTableName: 'itineraries', // nome da tabela que possui a PK
         onDelete: 'SET NULL',
         onUpdate: 'CASCADE',
       }),
@@ -50,6 +50,6 @@ export class CreateNeighborhoodsServed1660009211327
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.dropTable('neighborhoods_served');
-    await queryRunner.dropForeignKey('neighborhoods_served', 'neighborhoods_served_route_id_fk');
+    await queryRunner.dropForeignKey('neighborhoods_served', 'neighborhoods_served_itinerary_id_fk');
   }
 }

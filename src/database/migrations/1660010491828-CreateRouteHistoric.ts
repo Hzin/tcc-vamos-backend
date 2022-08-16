@@ -14,7 +14,7 @@ export class CreateRouteHistoric1660010491828 implements MigrationInterface {
             generationStrategy: 'increment',
           },
           {
-            name: 'route_id',
+            name: 'itinerary_id',
             type: 'integer',
           },
           {
@@ -36,10 +36,10 @@ export class CreateRouteHistoric1660010491828 implements MigrationInterface {
     await queryRunner.createForeignKey(
       'route_historic',
       new TableForeignKey({
-        name: 'route_historic_route_id_fk', // nome da FK, serve para referenciar numa exclusão pelo QueryRunner se necessário
-        columnNames: ['route_id'], // coluna que vai virar FK
-        referencedColumnNames: ['id_route'], // coluna PK da tabela referenciada
-        referencedTableName: 'routes', // nome da tabela que possui a PK
+        name: 'route_historic_itinerary_id_fk', // nome da FK, serve para referenciar numa exclusão pelo QueryRunner se necessário
+        columnNames: ['itinerary_id'], // coluna que vai virar FK
+        referencedColumnNames: ['id_itinerary'], // coluna PK da tabela referenciada
+        referencedTableName: 'itineraries', // nome da tabela que possui a PK
         onDelete: 'SET NULL',
         onUpdate: 'CASCADE',
       }),
@@ -60,8 +60,8 @@ export class CreateRouteHistoric1660010491828 implements MigrationInterface {
     await queryRunner.createIndex(
       'route_historic', 
       new TableIndex({
-        name: 'route_historic_idx',
-        columnNames: ['route_id', 'user_id', 'is_return', 'date'],
+        name: 'itinerary_historic_idx',
+        columnNames: ['itinerary_id', 'user_id', 'is_return', 'date'],
         isUnique: true,
       }),
     );
@@ -69,8 +69,8 @@ export class CreateRouteHistoric1660010491828 implements MigrationInterface {
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.dropTable('route_historic');
-    await queryRunner.dropForeignKey('route_historic', 'route_historic_route_id_fk');
+    await queryRunner.dropForeignKey('route_historic', 'route_historic_itinerary_id_fk');
     await queryRunner.dropForeignKey('route_historic', 'route_historic_user_id_fk');
-    await queryRunner.dropIndex('route_historic', 'route_historic_idx');
+    await queryRunner.dropIndex('route_historic', 'itinerary_historic_idx');
   }
 }
