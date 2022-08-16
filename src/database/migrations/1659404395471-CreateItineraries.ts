@@ -4,7 +4,7 @@ export class CreateItineraries1659404395471 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'routes',
+        name: 'itineraries',
         columns: [
           {
             name: 'id_itinerary',
@@ -62,9 +62,9 @@ export class CreateItineraries1659404395471 implements MigrationInterface {
     );
 
     await queryRunner.createForeignKey(
-      'routes',
+      'itineraries',
       new TableForeignKey({
-        name: 'routes_van_plate_fk', // nome da FK, serve para referenciar numa exclusão pelo QueryRunner se necessário
+        name: 'itineraries_van_plate_fk', // nome da FK, serve para referenciar numa exclusão pelo QueryRunner se necessário
         columnNames: ['van_plate'], // coluna que vai virar FK
         referencedColumnNames: ['plate'], // coluna PK da primeira tabela
         referencedTableName: 'vans', // nome da tabela que possui a PK
@@ -74,9 +74,9 @@ export class CreateItineraries1659404395471 implements MigrationInterface {
     );
 
     await queryRunner.createIndex(
-      'routes',
+      'itineraries',
       new TableIndex({
-        name: 'routes_idx',
+        name: 'itineraries_idx',
         columnNames: ['van_plate', 'days_of_week', 'specific_day', 'estimated_departure_time'],
         isUnique: true,
       })
@@ -84,8 +84,8 @@ export class CreateItineraries1659404395471 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('routes');
-    await queryRunner.dropForeignKey('routes', 'routes_van_plate_fk');
-    await queryRunner.dropIndex('routes', 'routes_idx');
+    await queryRunner.dropTable('itineraries');
+    await queryRunner.dropForeignKey('itineraries', 'itineraries_van_plate_fk');
+    await queryRunner.dropIndex('itineraries', 'itineraries_idx');
   }
 }
