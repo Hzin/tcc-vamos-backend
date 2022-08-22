@@ -21,12 +21,12 @@ class User {
 
   @Column()
   email: string;
-  
+
   @Column()
   phone_number: string;
 
   @Column()
-  birth_date: Date;
+  birth_date: string;
 
   @Column()
   password: string;
@@ -36,7 +36,7 @@ class User {
 
   @Column()
   bio: string;
-  
+
   @Column()
   star_rating: number;
 
