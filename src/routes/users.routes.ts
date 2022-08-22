@@ -49,14 +49,14 @@ usersRouter.get('/:id', ensureAuthenticated, async (request, response) => {
 
   const user = await findUserService.execute(id);
 
-  // converting ISO 8601 date to normal date
-  let birth_date = new Date(user.birth_date);
+  // // converting ISO 8601 date to normal date
+  // let birth_date = new Date(user.birth_date);
 
-  let year = birth_date.getFullYear();
-  let month = birth_date.getMonth() + 1;
-  let date = birth_date.getDate();
+  // let year = birth_date.getFullYear();
+  // let month = birth_date.getMonth() + 1;
+  // let date = birth_date.getDate();
 
-  const finalDate = `${date}/${month}/${year}`;
+  // const newBirthDate = `${date}/${month}/${year}`;
 
   const userWithoutPassword = {
     id_user: user.id_user,
@@ -64,7 +64,7 @@ usersRouter.get('/:id', ensureAuthenticated, async (request, response) => {
     lastname: user.lastname,
     email: user.email,
     phone_number: user.phone_number,
-    birth_date: finalDate,
+    birth_date: user.birth_date,
     avatar_image: user.avatar_image,
     bio: user.bio,
     document_type: user.document_type,

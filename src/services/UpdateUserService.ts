@@ -34,6 +34,7 @@ class UpdateUserService {
     if (lastname) user.lastname = lastname
     if (bio) user.bio = bio
     if (email) user.email = email
+    if (birth_date) user.birth_date = birth_date
 
     if (phone_number) {
       const phoneAlreadyExists = await usersRepository.findOne({
@@ -44,13 +45,11 @@ class UpdateUserService {
         throw new AppError('O telefone informado já está em uso por outra conta!', 409);
       }
     }
-    
+
     user.phone_number = phone_number
 
     if (document_type) user.document_type = document_type
     if (document) user.document = document
-    
-    // user.birth_date = new Date(birth_date); // TODO, funciona?
 
     await usersRepository.save(user);
 
