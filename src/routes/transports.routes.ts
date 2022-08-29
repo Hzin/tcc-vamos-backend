@@ -2,9 +2,9 @@ import { Router } from 'express';
 import { getRepository } from 'typeorm';
 import CalculateDistanceBetweenCoords from '../services/CalculateDistanceBetweenCoords';
 
-const transportesRouter = Router();
+const transporteRouter = Router();
 
-transportesRouter.post('/', async (request, response) => {
+transporteRouter.post('/', async (request, response) => {
   const { coordinatesFrom, coordinatesTo } = request.body;
   console.log(coordinatesFrom, coordinatesTo);
   const data = [
@@ -95,4 +95,4 @@ transportesRouter.post('/', async (request, response) => {
   return response.json(transportsFiltered);
 });
 
-export default transportesRouter;
+export default transporteRouter;
