@@ -1,4 +1,10 @@
-import { MigrationInterface, QueryRunner, Table, TableForeignKey, TableIndex } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableForeignKey,
+  TableIndex,
+} from 'typeorm';
 
 export class CreatePassengers1660010452826 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -20,6 +26,22 @@ export class CreatePassengers1660010452826 implements MigrationInterface {
           {
             name: 'user_id',
             type: 'uuid',
+          },
+          {
+            name: 'address',
+            type: 'varchar',
+          },
+          {
+            name: 'latitude_address',
+            type: 'numeric',
+          },
+          {
+            name: 'longitude_address',
+            type: 'numeric',
+          },
+          {
+            name: 'payment_status',
+            type: 'boolean',
           },
         ],
       }),
@@ -50,7 +72,7 @@ export class CreatePassengers1660010452826 implements MigrationInterface {
     );
 
     await queryRunner.createIndex(
-      'passengers', 
+      'passengers',
       new TableIndex({
         name: 'passengers_itinerary_user_idx',
         columnNames: ['itinerary_id', 'user_id'],
@@ -61,7 +83,10 @@ export class CreatePassengers1660010452826 implements MigrationInterface {
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.dropTable('passengers');
-    await queryRunner.dropForeignKey('passengers', 'passengers_itinerary_id_fk');
+    await queryRunner.dropForeignKey(
+      'passengers',
+      'passengers_itinerary_id_fk',
+    );
     await queryRunner.dropForeignKey('passengers', 'passengers_user_id_fk');
     await queryRunner.dropIndex('passengers', 'passengers_itinerary_user_idx');
   }

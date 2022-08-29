@@ -1,4 +1,10 @@
-import { MigrationInterface, QueryRunner, Table, TableForeignKey, TableIndex } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableForeignKey,
+  TableIndex,
+} from 'typeorm';
 
 export class CreateItineraries1659404395471 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -48,6 +54,22 @@ export class CreateItineraries1659404395471 implements MigrationInterface {
             type: 'varchar',
           },
           {
+            name: 'is_active',
+            type: 'boolean',
+          },
+          {
+            name: 'estimated_departure_address',
+            type: 'varchar',
+          },
+          {
+            name: 'departure_latitude',
+            type: 'numeric',
+          },
+          {
+            name: 'departure_longitude',
+            type: 'numeric',
+          },
+          {
             name: 'created_at',
             type: 'timestamp',
             default: 'now()',
@@ -77,9 +99,14 @@ export class CreateItineraries1659404395471 implements MigrationInterface {
       'itineraries',
       new TableIndex({
         name: 'itineraries_idx',
-        columnNames: ['van_plate', 'days_of_week', 'specific_day', 'estimated_departure_time'],
+        columnNames: [
+          'van_plate',
+          'days_of_week',
+          'specific_day',
+          'estimated_departure_time',
+        ],
         isUnique: true,
-      })
+      }),
     );
   }
 
