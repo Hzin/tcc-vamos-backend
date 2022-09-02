@@ -104,6 +104,7 @@ export class CreateItineraries1659404395471 implements MigrationInterface {
           'days_of_week',
           'specific_day',
           'estimated_departure_time',
+          'is_active',
         ],
         isUnique: true,
       }),
