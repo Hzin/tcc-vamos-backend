@@ -5,7 +5,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  JoinColumn,
 } from 'typeorm';
+import Destination from './Destination';
+import NeighborhoodServed from './NeighborhoodServed';
 import Vehicle from './Vehicle';
 
 @Entity('itineraries')
@@ -36,6 +39,12 @@ class Itinerary {
 
   @Column()
   itinerary_nickname: string;
+
+  @OneToMany(() => NeighborhoodServed, neighborhoodServed => neighborhoodServed.itinerary, { eager: true, cascade: true, nullable: true })
+  neighborhoodsServed?: NeighborhoodServed[];
+
+  @OneToMany(() => Destination, destination => destination.itinerary, { eager: true, cascade: true, nullable: true })
+  destinations?: Destination[];
 
   // @CreateDateColumn()
   // created_at: Date;
