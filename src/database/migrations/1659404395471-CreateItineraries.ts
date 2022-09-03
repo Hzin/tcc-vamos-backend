@@ -14,7 +14,7 @@ export class CreateItineraries1659404395471 implements MigrationInterface {
             generationStrategy: 'increment',
           },
           {
-            name: 'van_plate',
+            name: 'vehicle_plate',
             type: 'varchar',
           },
           {
@@ -64,10 +64,10 @@ export class CreateItineraries1659404395471 implements MigrationInterface {
     await queryRunner.createForeignKey(
       'itineraries',
       new TableForeignKey({
-        name: 'itineraries_van_plate_fk', // nome da FK, serve para referenciar numa exclusão pelo QueryRunner se necessário
-        columnNames: ['van_plate'], // coluna que vai virar FK
+        name: 'itineraries_vehicle_plate_fk', // nome da FK, serve para referenciar numa exclusão pelo QueryRunner se necessário
+        columnNames: ['vehicle_plate'], // coluna que vai virar FK
         referencedColumnNames: ['plate'], // coluna PK da primeira tabela
-        referencedTableName: 'vans', // nome da tabela que possui a PK
+        referencedTableName: 'vehicles', // nome da tabela que possui a PK
         onDelete: 'SET NULL',
         onUpdate: 'CASCADE',
       }),
@@ -77,7 +77,7 @@ export class CreateItineraries1659404395471 implements MigrationInterface {
       'itineraries',
       new TableIndex({
         name: 'itineraries_idx',
-        columnNames: ['van_plate', 'days_of_week', 'specific_day', 'estimated_departure_time'],
+        columnNames: ['vehicle_plate', 'days_of_week', 'specific_day', 'estimated_departure_time'],
         isUnique: true,
       })
     );
@@ -85,7 +85,7 @@ export class CreateItineraries1659404395471 implements MigrationInterface {
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.dropTable('itineraries');
-    await queryRunner.dropForeignKey('itineraries', 'itineraries_van_plate_fk');
+    await queryRunner.dropForeignKey('itineraries', 'itineraries_vehicle_plate_fk');
     await queryRunner.dropIndex('itineraries', 'itineraries_idx');
   }
 }

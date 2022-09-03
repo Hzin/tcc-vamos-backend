@@ -6,30 +6,30 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
-import Van from './Van';
+import Vehicle from './Vehicle';
 
 @Entity('itineraries')
-class User {
+class Itinerary {
   @PrimaryGeneratedColumn('increment')
   id_itinerary: number;
 
   @Column()
-  van_plate: string;
+  vehicle_plate: string;
 
   @Column()
   price: number;
 
   @Column()
-  days_of_week: number;
+  days_of_week: string;
 
   @Column()
-  specific_day: Date;
+  specific_day?: Date;
 
   @Column()
-  estimated_departure_time: Date;
+  estimated_departure_time: string;
 
   @Column()
-  estimated_arrival_time: Date;
+  estimated_arrival_time: string;
 
   @Column()
   available_seats: number;
@@ -37,11 +37,11 @@ class User {
   @Column()
   itinerary_nickname: string;
 
-  @CreateDateColumn()
-  created_at: Date;
+  // @CreateDateColumn()
+  // created_at: Date;
 
-  @UpdateDateColumn()
-  updated_at: Date;
+  // @UpdateDateColumn()
+  // updated_at: Date;
 }
 
-export default User;
+export default Itinerary;
