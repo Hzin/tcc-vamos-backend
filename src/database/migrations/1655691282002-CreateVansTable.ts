@@ -7,6 +7,10 @@ export class CreateVansTable1655691282002 implements MigrationInterface {
         name: 'vans',
         columns: [
           {
+            name: 'user_id',
+            type: 'uuid',
+          },
+          {
             name: 'plate',
             type: 'varchar',
             isPrimary: true,
