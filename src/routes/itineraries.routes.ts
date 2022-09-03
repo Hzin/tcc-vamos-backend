@@ -1,15 +1,13 @@
 import { Router } from 'express';
 import { getRepository } from 'typeorm';
-import axios from 'axios'
 
-import AppError from '../errors/AppError';
 import Itinerary from '../models/Itinerary';
 import CalculateDistanceBetweenCoords from '../services/CalculateDistanceBetweenCoords';
 import CreateItineraryService from '../services/CreateItineraryService';
-import NeighborhoodServed from '../models/NeighborhoodServed';
-import Destination from '../models/Destination';
 
 import testData from "../constants/itineraryExample"
+
+import maxRadius from '../constants/mapRadiusConfig';
 
 const itinerariesRouter = Router();
 
@@ -76,48 +74,39 @@ itinerariesRouter.post('/examples', async (request, response) => {
 });
 
 itinerariesRouter.post('/inradius', async (request, response) => {
-  const { coordinatesFrom, coordinatesTo } = request.body;
-  console.log(coordinatesFrom, coordinatesTo);
+  const { coordinatesOrigin, coordinatesDestination } = request.body;
 
-  let lat_from: number = +coordinatesFrom.lat;
-  let lng_from: number = +coordinatesFrom.lng;
-  let lat_to: number = +coordinatesTo.lat;
-  let lng_to: number = +coordinatesTo.lng;
+  const itinerariesRepository = getRepository(Itinerary);
+  // console.log(coordinatesOrigin, coordinatesDestiny);
 
-  const { data, status } = await axios.get<Itinerary[]>(
-    'https://630d4f7fb37c364eb702a43d.mockapi.io/vehiclemos/itineraries',
-    {
-      headers: {
-        Accept: 'application/json',
-      },
-    },
-  );
+  const lat_from: number = +coordinatesOrigin.lat;
+  const lng_from: number = +coordinatesOrigin.lng;
+  const lat_to: number = +coordinatesDestination.lat;
+  const lng_to: number = +coordinatesDestination.lng;
 
-  if (status !== 200) {
-    throw new AppError('Não foi possível recuperar a lista de modelos do veículo informado.', 200);
-  }
+  const itineraries = await itinerariesRepository.find();
 
-  console.log(data)
+  let transportsFiltered = itineraries.filter(itinerary => {
+    if (!itinerary.neighborhoodsServed || !itinerary.destinations) return false
 
-  // "data" é a lista de itinerários
-  let transportsFiltered = data.filter(x => {
     var distance = 0;
     var distance2 = 0;
-    for (const i of x.bairros_atendidos) {
-      let lat2: number = +i.lat;
-      let lng2: number = +i.lgn;
+
+    for (const neighborhoodServed of itinerary.neighborhoodsServed) {
+      let lat2: number = +neighborhoodServed.latitude;
+      let lng2: number = +neighborhoodServed.longitude;
       distance = CalculateDistanceBetweenCoords({ lat1: lat_from, lng1: lng_from, lat2, lng2 });
-      if (distance <= 10) break;
+      if (distance <= maxRadius) break;
     }
 
-    for (const j of x.destinos) {
-      let lat2: number = +j.lat;
-      let lng2: number = +j.lgn;
+    for (const destination of itinerary.destinations) {
+      let lat2: number = +destination.latitude;
+      let lng2: number = +destination.longitude;
       distance2 = CalculateDistanceBetweenCoords({ lat1: lat_to, lng1: lng_to, lat2, lng2 });
-      if (distance2 <= 10) break;
+      if (distance2 <= maxRadius) break;
     }
 
-    return (distance <= 10 && distance2 <= 10);
+    return (distance <= maxRadius && distance2 <= maxRadius);
   });
 
   console.log(transportsFiltered)
