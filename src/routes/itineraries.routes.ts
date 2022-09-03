@@ -89,35 +89,30 @@ itinerariesRouter.post('/inradius', async (request, response) => {
   let transportsFiltered = itineraries.filter(itinerary => {
     if (!itinerary.neighborhoodsServed || !itinerary.destinations) return false
 
-    var distance = 0;
-    var distance2 = 0;
+    var distanceOrigins = 0;
+    var distanceDestinations = 0;
 
     for (const neighborhoodServed of itinerary.neighborhoodsServed) {
       let lat2: number = +neighborhoodServed.latitude;
       let lng2: number = +neighborhoodServed.longitude;
-      distance = CalculateDistanceBetweenCoords({ lat1: lat_from, lng1: lng_from, lat2, lng2 });
-      if (distance <= maxRadius) break;
+      distanceOrigins = CalculateDistanceBetweenCoords({ lat1: lat_from, lng1: lng_from, lat2, lng2 });
+      if (distanceOrigins <= maxRadius) break;
     }
 
     for (const destination of itinerary.destinations) {
       let lat2: number = +destination.latitude;
       let lng2: number = +destination.longitude;
-      distance2 = CalculateDistanceBetweenCoords({ lat1: lat_to, lng1: lng_to, lat2, lng2 });
-      if (distance2 <= maxRadius) break;
+      distanceDestinations = CalculateDistanceBetweenCoords({ lat1: lat_to, lng1: lng_to, lat2, lng2 });
+      if (distanceDestinations <= maxRadius) break;
     }
 
-    return (distance <= maxRadius && distance2 <= maxRadius);
+    console.log('distanceOrigins: ' + distanceOrigins)
+    console.log('distanceDestinations: ' + distanceDestinations)
+
+    return (distanceOrigins <= maxRadius && distanceDestinations <= maxRadius);
   });
 
-  console.log(transportsFiltered)
   return response.json(transportsFiltered);
 });
-
-itinerariesRouter.post('/', async (request, response) => {
-  const itinerariesRepository = getRepository(Itinerary);
-  // const itinerary = itinerariesRepository.create();
-
-  // return user;
-})
 
 export default itinerariesRouter;
