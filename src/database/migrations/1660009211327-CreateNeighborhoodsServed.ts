@@ -49,7 +49,7 @@ export class CreateNeighborhoodsServed1660009211327
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('neighborhoods_served');
     await queryRunner.dropForeignKey('neighborhoods_served', 'neighborhoods_served_itinerary_id_fk');
+    await queryRunner.dropTable('neighborhoods_served');
   }
 }

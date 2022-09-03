@@ -29,7 +29,7 @@ export class CreateItineraries1659404395471 implements MigrationInterface {
           },
           {
             name: 'days_of_week',
-            type: 'bit',
+            type: 'varchar',
             isNullable: true,
           },
           {
