@@ -73,7 +73,7 @@ itinerariesRouter.post('/examples', async (request, response) => {
   return response.json({ data: itinerary, message: 'Itinerário criado com sucesso!' });
 });
 
-itinerariesRouter.post('/inradius', async (request, response) => {
+itinerariesRouter.post('/search/inradius', async (request, response) => {
   const { coordinatesOrigin, coordinatesDestination } = request.body;
 
   const itinerariesRepository = getRepository(Itinerary);
@@ -112,7 +112,7 @@ itinerariesRouter.post('/inradius', async (request, response) => {
     return (distanceOrigins <= maxRadius && distanceDestinations <= maxRadius);
   });
 
-  return response.json(transportsFiltered);
+  return response.json({ data: transportsFiltered });
 });
 
 export default itinerariesRouter;
