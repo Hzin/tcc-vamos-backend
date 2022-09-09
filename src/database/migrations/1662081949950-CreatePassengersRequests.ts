@@ -6,14 +6,16 @@ import {
   TableIndex,
 } from 'typeorm';
 
-export class CreatePassengers1660010452826 implements MigrationInterface {
+export class CreatePassengersRequests1662081949950
+  implements MigrationInterface
+{
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'passengers',
+        name: 'passengers_requests',
         columns: [
           {
-            name: 'id_passenger',
+            name: 'id_request',
             type: 'integer',
             isPrimary: true,
             isGenerated: true,
@@ -28,6 +30,16 @@ export class CreatePassengers1660010452826 implements MigrationInterface {
             type: 'uuid',
           },
           {
+            name: 'status',
+            type: 'enum',
+            enum: ['pending', 'accepted', 'rejected'],
+          },
+          {
+            name: 'created_at',
+            type: 'timestamp',
+            default: 'now()',
+          },
+          {
             name: 'address',
             type: 'varchar',
           },
@@ -39,18 +51,14 @@ export class CreatePassengers1660010452826 implements MigrationInterface {
             name: 'longitude_address',
             type: 'numeric',
           },
-          {
-            name: 'payment_status',
-            type: 'boolean',
-          },
         ],
       }),
     );
 
     await queryRunner.createForeignKey(
-      'passengers',
+      'passengers_requests',
       new TableForeignKey({
-        name: 'passengers_itinerary_id_fk', // nome da FK, serve para referenciar numa exclusão pelo QueryRunner se necessário
+        name: 'passengers_requests_itinerary_id_fk', // nome da FK, serve para referenciar numa exclusão pelo QueryRunner se necessário
         columnNames: ['itinerary_id'], // coluna que vai virar FK
         referencedColumnNames: ['id_itinerary'], // coluna PK da tabela referenciada
         referencedTableName: 'itineraries', // nome da tabela que possui a PK
@@ -60,9 +68,9 @@ export class CreatePassengers1660010452826 implements MigrationInterface {
     );
 
     await queryRunner.createForeignKey(
-      'passengers',
+      'passengers_requests',
       new TableForeignKey({
-        name: 'passengers_user_id_fk', // nome da FK, serve para referenciar numa exclusão pelo QueryRunner se necessário
+        name: 'passengers_requests_user_id_fk', // nome da FK, serve para referenciar numa exclusão pelo QueryRunner se necessário
         columnNames: ['user_id'], // coluna que vai virar FK
         referencedColumnNames: ['id_user'], // coluna PK da tabela referenciada
         referencedTableName: 'users', // nome da tabela que possui a PK
@@ -72,22 +80,28 @@ export class CreatePassengers1660010452826 implements MigrationInterface {
     );
 
     await queryRunner.createIndex(
-      'passengers',
+      'passengers_requests',
       new TableIndex({
-        name: 'passengers_itinerary_user_idx',
-        columnNames: ['itinerary_id', 'user_id'],
+        name: 'passengers_requests_idx',
+        columnNames: ['itinerary_id', 'user_id', 'status', 'created_at'],
         isUnique: true,
       }),
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('passengers');
+    await queryRunner.dropTable('passengers_requests');
     await queryRunner.dropForeignKey(
-      'passengers',
-      'passengers_itinerary_id_fk',
+      'passengers_requests',
+      'passengers_requests_itinerary_id_fk',
     );
-    await queryRunner.dropForeignKey('passengers', 'passengers_user_id_fk');
-    await queryRunner.dropIndex('passengers', 'passengers_itinerary_user_idx');
+    await queryRunner.dropForeignKey(
+      'passengers_requests',
+      'passengers_requests_user_id_fk',
+    );
+    await queryRunner.dropIndex(
+      'passengers_requests',
+      'passengers_requests_idx',
+    );
   }
 }

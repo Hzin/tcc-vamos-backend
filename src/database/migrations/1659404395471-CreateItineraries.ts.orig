@@ -99,13 +99,17 @@ export class CreateItineraries1659404395471 implements MigrationInterface {
       'itineraries',
       new TableIndex({
         name: 'itineraries_idx',
+<<<<<<< HEAD
+        columnNames: ['vehicle_plate', 'days_of_week', 'specific_day', 'estimated_departure_time'],
+=======
         columnNames: [
-          'vehicle_plate',
+          'van_plate',
           'days_of_week',
           'specific_day',
           'estimated_departure_time',
           'is_active',
         ],
+>>>>>>> c1c8dc7a5ec1043bff7ae027e0b959e0cc561254
         isUnique: true,
       }),
     );
