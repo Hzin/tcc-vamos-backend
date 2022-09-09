@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
-import Van from './Van';
+import Vehicle from './Vehicle';
 
 @Entity('users')
 class User {
@@ -46,8 +46,8 @@ class User {
   @Column()
   document: string;
 
-  @OneToMany(() => Van, van => van.user)
-  van: Van[];
+  @OneToMany(() => Vehicle, vehicle => vehicle.user)
+  vehicle: Vehicle[];
 
   @CreateDateColumn()
   created_at: Date;

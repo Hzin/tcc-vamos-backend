@@ -1,11 +1,11 @@
 import { MigrationInterface, QueryRunner, TableForeignKey } from 'typeorm';
 
-export class AddFKUserIdToVansTable1655720873936 implements MigrationInterface {
+export class AddFKUserIdToVehiclesTable1655720873936 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createForeignKey(
-      'vans',
+      'vehicles',
       new TableForeignKey({
-        name: 'UserIdVan', // nome da FK, serve para referenciar numa exclusão pelo QueryRunner se necessário
+        name: 'UserIdVehicle', // nome da FK, serve para referenciar numa exclusão pelo QueryRunner se necessário
         columnNames: ['user_id'], // coluna que vai virar FK
         referencedColumnNames: ['id_user'], // coluna PK da primeira tabela
         referencedTableName: 'users', // nome da tabela que possui a PK
@@ -17,8 +17,8 @@ export class AddFKUserIdToVansTable1655720873936 implements MigrationInterface {
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.dropForeignKey(
-      'vans',
-      'UserIdVan',
+      'vehicles',
+      'UserIdVehicle',
     );
   }
 }
