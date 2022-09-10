@@ -12,7 +12,7 @@ import UpdateUserService from '../services/UpdateUserService';
 import UpdateUserAvatarService from '../services/UpdateUserAvatarService';
 import UpdateUserPasswordService from '../services/UpdateUserPasswordService';
 import AuthenticateUserService from '../services/AuthenticateUserService';
-import CheckIfUserHasVansService from '../services/CheckIfUserHasVansService';
+import CheckIfUserHasVehiclesService from '../services/CheckIfUserHasVehiclesService';
 
 const usersRouter = Router();
 
@@ -134,13 +134,13 @@ usersRouter.get(
   async (request, response) => {
     const { id_user } = request.params;
 
-    const checkIfUserHasVansService = new CheckIfUserHasVansService();
+    const checkIfUserHasVehiclesService = new CheckIfUserHasVehiclesService();
 
-    const userHasVans = await checkIfUserHasVansService.execute({
+    const userHasVehicles = await checkIfUserHasVehiclesService.execute({
       id_user,
     });
 
-    return response.json({ result: userHasVans });
+    return response.json({ result: userHasVehicles });
   },
 );
 

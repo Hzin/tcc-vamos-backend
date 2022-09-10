@@ -3,7 +3,7 @@ import { getRepository } from 'typeorm';
 import AppError from '../errors/AppError';
 import User from '../models/User';
 
-import Van from '../models/Van';
+import Vehicle from '../models/Vehicle';
 
 interface Request {
   id_user: string;
@@ -18,7 +18,7 @@ interface Request {
   locator_state: string;
 }
 
-class CreateVanService {
+class CreateVehicleService {
   public async execute({
     id_user,
     plate,
@@ -30,8 +30,8 @@ class CreateVanService {
     locator_complement,
     locator_city,
     locator_state,
-  }: Request): Promise<Van> {
-    const vansRepository = getRepository(Van);
+  }: Request): Promise<Vehicle> {
+    const vehiclesRepository = getRepository(Vehicle);
     const usersRepository = getRepository(User);
 
     const user = await usersRepository.findOne({
@@ -45,18 +45,18 @@ class CreateVanService {
       );
     }
 
-    const vanExists = await vansRepository.findOne({
+    const vehicleExists = await vehiclesRepository.findOne({
       where: { plate },
     });
 
-    if (vanExists) {
+    if (vehicleExists) {
       throw new AppError(
-        'Uma van com a placa informada já foi cadastrada.',
+        'Uma vehicle com a placa informada já foi cadastrada.',
         409,
       );
     }
 
-    const van = vansRepository.create({
+    const vehicle = vehiclesRepository.create({
       user,
       plate,
       brand,
@@ -70,10 +70,10 @@ class CreateVanService {
       locator_state,
     });
 
-    await vansRepository.save(van);
+    await vehiclesRepository.save(vehicle);
 
-    return van;
+    return vehicle;
   }
 }
 
-export default CreateVanService;
+export default CreateVehicleService;
