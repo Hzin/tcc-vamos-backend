@@ -99,17 +99,13 @@ export class CreateItineraries1659404395471 implements MigrationInterface {
       'itineraries',
       new TableIndex({
         name: 'itineraries_idx',
-<<<<<<< HEAD
         columnNames: [
-          'van_plate',
+          'vehicle_plate',
           'days_of_week',
           'specific_day',
           'estimated_departure_time',
           'is_active',
         ],
-=======
-        columnNames: ['vehicle_plate', 'days_of_week', 'specific_day', 'estimated_departure_time'],
->>>>>>> Refatora Van para Vehicle
         isUnique: true,
       }),
     );
