@@ -8,6 +8,7 @@ import CreateItineraryService from '../services/CreateItineraryService';
 import testData from "../constants/itineraryExample"
 
 import maxRadius from '../constants/mapRadiusConfig';
+import { SortArrayOfObjects } from '../services/SortArrayOfObjects';
 
 const itinerariesRouter = Router();
 
@@ -30,6 +31,10 @@ itinerariesRouter.post('/', async (request, response) => {
     estimated_arrival_time,
     available_seats,
     itinerary_nickname,
+    // is_active,
+    estimated_departure_address,
+    departure_latitude,
+    departure_longitude,
     neighborhoodsServed,
     destinations
   } = request.body;
@@ -46,6 +51,10 @@ itinerariesRouter.post('/', async (request, response) => {
     estimated_arrival_time,
     available_seats,
     itinerary_nickname,
+    is_active: true,
+    estimated_departure_address,
+    departure_latitude,
+    departure_longitude,
     neighborhoodsServed,
     destinations
   });
@@ -57,27 +66,48 @@ itinerariesRouter.post('/examples', async (request, response) => {
   const createItineraryService = new CreateItineraryService();
 
   const itinerary = await createItineraryService.execute({
-    id_itinerary: testData.itineraryExample.id_itinerary,
-    vehicle_plate: testData.itineraryExample.vehicle_plate,
-    price: testData.itineraryExample.price,
-    days_of_week: testData.itineraryExample.days_of_week,
-    specific_day: testData.itineraryExample.specific_day,
-    estimated_departure_time: testData.itineraryExample.estimated_departure_time,
-    estimated_arrival_time: testData.itineraryExample.estimated_arrival_time,
-    available_seats: testData.itineraryExample.available_seats,
-    itinerary_nickname: testData.itineraryExample.itinerary_nickname,
-    neighborhoodsServed: testData.neighborhoodsServed,
-    destinations: testData.destinations,
+    id_itinerary: testData.itineraryExample1.id_itinerary,
+    vehicle_plate: testData.itineraryExample1.vehicle_plate,
+    price: testData.itineraryExample1.price,
+    days_of_week: testData.itineraryExample1.days_of_week,
+    specific_day: testData.itineraryExample1.specific_day,
+    estimated_departure_time: testData.itineraryExample1.estimated_departure_time,
+    estimated_arrival_time: testData.itineraryExample1.estimated_arrival_time,
+    available_seats: testData.itineraryExample1.available_seats,
+    is_active: testData.itineraryExample1.is_active,
+    estimated_departure_address: testData.itineraryExample1.estimated_departure_address,
+    departure_latitude: testData.itineraryExample1.departure_latitude,
+    departure_longitude: testData.itineraryExample1.departure_longitude,
+    itinerary_nickname: testData.itineraryExample1.itinerary_nickname,
+    neighborhoodsServed: testData.neighborhoodsServed1,
+    destinations: testData.destinations1,
   });
 
-  return response.json({ data: itinerary, message: 'Itinerário criado com sucesso!' });
+  const itinerary2 = await createItineraryService.execute({
+    id_itinerary: testData.itineraryExample2.id_itinerary,
+    vehicle_plate: testData.itineraryExample2.vehicle_plate,
+    price: testData.itineraryExample2.price,
+    days_of_week: testData.itineraryExample2.days_of_week,
+    specific_day: testData.itineraryExample2.specific_day,
+    estimated_departure_time: testData.itineraryExample2.estimated_departure_time,
+    estimated_arrival_time: testData.itineraryExample2.estimated_arrival_time,
+    available_seats: testData.itineraryExample2.available_seats,
+    is_active: testData.itineraryExample2.is_active,
+    estimated_departure_address: testData.itineraryExample2.estimated_departure_address,
+    departure_latitude: testData.itineraryExample2.departure_latitude,
+    departure_longitude: testData.itineraryExample2.departure_longitude,
+    itinerary_nickname: testData.itineraryExample2.itinerary_nickname,
+    neighborhoodsServed: testData.neighborhoodsServed2,
+    destinations: testData.destinations2,
+  });
+
+  return response.json({ data: itinerary, itinerary2, message: 'Itinerário criado com sucesso!' });
 });
 
 itinerariesRouter.post('/search/inradius', async (request, response) => {
-  const { coordinatesOrigin, coordinatesDestination } = request.body;
+  const { coordinatesOrigin, coordinatesDestination, orderOption, orderBy, preference_AvulseSeat, preference_A_C, preference_PrioritySeat } = request.body;
 
   const itinerariesRepository = getRepository(Itinerary);
-  // console.log(coordinatesOrigin, coordinatesDestiny);
 
   const lat_from: number = +coordinatesOrigin.lat;
   const lng_from: number = +coordinatesOrigin.lng;
@@ -106,11 +136,24 @@ itinerariesRouter.post('/search/inradius', async (request, response) => {
       if (distanceDestinations <= maxRadius) break;
     }
 
-    console.log('distanceOrigins: ' + distanceOrigins)
-    console.log('distanceDestinations: ' + distanceDestinations)
-
     return (distanceOrigins <= maxRadius && distanceDestinations <= maxRadius);
   });
+
+  let newOrderBy = orderBy
+
+  if (!newOrderBy) newOrderBy = 'ascending'
+
+  switch (orderOption) {
+    case "lower_price":
+      transportsFiltered = SortArrayOfObjects(transportsFiltered, 'price', newOrderBy)
+      break;
+    // case "ratings":
+    //   transportsFiltered = SortArrayOfObjects(transportsFiltered, 'rating', newOrderBy)
+    //   break;
+    case "available_seats":
+      transportsFiltered = SortArrayOfObjects(transportsFiltered, 'available_seats', newOrderBy)
+      break;
+  }
 
   return response.json({ data: transportsFiltered });
 });

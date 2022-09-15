@@ -16,6 +16,11 @@ interface Request {
   estimated_arrival_time: string,
   available_seats: number,
   itinerary_nickname: string,
+  is_active: boolean;
+  estimated_departure_address: string;
+  departure_latitude: number;
+  departure_longitude: number;
+
   neighborhoodsServed: NeighborhoodServed[],
   destinations: Destination[]
 }
@@ -31,8 +36,12 @@ class CreateItineraryService {
     estimated_arrival_time,
     available_seats,
     itinerary_nickname,
+    is_active,
     neighborhoodsServed,
     destinations,
+    estimated_departure_address,
+    departure_latitude,
+    departure_longitude,
   }: Request): Promise<Itinerary> {
     const itinerariesRepository = getRepository(Itinerary);
 
@@ -54,7 +63,11 @@ class CreateItineraryService {
       estimated_departure_time,
       estimated_arrival_time,
       available_seats,
-      itinerary_nickname
+      itinerary_nickname,
+      is_active,
+      estimated_departure_address,
+      departure_latitude,
+      departure_longitude,
     });
 
     await itinerariesRepository.save(itinerary);

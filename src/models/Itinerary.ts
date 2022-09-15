@@ -40,6 +40,18 @@ class Itinerary {
   @Column()
   itinerary_nickname: string;
 
+  @Column()
+  is_active: boolean;
+
+  @Column()
+  estimated_departure_address: string;
+
+  @Column()
+  departure_latitude: number;
+
+  @Column()
+  departure_longitude: number;
+
   @OneToMany(() => NeighborhoodServed, neighborhoodServed => neighborhoodServed.itinerary, { eager: true, cascade: true, nullable: true })
   neighborhoodsServed?: NeighborhoodServed[];
 
