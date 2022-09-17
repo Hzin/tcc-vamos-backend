@@ -10,6 +10,7 @@ import {
   OneToMany,
   ManyToOne,
 } from 'typeorm';
+import Itinerary from './Itinerary';
 import User from './User';
 
 @Entity('vehicles')
@@ -47,6 +48,9 @@ class Vehicle {
   @ManyToOne(() => User, user => user.vehicle)
   @JoinColumn({ name: 'user_id' })
   user: User;
+
+  @OneToMany(() => Itinerary, itinerary => itinerary.vehicle, { eager: true, cascade: true, nullable: true })
+  itineraries?: Itinerary[];
 
   @CreateDateColumn()
   created_at: Date;
