@@ -18,17 +18,22 @@ export class CreateDestinations1660009323138 implements MigrationInterface {
             type: 'integer',
           },
           {
-            name: 'latitude',
+            name: 'lat',
             type: 'numeric',
           },
           {
-            name: 'longitude',
+            name: 'lng',
             type: 'numeric',
           },
           {
-            name: 'name',
+            name: 'formatted_address',
             type: 'varchar',
           },
+          {
+            name: 'is_final',
+            type: 'boolean',
+            default: false,
+          }
         ],
       }),
     );
@@ -51,8 +56,8 @@ export class CreateDestinations1660009323138 implements MigrationInterface {
         name: 'destinations_idx',
         columnNames: [
           'itinerary_id',
-          'latitude',
-          'longitude',
+          'lat',
+          'lng',
         ],
         isUnique: true,
       }),

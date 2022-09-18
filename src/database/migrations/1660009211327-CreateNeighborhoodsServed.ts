@@ -20,15 +20,15 @@ export class CreateNeighborhoodsServed1660009211327
             type: 'integer',
           },
           {
-            name: 'latitude',
+            name: 'lat',
             type: 'numeric',
           },
           {
-            name: 'longitude',
+            name: 'lng',
             type: 'numeric',
           },
           {
-            name: 'address',
+            name: 'formatted_address',
             type: 'varchar',
           }
         ],
@@ -53,8 +53,8 @@ export class CreateNeighborhoodsServed1660009211327
         name: 'neighborhoods_served_idx',
         columnNames: [
           'itinerary_id',
-          'latitude',
-          'longitude',
+          'lat',
+          'lng',
         ],
         isUnique: true,
       }),

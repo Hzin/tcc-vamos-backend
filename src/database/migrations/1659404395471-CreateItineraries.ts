@@ -40,6 +40,7 @@ export class CreateItineraries1659404395471 implements MigrationInterface {
           {
             name: 'is_active',
             type: 'boolean',
+            default: true,
           },
           {
             name: 'estimated_arrival_time',
@@ -56,6 +57,7 @@ export class CreateItineraries1659404395471 implements MigrationInterface {
           {
             name: 'daily_price',
             type: 'float',
+            isNullable: true,
           },
           {
             name: 'accept_daily',

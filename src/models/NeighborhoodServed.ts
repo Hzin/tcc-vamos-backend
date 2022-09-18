@@ -14,18 +14,18 @@ class NeighborhoodServed {
   @PrimaryGeneratedColumn('increment')
   id_neighborhood: number;
 
-  @ManyToOne(() => Itinerary, itinerary => itinerary.neighborhoodsServed)
+  @ManyToOne(() => Itinerary, itinerary => itinerary.neighborhoods_served)
   @JoinColumn({ name: 'itinerary_id' })
   itinerary: Itinerary;
 
   @Column()
-  address: string;
+  formatted_address: string;
 
   @Column()
-  latitude: number;
+  lat: number;
 
   @Column()
-  longitude: number;
+  lng: number;
 }
 
 export default NeighborhoodServed;

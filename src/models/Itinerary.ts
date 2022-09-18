@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
   OneToMany,
   JoinColumn,
-  OneToOne,
+  ManyToOne,
 } from 'typeorm';
 import Destination from './Destination';
 import NeighborhoodServed from './NeighborhoodServed';
@@ -17,8 +17,8 @@ class Itinerary {
   @PrimaryGeneratedColumn('increment')
   id_itinerary: number;
 
-  @OneToOne(() => Vehicle, { eager: true })
-  @JoinColumn({ name: 'plate' })
+  @ManyToOne(() => Vehicle, vehicle => vehicle.plate)
+  @JoinColumn({ name: 'vehicle_plate' })
   vehicle_plate: string;
 
   @Column()
@@ -60,11 +60,11 @@ class Itinerary {
   @Column()
   departure_longitude: number;
 
-  @OneToMany(() => NeighborhoodServed, neighborhoodServed => neighborhoodServed.itinerary, { eager: true, cascade: true, nullable: true })
-  neighborhoodsServed?: NeighborhoodServed[];
+  @OneToMany(() => NeighborhoodServed, neighborhoodServed => neighborhoodServed.itinerary, { eager: true, cascade: true })
+  neighborhoods_served: NeighborhoodServed[];
 
-  @OneToMany(() => Destination, destination => destination.itinerary, { eager: true, cascade: true, nullable: true })
-  destinations?: Destination[];
+  @OneToMany(() => Destination, destination => destination.itinerary, { eager: true, cascade: true })
+  destinations: Destination[];
 
   @CreateDateColumn()
   created_at: Date;
