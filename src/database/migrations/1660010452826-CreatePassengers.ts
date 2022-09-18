@@ -43,6 +43,19 @@ export class CreatePassengers1660010452826 implements MigrationInterface {
             name: 'payment_status',
             type: 'boolean',
           },
+          {
+            name: 'start_date',
+            type: 'date',
+            default: 'now()',
+          },
+          {
+            name: 'end_date',
+            type: 'date',
+          },
+          {
+            name: 'is_single',
+            type: 'boolean',
+          }
         ],
       }),
     );

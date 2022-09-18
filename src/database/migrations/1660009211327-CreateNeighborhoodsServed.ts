@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner, Table, TableForeignKey } from 'typeorm';
+import { MigrationInterface, QueryRunner, Table, TableForeignKey, TableIndex } from 'typeorm';
 
 export class CreateNeighborhoodsServed1660009211327
   implements MigrationInterface
@@ -20,16 +20,16 @@ export class CreateNeighborhoodsServed1660009211327
             type: 'integer',
           },
           {
-            name: 'name',
-            type: 'varchar',
-          },
-          {
             name: 'latitude',
             type: 'numeric',
           },
           {
             name: 'longitude',
             type: 'numeric',
+          },
+          {
+            name: 'address',
+            type: 'varchar',
           }
         ],
       }),
@@ -46,9 +46,23 @@ export class CreateNeighborhoodsServed1660009211327
         onUpdate: 'CASCADE',
       }),
     );
+
+    await queryRunner.createIndex(
+      'neighborhoods_served',
+      new TableIndex({
+        name: 'neighborhoods_served_idx',
+        columnNames: [
+          'itinerary_id',
+          'latitude',
+          'longitude',
+        ],
+        isUnique: true,
+      }),
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.dropIndex('neighborhoods_served', 'neighborhoods_served_idx');
     await queryRunner.dropForeignKey('neighborhoods_served', 'neighborhoods_served_itinerary_id_fk');
     await queryRunner.dropTable('neighborhoods_served');
   }

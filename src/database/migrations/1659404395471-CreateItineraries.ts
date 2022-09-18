@@ -24,10 +24,6 @@ export class CreateItineraries1659404395471 implements MigrationInterface {
             type: 'varchar',
           },
           {
-            name: 'price',
-            type: 'float',
-          },
-          {
             name: 'days_of_week',
             type: 'varchar',
             isNullable: true,
@@ -42,6 +38,10 @@ export class CreateItineraries1659404395471 implements MigrationInterface {
             type: 'time',
           },
           {
+            name: 'is_active',
+            type: 'boolean',
+          },
+          {
             name: 'estimated_arrival_time',
             type: 'time',
           },
@@ -50,12 +50,20 @@ export class CreateItineraries1659404395471 implements MigrationInterface {
             type: 'integer',
           },
           {
-            name: 'itinerary_nickname',
-            type: 'varchar',
+            name: 'monthly_price',
+            type: 'float',
           },
           {
-            name: 'is_active',
+            name: 'daily_price',
+            type: 'float',
+          },
+          {
+            name: 'accept_daily',
             type: 'boolean',
+          },
+          {
+            name: 'itinerary_nickname',
+            type: 'varchar',
           },
           {
             name: 'estimated_departure_address',

@@ -19,19 +19,13 @@ class NeighborhoodServed {
   itinerary: Itinerary;
 
   @Column()
-  name: string;
+  address: string;
 
   @Column()
   latitude: number;
 
   @Column()
   longitude: number;
-
-  // @CreateDateColumn()
-  // created_at: Date;
-
-  // @UpdateDateColumn()
-  // updated_at: Date;
 }
 
 export default NeighborhoodServed;
