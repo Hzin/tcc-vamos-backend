@@ -58,14 +58,14 @@ itinerariesRouter.post('/', async (request, response) => {
 });
 
 itinerariesRouter.post('/search/inradius', async (request, response) => {
-  const { coordinatesFrom, coordinatesTo } = request.body;
+  const { coordinatesOrigin, coordinatesDestination } = request.body;
 
   const itinerariesRepository = getRepository(Itinerary);
 
-  const lat_from: number = +coordinatesFrom.lat;
-  const lng_from: number = +coordinatesFrom.lng;
-  const lat_to: number = +coordinatesTo.lat;
-  const lng_to: number = +coordinatesTo.lng;
+  const lat_from: number = +coordinatesOrigin.lat;
+  const lng_from: number = +coordinatesOrigin.lng;
+  const lat_to: number = +coordinatesDestination.lat;
+  const lng_to: number = +coordinatesDestination.lng;
 
   const itineraries = await itinerariesRepository.find();
 
