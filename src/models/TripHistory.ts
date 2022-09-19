@@ -13,7 +13,7 @@ import Itinerary from './Itinerary';
 import Trip from './Trip';
 import Vehicle from './Vehicle';
 
-@Entity('id_trips_history')
+@Entity('trips_history')
 class TripHistory {
   @PrimaryGeneratedColumn('increment')
   id_trip: string;
