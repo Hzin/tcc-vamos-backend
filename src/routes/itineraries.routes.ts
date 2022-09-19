@@ -89,9 +89,6 @@ itinerariesRouter.post('/search/inradius', async (request, response) => {
       if (distanceDestinations <= maxRadius) break;
     }
 
-    console.log('distanceOrigins: ' + distanceOrigins)
-    console.log('distanceDestinations: ' + distanceDestinations)
-
     return (distanceOrigins <= maxRadius && distanceDestinations <= maxRadius);
   });
 
