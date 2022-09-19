@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner, Table, TableForeignKey } from 'typeorm';
+import { MigrationInterface, QueryRunner, Table, TableForeignKey, TableIndex } from 'typeorm';
 
 export class CreateDestinations1660009323138 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -18,17 +18,22 @@ export class CreateDestinations1660009323138 implements MigrationInterface {
             type: 'integer',
           },
           {
-            name: 'name',
+            name: 'lat',
+            type: 'numeric',
+          },
+          {
+            name: 'lng',
+            type: 'numeric',
+          },
+          {
+            name: 'formatted_address',
             type: 'varchar',
           },
           {
-            name: 'latitude',
-            type: 'numeric',
-          },
-          {
-            name: 'longitude',
-            type: 'numeric',
-          },
+            name: 'is_final',
+            type: 'boolean',
+            default: false,
+          }
         ],
       }),
     );
@@ -44,9 +49,23 @@ export class CreateDestinations1660009323138 implements MigrationInterface {
         onUpdate: 'CASCADE',
       }),
     );
+
+    await queryRunner.createIndex(
+      'destinations',
+      new TableIndex({
+        name: 'destinations_idx',
+        columnNames: [
+          'itinerary_id',
+          'lat',
+          'lng',
+        ],
+        isUnique: true,
+      }),
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.dropIndex('destinations', 'destinations_idx');
     await queryRunner.dropTable('destinations');
     await queryRunner.dropForeignKey('destinations', 'destinations_itinerary_id_fk');
   }
