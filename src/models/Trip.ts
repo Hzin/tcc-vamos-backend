@@ -15,7 +15,7 @@ import TripHistory from './TripHistory';
 @Entity('trips')
 class Trip {
   @PrimaryGeneratedColumn('increment')
-  id_trip: string;
+  id_trip: number;
 
   @ManyToOne(() => Itinerary, itinerary => itinerary.trips)
   @JoinColumn({ name: 'itinerary_id' })
