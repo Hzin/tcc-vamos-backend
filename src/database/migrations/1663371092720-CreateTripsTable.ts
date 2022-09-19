@@ -8,14 +8,14 @@ export class CreateTripsTable1663371092720 implements MigrationInterface {
         columns: [
           {
             name: 'id_trip',
-            type: 'uuid',
+            type: 'integer',
             isPrimary: true,
-            generationStrategy: 'uuid',
-            default: 'uuid_generate_v4()',
+            isGenerated: true,
+            generationStrategy: 'increment',
           },
           {
             name: 'itinerary_id',
-            type: 'uuid',
+            type: 'integer',
           },
           {
             name: 'nickname',
@@ -29,8 +29,6 @@ export class CreateTripsTable1663371092720 implements MigrationInterface {
           {
             name: 'status',
             type: 'varchar',
-            isNullable: true,
-            default: 'PENDING'
           },
           {
             name: 'created_at',

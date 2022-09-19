@@ -8,14 +8,14 @@ export class CreateTripsHistoryTable1663372568541 implements MigrationInterface 
         columns: [
           {
             name: 'id_trips_history',
-            type: 'uuid',
+            type: 'integer',
             isPrimary: true,
-            generationStrategy: 'uuid',
-            default: 'uuid_generate_v4()',
+            isGenerated: true,
+            generationStrategy: 'increment',
           },
           {
             name: 'trip_id',
-            type: 'uuid',
+            type: 'integer',
           },
           {
             name: 'old_status',
@@ -51,7 +51,7 @@ export class CreateTripsHistoryTable1663372568541 implements MigrationInterface 
         name: 'trips_history_trip_id_fk', // nome da FK, serve para referenciar numa exclusão pelo QueryRunner se necessário
         columnNames: ['trip_id'], // coluna que vai virar FK
         referencedColumnNames: ['id_trip'], // coluna PK da tabela referenciada
-        referencedTableName: 'itineraries', // nome da tabela que possui a PK
+        referencedTableName: 'trips', // nome da tabela que possui a PK
         onDelete: 'SET NULL',
         onUpdate: 'CASCADE',
       }),

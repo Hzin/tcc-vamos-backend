@@ -8,29 +8,36 @@ import {
   JoinColumn,
   ManyToOne,
 } from 'typeorm';
+import { tripStatus } from '../constants/tripStatus';
 import Itinerary from './Itinerary';
 import TripHistory from './TripHistory';
 
 @Entity('trips')
 class Trip {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn('increment')
   id_trip: string;
 
   @ManyToOne(() => Itinerary, itinerary => itinerary.trips)
   @JoinColumn({ name: 'itinerary_id' })
   itinerary: Itinerary;
 
-  @Column()
-  nickname?: string;
+  @Column({ nullable: true })
+  nickname: string;
 
   @Column()
   date: string;
 
-  @Column()
+  @Column(
+    {
+      type: "enum",
+      enum: tripStatus,
+      default: tripStatus.pending,
+    }
+  )
   status: string;
 
   @OneToMany(() => TripHistory, tripHistory => tripHistory.trip, { eager: true, cascade: true, nullable: true })
-  trip_histories?: TripHistory[];
+  trip_histories: TripHistory[];
 
   @CreateDateColumn()
   created_at: Date;
