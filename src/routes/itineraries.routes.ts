@@ -6,6 +6,7 @@ import CalculateDistanceBetweenCoords from '../services/CalculateDistanceBetween
 import CreateItineraryService from '../services/CreateItineraryService';
 
 import maxRadius from '../constants/mapRadiusConfig';
+import { SortArrayOfObjects } from '../services/SortArrayOfObjects';
 
 const itinerariesRouter = Router();
 
@@ -28,11 +29,12 @@ itinerariesRouter.post('/', async (request, response) => {
     daily_price,
     accept_daily,
     itinerary_nickname,
+    // is_active,
     estimated_departure_address,
     departure_latitude,
     departure_longitude,
-    neighborhoods_served,
-    destinations,
+    neighborhoodsServed,
+    destinations
   } = request.body;
 
   const createItineraryService = new CreateItineraryService();
@@ -47,18 +49,19 @@ itinerariesRouter.post('/', async (request, response) => {
     daily_price,
     accept_daily,
     itinerary_nickname,
+    is_active: true,
     estimated_departure_address,
     departure_latitude,
     departure_longitude,
-    neighborhoods_served,
-    destinations,
+    neighborhoodsServed,
+    destinations
   });
 
   return response.status(201).json({ data: itinerary, message: 'Itinerário criado com sucesso!' });
 });
 
 itinerariesRouter.post('/search/inradius', async (request, response) => {
-  const { coordinatesOrigin, coordinatesDestination } = request.body;
+  const { coordinatesOrigin, coordinatesDestination, orderOption, orderBy, preference_AvulseSeat, preference_A_C, preference_PrioritySeat } = request.body;
 
   const itinerariesRepository = getRepository(Itinerary);
 
@@ -91,6 +94,22 @@ itinerariesRouter.post('/search/inradius', async (request, response) => {
 
     return (distanceOrigins <= maxRadius && distanceDestinations <= maxRadius);
   });
+
+  let newOrderBy = orderBy
+
+  if (!newOrderBy) newOrderBy = 'ascending'
+
+  switch (orderOption) {
+    case "lower_price":
+      transportsFiltered = SortArrayOfObjects(transportsFiltered, 'price', newOrderBy)
+      break;
+    // case "ratings":
+    //   transportsFiltered = SortArrayOfObjects(transportsFiltered, 'rating', newOrderBy)
+    //   break;
+    case "available_seats":
+      transportsFiltered = SortArrayOfObjects(transportsFiltered, 'available_seats', newOrderBy)
+      break;
+  }
 
   return response.json({ data: transportsFiltered });
 });
