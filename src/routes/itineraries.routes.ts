@@ -5,9 +5,8 @@ import Itinerary from '../models/Itinerary';
 import CalculateDistanceBetweenCoords from '../services/CalculateDistanceBetweenCoords';
 import CreateItineraryService from '../services/CreateItineraryService';
 
-import testData from "../constants/itineraryExample"
-
 import maxRadius from '../constants/mapRadiusConfig';
+import { SortArrayOfObjects } from '../services/SortArrayOfObjects';
 
 const itinerariesRouter = Router();
 
@@ -30,11 +29,12 @@ itinerariesRouter.post('/', async (request, response) => {
     daily_price,
     accept_daily,
     itinerary_nickname,
+    // is_active,
     estimated_departure_address,
     departure_latitude,
     departure_longitude,
-    neighborhoods_served,
-    destinations,
+    neighborhoodsServed,
+    destinations
   } = request.body;
 
   const createItineraryService = new CreateItineraryService();
@@ -49,41 +49,21 @@ itinerariesRouter.post('/', async (request, response) => {
     daily_price,
     accept_daily,
     itinerary_nickname,
+    is_active: true,
     estimated_departure_address,
     departure_latitude,
     departure_longitude,
-    neighborhoods_served,
-    destinations,
+    neighborhoodsServed,
+    destinations
   });
 
   return response.status(201).json({ data: itinerary, message: 'Itinerário criado com sucesso!' });
 });
 
-// itinerariesRouter.post('/examples', async (request, response) => {
-//   const createItineraryService = new CreateItineraryService();
-
-//   const itinerary = await createItineraryService.execute({
-//     id_itinerary: testData.itineraryExample.id_itinerary,
-//     vehicle_plate: testData.itineraryExample.vehicle_plate,
-//     price: testData.itineraryExample.price,
-//     days_of_week: testData.itineraryExample.days_of_week,
-//     specific_day: testData.itineraryExample.specific_day,
-//     estimated_departure_time: testData.itineraryExample.estimated_departure_time,
-//     estimated_arrival_time: testData.itineraryExample.estimated_arrival_time,
-//     available_seats: testData.itineraryExample.available_seats,
-//     itinerary_nickname: testData.itineraryExample.itinerary_nickname,
-//     neighborhoodsServed: testData.neighborhoodsServed,
-//     destinations: testData.destinations,
-//   });
-
-//   return response.json({ data: itinerary, message: 'Itinerário criado com sucesso!' });
-// });
-
 itinerariesRouter.post('/search/inradius', async (request, response) => {
-  const { coordinatesOrigin, coordinatesDestination } = request.body;
+  const { coordinatesOrigin, coordinatesDestination, orderOption, orderBy, preference_AvulseSeat, preference_A_C, preference_PrioritySeat } = request.body;
 
   const itinerariesRepository = getRepository(Itinerary);
-  // console.log(coordinatesOrigin, coordinatesDestiny);
 
   const lat_from: number = +coordinatesOrigin.lat;
   const lng_from: number = +coordinatesOrigin.lng;
@@ -112,11 +92,24 @@ itinerariesRouter.post('/search/inradius', async (request, response) => {
       if (distanceDestinations <= maxRadius) break;
     }
 
-    console.log('distanceOrigins: ' + distanceOrigins)
-    console.log('distanceDestinations: ' + distanceDestinations)
-
     return (distanceOrigins <= maxRadius && distanceDestinations <= maxRadius);
   });
+
+  let newOrderBy = orderBy
+
+  if (!newOrderBy) newOrderBy = 'ascending'
+
+  switch (orderOption) {
+    case "lower_price":
+      transportsFiltered = SortArrayOfObjects(transportsFiltered, 'price', newOrderBy)
+      break;
+    // case "ratings":
+    //   transportsFiltered = SortArrayOfObjects(transportsFiltered, 'rating', newOrderBy)
+    //   break;
+    case "available_seats":
+      transportsFiltered = SortArrayOfObjects(transportsFiltered, 'available_seats', newOrderBy)
+      break;
+  }
 
   return response.json({ data: transportsFiltered });
 });

@@ -52,6 +52,9 @@ class Itinerary {
   itinerary_nickname: string;
 
   @Column()
+  is_active: boolean;
+
+  @Column()
   estimated_departure_address: string;
 
   @Column()
