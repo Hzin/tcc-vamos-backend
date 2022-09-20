@@ -18,15 +18,15 @@ class FindVehiclesByUserIdService {
       throw new AppError('O usuário informado não existe.', 404);
     };
 
-    const vehicle = await vehiclesRepository.find({
+    const vehicles = await vehiclesRepository.find({
       where: { user }
     });
 
-    if (!vehicle) {
-      throw new AppError('Não há nenhuma vehicle cadastrada para esse usuário.');
+    if (!vehicles) {
+      throw new AppError('Não há nenhum veículo cadastrada para esse usuário.');
     };
 
-    return vehicle;
+    return vehicles;
   }
 }
 
