@@ -19,19 +19,16 @@ class Destination {
   itinerary: Itinerary;
 
   @Column()
-  name: string;
+  formatted_address: string;
 
   @Column()
-  latitude: number;
+  lat: number;
 
   @Column()
-  longitude: number;
+  lng: number;
 
-  // @CreateDateColumn()
-  // created_at: Date;
-
-  // @UpdateDateColumn()
-  // updated_at: Date;
+  @Column()
+  is_final: boolean;
 }
 
 export default Destination;
