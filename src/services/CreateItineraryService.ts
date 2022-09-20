@@ -31,8 +31,8 @@ class CreateItineraryService {
     const vehiclesRepository = getRepository(Vehicle);
     const itinerariesRepository = getRepository(Itinerary);
 
-    const findVehicle = new FindVehicleService();
-    const vehicle = await findVehicle.execute(props.vehicle_plate);
+    const findVehicleService = new FindVehicleService();
+    const vehicle = await findVehicleService.execute(props.vehicle_plate);
 
     // TODO, verificar se o período já está ocupado para a placa da vehicle informada!
     const checkAvailability = await itinerariesRepository.findOne({
@@ -49,16 +49,15 @@ class CreateItineraryService {
       throw new AppError('Não foi possível cadastrar esse itinerário. Verifique os itinerários já cadastrados para essa van para evitar conflitos de horário e/ou dias!', 400);
     }
 
-    //Formata data
+    // formata data
     if (props.specific_day) {
       props.specific_day = props.specific_day.replace(/\//g, '-');
       props.specific_day = props.specific_day.replace(/(\d{2})\-(\d{2})\-(\d{4}).*/, '$2-$1-$3');
     }
 
     const available_seats = vehicle ? Number(vehicle.seats_number) : 0;
-    const is_active = true;
 
-    const itinerary = itinerariesRepository.create({...props, vehicle, available_seats, is_active});
+    const itinerary = itinerariesRepository.create({ ...props, vehicle, available_seats, is_active: true });
     await itinerariesRepository.save(itinerary);
 
     return itinerary;
