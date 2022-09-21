@@ -75,6 +75,8 @@ class Itinerary {
 
   @UpdateDateColumn()
   updated_at: Date;
+
+  driverName?: string
 }
 
 export default Itinerary;

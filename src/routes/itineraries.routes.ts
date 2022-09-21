@@ -29,7 +29,6 @@ itinerariesRouter.post('/', async (request, response) => {
     daily_price,
     accept_daily,
     itinerary_nickname,
-    // is_active,
     estimated_departure_address,
     departure_latitude,
     departure_longitude,
@@ -49,11 +48,10 @@ itinerariesRouter.post('/', async (request, response) => {
     daily_price,
     accept_daily,
     itinerary_nickname,
-    is_active: true,
     estimated_departure_address,
     departure_latitude,
     departure_longitude,
-    neighborhoodsServed,
+    neighborhoods_served: neighborhoodsServed,
     destinations
   });
 
@@ -61,18 +59,18 @@ itinerariesRouter.post('/', async (request, response) => {
 });
 
 itinerariesRouter.post('/search/inradius', async (request, response) => {
-  const { coordinatesOrigin, coordinatesDestination, orderOption, orderBy, preference_AvulseSeat, preference_A_C, preference_PrioritySeat } = request.body;
+  const { coordinatesFrom, coordinatesTo, orderOption, orderBy, preference_AvulseSeat, preference_A_C, preference_PrioritySeat } = request.body;
 
   const itinerariesRepository = getRepository(Itinerary);
 
-  const lat_from: number = +coordinatesOrigin.lat;
-  const lng_from: number = +coordinatesOrigin.lng;
-  const lat_to: number = +coordinatesDestination.lat;
-  const lng_to: number = +coordinatesDestination.lng;
+  const lat_from: number = +coordinatesFrom.lat;
+  const lng_from: number = +coordinatesFrom.lng;
+  const lat_to: number = +coordinatesTo.lat;
+  const lng_to: number = +coordinatesTo.lng;
 
   const itineraries = await itinerariesRepository.find();
 
-  let transportsFiltered = itineraries.filter(itinerary => {
+  let itinerariesFiltered = itineraries.filter(itinerary => {
     if (!itinerary.neighborhoods_served || !itinerary.destinations) return false
 
     var distanceOrigins = 0;
@@ -95,23 +93,22 @@ itinerariesRouter.post('/search/inradius', async (request, response) => {
     return (distanceOrigins <= maxRadius && distanceDestinations <= maxRadius);
   });
 
-  let newOrderBy = orderBy
-
-  if (!newOrderBy) newOrderBy = 'ascending'
-
   switch (orderOption) {
-    case "lower_price":
-      transportsFiltered = SortArrayOfObjects(transportsFiltered, 'price', newOrderBy)
+    case "monthly_price":
+      itinerariesFiltered = SortArrayOfObjects(itinerariesFiltered, 'monthly_price', orderBy ? orderBy : 'ascending')
       break;
-    // case "ratings":
-    //   transportsFiltered = SortArrayOfObjects(transportsFiltered, 'rating', newOrderBy)
+    case "daily_price":
+      itinerariesFiltered = SortArrayOfObjects(itinerariesFiltered, 'daily_price', orderBy ? orderBy : 'ascending')
+      break;
+    // case "rating":
+    //   itinerariesFiltered = SortArrayOfObjects(itinerariesFiltered, 'rating', orderBy ? orderBy : 'ascending')
     //   break;
     case "available_seats":
-      transportsFiltered = SortArrayOfObjects(transportsFiltered, 'available_seats', newOrderBy)
+      itinerariesFiltered = SortArrayOfObjects(itinerariesFiltered, 'available_seats', orderBy ? orderBy : 'ascending')
       break;
   }
 
-  return response.json({ data: transportsFiltered });
+  return response.json({ data: itinerariesFiltered });
 });
 
 export default itinerariesRouter;
