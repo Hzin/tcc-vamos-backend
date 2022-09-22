@@ -28,7 +28,6 @@ interface Request {
 
 class CreateItineraryService {
   public async execute(props: Request): Promise<Itinerary> {
-    const vehiclesRepository = getRepository(Vehicle);
     const itinerariesRepository = getRepository(Itinerary);
 
     const findVehicleService = new FindVehicleService();

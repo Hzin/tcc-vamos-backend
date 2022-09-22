@@ -32,7 +32,7 @@ itinerariesRouter.post('/', async (request, response) => {
     estimated_departure_address,
     departure_latitude,
     departure_longitude,
-    neighborhoodsServed,
+    neighborhoods_served,
     destinations
   } = request.body;
 
@@ -51,7 +51,7 @@ itinerariesRouter.post('/', async (request, response) => {
     estimated_departure_address,
     departure_latitude,
     departure_longitude,
-    neighborhoods_served: neighborhoodsServed,
+    neighborhoods_served,
     destinations
   });
 
