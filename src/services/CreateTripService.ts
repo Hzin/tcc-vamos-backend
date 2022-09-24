@@ -6,6 +6,7 @@ import Itinerary from '../models/Itinerary';
 
 import Trip from '../models/Trip';
 import TripHistory from '../models/TripHistory';
+import GetTodaysDate from './utils/Date';
 
 interface Request {
   id_itinerary: string;
@@ -26,7 +27,7 @@ class CreateTripService {
     }
 
     const trips = await tripsRepository.find({
-      where: { itinerary },
+      where: { itinerary, date: GetTodaysDate.execute() },
     });
 
     const todayDate = 'HOJE'
