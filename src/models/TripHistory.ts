@@ -4,14 +4,11 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  OneToMany,
   JoinColumn,
   ManyToOne,
 } from 'typeorm';
 import { tripStatus } from '../constants/tripStatus';
-import Itinerary from './Itinerary';
 import Trip from './Trip';
-import Vehicle from './Vehicle';
 
 @Entity('trips_history')
 class TripHistory {

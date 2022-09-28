@@ -12,6 +12,7 @@ import UpdateTripNicknameService from '../services/UpdateTripNicknameService';
 import GetUserTripsFeedService from '../services/GetUserTripsFeedService';
 import DateUtils from '../services/utils/Date';
 import GetItineraryTodaysTripStatusService from '../services/GetItineraryTodaysTripStatusService';
+import { tripStatus } from '../constants/tripStatus';
 
 const tripsRouter = Router();
 
@@ -30,7 +31,7 @@ tripsRouter.get('/list', async (request, response) => {
   return response.json({ data: trips });
 });
 
-tripsRouter.get('/id/:id', ensureAuthenticated, async (request, response) => {
+tripsRouter.get('/:id', ensureAuthenticated, async (request, response) => {
   const { id } = request.params;
 
   const findTripService = new FindTripService();
@@ -40,16 +41,30 @@ tripsRouter.get('/id/:id', ensureAuthenticated, async (request, response) => {
   return response.json({ data: trip });
 });
 
-tripsRouter.post('/', async (request, response) => {
+tripsRouter.post('/update/confirm', async (request, response) => {
   const { id_itinerary } = request.body;
 
   const createTripService = new CreateTripService();
 
-  const trip = await createTripService.execute({
-    id_itinerary
-  });
+  const trip = await createTripService.execute(
+    id_itinerary,
+    tripStatus.confirmed
+  );
 
   return response.json({ message: 'Viagem confirmada com sucesso!', data: trip });
+});
+
+tripsRouter.post('/update/cancel', async (request, response) => {
+  const { id_itinerary } = request.body;
+
+  const createTripService = new CreateTripService();
+
+  const trip = await createTripService.execute(
+    id_itinerary,
+    tripStatus.canceled
+  );
+
+  return response.json({ message: 'Viagem cancelada com sucesso.' });
 });
 
 tripsRouter.patch('/update/nickname', ensureAuthenticated, async (request, response) => {
@@ -68,7 +83,6 @@ tripsRouter.patch('/update/status', ensureAuthenticated, async (request, respons
   const { id_trip, new_status, description } = request.body;
 
   const updateTripStatusService = new UpdateTripStatusService();
-
   await updateTripStatusService.execute({
     id_trip, new_status, description
   });
@@ -105,7 +119,7 @@ tripsRouter.get(
 // and the trip card can always show the trip status. It will be delivered by this route
 // valid statuses: 'pending', 'confirmed'
 tripsRouter.get(
-  '/status/itinerary/:id_itinerary',
+  '/today/status/itinerary/:id_itinerary',
   ensureAuthenticated,
   async (request, response) => {
     const { id_itinerary } = request.params;
