@@ -2,44 +2,23 @@
 import Trip from '../models/Trip';
 import FindItineraryService from './FindItineraryService';
 import { tripStatus } from '../constants/tripStatus';
-import FindTripService from './FindTripService';
 import FindTripsServiceByItineraryId from './FindTripsServiceByItineraryId';
 import DateUtils from './utils/Date';
+import GetItineraryTodaysTripByItineraryId from './GetItineraryTodaysTripByItineraryId';
 
 class GetItineraryTodaysTripStatusService {
   public async execute(id_itinerary: string): Promise<tripStatus> {
-    const findItineraryService = new FindItineraryService();
-    const itinerary = await findItineraryService.execute(id_itinerary);
+    const getItineraryTodaysTripByItineraryId = new GetItineraryTodaysTripByItineraryId()
 
-    // today's trips can have its own status
-    // like "late", "ongoing"
-    // this status can be only assigned in this filter
-
-    const findTripService = new FindTripService();
-
-    let itineraryTrips: Trip[]
-    let itineraryTodaysTrip: Trip | undefined = undefined
+    let todaysTrip: any
 
     try {
-      const findTripsServiceByItineraryId = new FindTripsServiceByItineraryId();
-      itineraryTrips = await findTripsServiceByItineraryId.execute(id_itinerary);
+      todaysTrip = await getItineraryTodaysTripByItineraryId.execute(id_itinerary)
     } catch {
       return tripStatus.pending
     }
 
-    for (let i = 0; i < itineraryTrips.length; i++) {
-      const itineraryTrip = itineraryTrips[i]
-      // itineraryTrips.forEach(itineraryTrip => {
-      if (itineraryTrip.date === DateUtils.getCurrentDate()) {
-        itineraryTodaysTrip = itineraryTrip
-        break
-      }
-    }
-    // )
-
-    if (!itineraryTodaysTrip) return tripStatus.pending
-
-    return itineraryTodaysTrip.status
+    return todaysTrip.status
   }
 }
 

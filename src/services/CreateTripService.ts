@@ -6,6 +6,8 @@ import Itinerary from '../models/Itinerary';
 
 import Trip from '../models/Trip';
 import TripHistory from '../models/TripHistory';
+import FindItineraryService from './FindItineraryService';
+import GetItineraryTodaysTripByItineraryId from './GetItineraryTodaysTripByItineraryId';
 import DateUtils from './utils/Date';
 import GetTodaysDate from './utils/Date';
 
@@ -13,30 +15,29 @@ class CreateTripService {
   public async execute(id_itinerary: string, nextStatus: tripStatus): Promise<Trip> {
     const tripsRepository = getRepository(Trip);
     const tripsHistoricRepository = getRepository(TripHistory);
-    const itinerariesRepository = getRepository(Itinerary);
 
-    const itinerary = await itinerariesRepository.findOne({
-      where: { id_itinerary },
-    });
+    // verifica se itinerário existe
+    const findItineraryService = new FindItineraryService()
+    const itinerary = await findItineraryService.execute(id_itinerary);
 
-    if (!itinerary) {
-      throw new AppError('Itinerário informado não existe.', 200);
-    }
+    // verifica se a viagem de hoje já está criada
+    const getItineraryTodaysTripByItineraryId = new GetItineraryTodaysTripByItineraryId()
+    let todayTrip: Trip | undefined
 
-    const todayDate = DateUtils.getCurrentDate()
-
-    const todayTrip = await tripsRepository.findOne({
-      where: { itinerary, date: todayDate },
-    });
+    try {
+      todayTrip = await getItineraryTodaysTripByItineraryId.execute(id_itinerary);
+    } catch { }
 
     if (todayTrip) throw new AppError('A viagem de hoje do itinerário informado já está criada.', 200);
 
+    // cria viagem
     const trip = tripsRepository.create({
-      itinerary, date: todayDate, status: tripStatus.pending
+      itinerary, date: DateUtils.getCurrentDate(), status: tripStatus.pending
     });
 
     await tripsRepository.save(trip);
 
+    // cria 1º histórico de viagem
     const tripHistory1 = tripsHistoricRepository.create({
       trip, new_status: tripStatus.pending, description: 'Criação da viagem'
     });
@@ -44,8 +45,9 @@ class CreateTripService {
     let tripHistoryDescription = 'Confirmação da viagem'
     if (nextStatus === tripStatus.canceled) tripHistoryDescription = 'Cancelamento da viagem'
 
+    // cria 2º histórico de viagem
     const tripHistory2 = tripsHistoricRepository.create({
-      trip, old_status: tripStatus.pending,new_status: nextStatus, description: tripHistoryDescription
+      trip, old_status: tripStatus.pending, new_status: nextStatus, description: tripHistoryDescription
     });
 
     try {

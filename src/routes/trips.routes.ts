@@ -13,6 +13,8 @@ import GetUserTripsFeedService from '../services/GetUserTripsFeedService';
 import DateUtils from '../services/utils/Date';
 import GetItineraryTodaysTripStatusService from '../services/GetItineraryTodaysTripStatusService';
 import { tripStatus } from '../constants/tripStatus';
+import FindTripsServiceByItineraryId from '../services/FindTripsServiceByItineraryId';
+import FindTodaysTripByItineraryIdService from '../services/FindTodaysTripByItineraryIdService';
 
 const tripsRouter = Router();
 
@@ -41,6 +43,15 @@ tripsRouter.get('/:id', ensureAuthenticated, async (request, response) => {
   return response.json({ data: trip });
 });
 
+tripsRouter.get('/itinerary/:id_itinerary', ensureAuthenticated, async (request, response) => {
+  const { id_itinerary } = request.params;
+
+  const findTodaysTripByItineraryIdService = new FindTodaysTripByItineraryIdService();
+  const trip = await findTodaysTripByItineraryIdService.execute(id_itinerary)
+
+  return response.json({ data: trip });
+});
+
 tripsRouter.post('/update/confirm', async (request, response) => {
   const { id_itinerary } = request.body;
 
@@ -59,7 +70,7 @@ tripsRouter.post('/update/cancel', async (request, response) => {
 
   const createTripService = new CreateTripService();
 
-  const trip = await createTripService.execute(
+  await createTripService.execute(
     id_itinerary,
     tripStatus.canceled
   );

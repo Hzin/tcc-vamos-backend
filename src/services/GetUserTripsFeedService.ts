@@ -6,10 +6,12 @@ import { tripStatus } from '../constants/tripStatus';
 import GetItineraryTodaysTripStatusService from './GetItineraryTodaysTripStatusService';
 import DateUtils from './utils/Date';
 import AppError from '../errors/AppError';
+import GetItineraryTodaysTripByItineraryId from './GetItineraryTodaysTripByItineraryId';
 
 interface Return {
   itinerary: Itinerary;
   tripStatus: tripStatus;
+  tripId?: number;
 }
 
 class GetUserTripsFeedService {
@@ -48,11 +50,20 @@ class GetUserTripsFeedService {
       const getItineraryTodaysTripStatusService = new GetItineraryTodaysTripStatusService()
       const tripStatus = await getItineraryTodaysTripStatusService.execute(itinerary.id_itinerary.toString())
 
-      // se "days_of_week" incluir a data de hoje
+      const getItineraryTodaysTripByItineraryId = new GetItineraryTodaysTripByItineraryId()
+      let tripId: number | undefined
+
+      try {
+        const trip = await getItineraryTodaysTripByItineraryId.execute(itinerary.id_itinerary.toString())
+        tripId = trip.id_trip
+      } catch {
+        tripId = undefined
+      }
 
       todaysTrips.push({
         itinerary,
-        tripStatus
+        tripStatus,
+        tripId: tripId
       })
     }
 
