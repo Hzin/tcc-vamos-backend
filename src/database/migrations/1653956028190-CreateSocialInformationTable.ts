@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner, Table } from 'typeorm';
+import { MigrationInterface, QueryRunner, Table, TableForeignKey } from 'typeorm';
 
 export class CreateSocialInformationTable1653956028190
   implements MigrationInterface
@@ -53,9 +53,23 @@ export class CreateSocialInformationTable1653956028190
         ],
       }),
     );
+
+    await queryRunner.createForeignKey(
+      'socialInformation',
+      new TableForeignKey({
+        name: 'SocialInformationUser', // nome da FK, serve para referenciar numa exclusão pelo QueryRunner se necessário
+        columnNames: ['user_id'], // coluna que vai virar FK
+        referencedColumnNames: ['id_user'], // coluna PK da primeira tabela
+        referencedTableName: 'users', // nome da tabela que possui a PK
+        onDelete: 'SET NULL',
+        onUpdate: 'CASCADE',
+      }),
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.dropForeignKey('socialInformation', 'SocialInformationUser');
+
     await queryRunner.dropTable('socials');
   }
 }
