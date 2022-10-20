@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { getRepository } from 'typeorm';
+
 import Vehicle from '../models/Vehicle';
 
 import ensureAuthenticated from '../middlewares/ensureAuthenticated';
@@ -9,6 +10,11 @@ import CreateVehicleService from '../services/CreateVehicleService';
 import UpdateVehicleService from '../services/UpdateVehicleService';
 import UpdateVehiclePlateService from '../services/UpdateVehiclePlateService';
 import FindVehicleByUserIdService from '../services/FindVehiclesByUserIdService';
+
+import vehiclesRoutesDocumentPostMulter from '../constants/multerConfig';
+import UploadVehicleDocumentFileService from '../services/UploadVehicleDocumentFileService';
+import AppError from '../errors/AppError';
+import DeleteVehicleDocumentFileService from '../services/DeleteVehicleDocumentFileService';
 
 const vehiclesRouter = Router();
 
@@ -135,5 +141,42 @@ vehiclesRouter.patch(
     });
   },
 );
+
+const upload = vehiclesRoutesDocumentPostMulter
+vehiclesRouter.post('/document', ensureAuthenticated, upload.single('file'), async (request, response) => {
+  const { vehicle_plate, document_type } = request.body
+
+  if (!request.file) {
+    throw new AppError("Arquivo não foi informado")
+  }
+
+  const uploadVehicleDocumentFileService = new UploadVehicleDocumentFileService();
+
+  await uploadVehicleDocumentFileService.execute({
+    vehicle_plate,
+    document_type,
+    fileName: request.file.filename,
+    originalFileName: request.file.originalname
+  });
+
+  return response.json({
+    message: 'Documento enviado com sucesso.',
+  });
+})
+
+vehiclesRouter.delete('/document', ensureAuthenticated, async (request, response) => {
+  const { vehicle_plate, document_type } = request.body
+
+  const deleteVehicleDocumentFileService = new DeleteVehicleDocumentFileService();
+
+  await deleteVehicleDocumentFileService.execute({
+    vehicle_plate,
+    document_type,
+  });
+
+  return response.json({
+    message: 'Documento deletado com sucesso.',
+  });
+})
 
 export default vehiclesRouter;

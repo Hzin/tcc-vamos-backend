@@ -1,17 +1,17 @@
 import {
   Entity,
   Column,
-  PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
   JoinColumn,
-  OneToOne,
   PrimaryColumn,
   OneToMany,
   ManyToOne,
 } from 'typeorm';
 import Itinerary from './Itinerary';
 import User from './User';
+import VehicleDocument from './VehicleDocument';
+import VehicleDocuments from './VehicleDocument';
 
 @Entity('vehicles')
 class Vehicle {
@@ -51,6 +51,9 @@ class Vehicle {
 
   @OneToMany(() => Itinerary, itinerary => itinerary.vehicle, { eager: true, cascade: true, nullable: true })
   itineraries?: Itinerary[];
+
+  @OneToMany(() => VehicleDocument, vehicleDocuments => vehicleDocuments.vehicle, { eager: true, cascade: true, nullable: true })
+  documents?: VehicleDocuments[];
 
   @CreateDateColumn()
   created_at: Date;

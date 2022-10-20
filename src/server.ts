@@ -12,10 +12,19 @@ import cors from "cors";
 
 const app = express();
 
+// express setup
 var path = require('path');
 
 // app.use(express.static(__dirname)); // Current directory is root
 app.use(express.static(path.join(__dirname, 'public'))); //  "public" off of current is root
+
+// multer setup
+import bodyParser from 'body-parser';
+import morgan from 'morgan';
+
+app.use(morgan('combined'))
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(cors());
 app.use(express.json());
