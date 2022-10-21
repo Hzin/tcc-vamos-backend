@@ -1,6 +1,6 @@
 import fs from 'fs'
 
-import { vehiclesRoutesDocumentPostPath } from '../constants/multerConfig';
+import { basePath, vehiclesRoutesDocumentPostPath } from '../constants/multerConfig';
 import VehicleDocument from '../models/VehicleDocument';
 
 import CreateVehicleDocumentService from './CreateVehicleDocument';
@@ -17,7 +17,6 @@ class UploadVehicleDocumentFileService {
     vehicle_plate, document_type, fileName, originalFileName
   }: Request): Promise<VehicleDocument> {
     const fileExtension = originalFileName.split('.').at(-1)
-    document_type = document_type.toUpperCase()
 
     // rename file
     // <timestamp>-<vehicle_plate>-<document_type>.<file_extension>
@@ -25,7 +24,7 @@ class UploadVehicleDocumentFileService {
     let savedFileName = fileName
 
     try {
-      fs.renameSync(`${vehiclesRoutesDocumentPostPath}/${savedFileName}`, `${vehiclesRoutesDocumentPostPath}/${finalFilename}`)
+      fs.renameSync(`${basePath}/${vehiclesRoutesDocumentPostPath}/${savedFileName}`, `${basePath}/${vehiclesRoutesDocumentPostPath}/${finalFilename}`)
       savedFileName = finalFilename
     } catch (e) { }
 

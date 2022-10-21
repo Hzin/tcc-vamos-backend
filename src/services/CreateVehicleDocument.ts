@@ -1,4 +1,5 @@
 import { getRepository } from 'typeorm';
+import { vehicleDocumentStatus } from '../constants/vehicleDocumentStatus';
 
 import VehicleDocument from '../models/VehicleDocument';
 import DeleteVehicleDocumentFileService from './DeleteVehicleDocumentFileService';
@@ -15,8 +16,6 @@ class CreateVehicleDocumentService {
   public async execute({
     vehicle_plate, document_type, path
   }: Request): Promise<VehicleDocument> {
-    vehicle_plate = vehicle_plate.toUpperCase()
-
     const vehicleDocumentsRepository = getRepository(VehicleDocument)
 
     const findVehicleService = new FindVehicleService()
@@ -34,7 +33,8 @@ class CreateVehicleDocumentService {
     const vehicleDocument = vehicleDocumentsRepository.create({
       vehicle,
       document_type,
-      path
+      path,
+      status: vehicleDocumentStatus.pending
     })
 
     await vehicleDocumentsRepository.save(vehicleDocument)

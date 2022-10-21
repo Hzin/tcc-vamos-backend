@@ -27,8 +27,8 @@ export class CreateVehiclesDocumentsTable1655691282003 implements MigrationInter
             isNullable: true
           },
           {
-            name: 'isApproved',
-            type: 'boolean',
+            name: 'status',
+            type: 'varchar',
             default: false
           },
           {

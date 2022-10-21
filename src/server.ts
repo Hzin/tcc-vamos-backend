@@ -15,8 +15,8 @@ const app = express();
 // express setup
 var path = require('path');
 
-// app.use(express.static(__dirname)); // Current directory is root
-app.use(express.static(path.join(__dirname, 'public'))); //  "public" off of current is root
+// static setup
+app.use('/static', express.static(path.join(__dirname, '..', '/public')));
 
 // multer setup
 import bodyParser from 'body-parser';

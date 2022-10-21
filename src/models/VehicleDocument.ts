@@ -9,6 +9,7 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
 } from 'typeorm';
+import { vehicleDocumentStatus } from '../constants/vehicleDocumentStatus';
 import Vehicle from './Vehicle';
 
 @Entity('vehicles_documents')
@@ -26,8 +27,14 @@ class VehicleDocument {
   @Column({ nullable: true })
   path: string;
 
-  @Column()
-  isApproved: boolean
+  @Column(
+    {
+      type: "enum",
+      enum: vehicleDocumentStatus,
+      nullable: true
+    }
+  )
+  status: string;
 
   @CreateDateColumn()
   created_at: Date;

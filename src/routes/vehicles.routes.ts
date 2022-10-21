@@ -11,10 +11,12 @@ import UpdateVehicleService from '../services/UpdateVehicleService';
 import UpdateVehiclePlateService from '../services/UpdateVehiclePlateService';
 import FindVehicleByUserIdService from '../services/FindVehiclesByUserIdService';
 
-import vehiclesRoutesDocumentPostMulter from '../constants/multerConfig';
+import vehiclesRoutesDocumentPostMulter, { vehiclesRoutesDocumentPostPath } from '../constants/multerConfig';
 import UploadVehicleDocumentFileService from '../services/UploadVehicleDocumentFileService';
 import AppError from '../errors/AppError';
 import DeleteVehicleDocumentFileService from '../services/DeleteVehicleDocumentFileService';
+import FindVehicleDocumentsByDocumentTypeService from '../services/FindVehicleDocumentsByDocumentTypeService';
+import UpdateVehicleDocumentStatusService from '../services/UpdateVehicleDocumentStatusService';
 
 const vehiclesRouter = Router();
 
@@ -142,8 +144,37 @@ vehiclesRouter.patch(
   },
 );
 
+vehiclesRouter.post('/document/search', ensureAuthenticated, async (request, response) => {
+  const { vehicle_plate, document_type } = request.body
+
+  const findVehicleDocumentsByDocumentTypeService = new FindVehicleDocumentsByDocumentTypeService();
+
+  const vehicleDocument = await findVehicleDocumentsByDocumentTypeService.execute(
+    vehicle_plate,
+    document_type,
+  );
+
+  const vehicleDocumentPath = `${vehiclesRoutesDocumentPostPath}/${vehicleDocument.path}`
+
+  return response.json({
+    path: vehicleDocumentPath,
+    status: vehicleDocument.status
+  });
+})
+
+vehiclesRouter.patch('/document/status', ensureAuthenticated, async (request, response) => {
+  const { vehicle_plate, document_type, status } = request.body;
+
+  const updateVehicleDocumentStatusService = new UpdateVehicleDocumentStatusService();
+  await updateVehicleDocumentStatusService.execute({
+    vehicle_plate, document_type, status
+  });
+
+  return response.json({ message: 'Status do documento do veículo atualizado com sucesso!' });
+});
+
 const upload = vehiclesRoutesDocumentPostMulter
-vehiclesRouter.post('/document', ensureAuthenticated, upload.single('file'), async (request, response) => {
+vehiclesRouter.post('/document/upload', ensureAuthenticated, upload.single('file'), async (request, response) => {
   const { vehicle_plate, document_type } = request.body
 
   if (!request.file) {
@@ -164,7 +195,7 @@ vehiclesRouter.post('/document', ensureAuthenticated, upload.single('file'), asy
   });
 })
 
-vehiclesRouter.delete('/document', ensureAuthenticated, async (request, response) => {
+vehiclesRouter.post('/document/delete', ensureAuthenticated, async (request, response) => {
   const { vehicle_plate, document_type } = request.body
 
   const deleteVehicleDocumentFileService = new DeleteVehicleDocumentFileService();

@@ -18,8 +18,6 @@ class DeleteVehicleDocumentFileService {
   public async execute({
     vehicle_plate, document_type
   }: Request): Promise<void> {
-    document_type = document_type.toUpperCase()
-
     const vehicleDocumentsRepository = getRepository(VehicleDocument)
 
     const findVehicleDocumentsByDocumentTypeService = new FindVehicleDocumentsByDocumentTypeService();

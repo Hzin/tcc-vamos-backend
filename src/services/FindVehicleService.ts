@@ -13,7 +13,7 @@ class FindVehicleService {
     });
 
     if (!vehicle) {
-      throw new AppError('A vehicle informada não existe.');
+      throw new AppError('O veículo informado não existe.');
     };
 
     return vehicle;
