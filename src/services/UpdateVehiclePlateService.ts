@@ -3,6 +3,7 @@ import { getRepository } from 'typeorm';
 import AppError from '../errors/AppError';
 
 import Vehicle from '../models/Vehicle';
+import FindVehicleService from './FindVehicleService';
 
 interface Request {
   oldPlate: string;
@@ -13,13 +14,8 @@ class UpdateVehiclePlateService {
   public async execute({ oldPlate, newPlate }: Request): Promise<Vehicle> {
     const vehiclesRepository = getRepository(Vehicle);
 
-    const vehicle = await vehiclesRepository.findOne({
-      where: { plate: oldPlate },
-    });
-
-    if (!vehicle) {
-      throw new AppError('A vehicle informada não existe.');
-    }
+    const findVehicleService = new FindVehicleService()
+    const vehicle = await findVehicleService.execute(oldPlate)
 
     vehicle.plate = newPlate
 
