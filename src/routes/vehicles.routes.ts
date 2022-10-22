@@ -11,12 +11,15 @@ import UpdateVehicleService from '../services/UpdateVehicleService';
 import UpdateVehiclePlateService from '../services/UpdateVehiclePlateService';
 import FindVehicleByUserIdService from '../services/FindVehiclesByUserIdService';
 
-import vehiclesRoutesDocumentPostMulter, { vehiclesRoutesDocumentPostPath } from '../constants/multerConfig';
+import { vehiclesRoutesDocumentPostMulter, vehiclesRoutesDocumentPostPath, vehiclesUploadPictureMulter } from '../constants/multerConfig';
 import UploadVehicleDocumentFileService from '../services/UploadVehicleDocumentFileService';
 import AppError from '../errors/AppError';
 import DeleteVehicleDocumentFileService from '../services/DeleteVehicleDocumentFileService';
 import FindVehicleDocumentsByDocumentTypeService from '../services/FindVehicleDocumentsByDocumentTypeService';
 import UpdateVehicleDocumentStatusService from '../services/UpdateVehicleDocumentStatusService';
+import UploadVehiclePictureFileService from '../services/UploadVehiclePictureFileService';
+import DeleteVehiclePictureFileService from '../services/DeleteVehiclePictureFileService';
+import { defaultPictureVehicle } from '../constants/defaultPictures';
 
 const vehiclesRouter = Router();
 
@@ -173,8 +176,8 @@ vehiclesRouter.patch('/document/status', ensureAuthenticated, async (request, re
   return response.json({ message: 'Status do documento do veículo atualizado com sucesso!' });
 });
 
-const upload = vehiclesRoutesDocumentPostMulter
-vehiclesRouter.post('/document/upload', ensureAuthenticated, upload.single('file'), async (request, response) => {
+const uploadDocument = vehiclesRoutesDocumentPostMulter
+vehiclesRouter.post('/document/upload', ensureAuthenticated, uploadDocument.single('file'), async (request, response) => {
   const { vehicle_plate, document_type } = request.body
 
   if (!request.file) {
@@ -182,7 +185,6 @@ vehiclesRouter.post('/document/upload', ensureAuthenticated, upload.single('file
   }
 
   const uploadVehicleDocumentFileService = new UploadVehicleDocumentFileService();
-
   await uploadVehicleDocumentFileService.execute({
     vehicle_plate,
     document_type,
@@ -195,7 +197,7 @@ vehiclesRouter.post('/document/upload', ensureAuthenticated, upload.single('file
   });
 })
 
-vehiclesRouter.post('/document/delete', ensureAuthenticated, async (request, response) => {
+vehiclesRouter.patch('/document/delete', ensureAuthenticated, async (request, response) => {
   const { vehicle_plate, document_type } = request.body
 
   const deleteVehicleDocumentFileService = new DeleteVehicleDocumentFileService();
@@ -208,6 +210,41 @@ vehiclesRouter.post('/document/delete', ensureAuthenticated, async (request, res
   return response.json({
     message: 'Documento deletado com sucesso.',
   });
+})
+
+const uploadPicture = vehiclesUploadPictureMulter
+vehiclesRouter.patch('/picture/update', ensureAuthenticated, uploadPicture.single('file'), async (request, response) => {
+  const { vehicle_plate } = request.body
+
+  if (!request.file) {
+    throw new AppError("Arquivo não foi informado")
+  }
+
+  const uploadVehiclePictureFileServiceuploadVehicleDocumentFileService = new UploadVehiclePictureFileService();
+  const vehicle = await uploadVehiclePictureFileServiceuploadVehicleDocumentFileService.execute({
+    vehicle_plate,
+    fileName: request.file.filename,
+    originalFileName: request.file.originalname
+  });
+
+  return response.json({
+    message: "Foto do veículo atualizada com sucesso",
+    data: vehicle.picture
+  })
+})
+
+vehiclesRouter.patch('/picture/delete', ensureAuthenticated, async (request, response) => {
+  const { vehicle_plate } = request.body
+
+  const deleteVehiclePictureFileService = new DeleteVehiclePictureFileService();
+  const defaultPicture = await deleteVehiclePictureFileService.execute({
+    vehicle_plate,
+  });
+
+  return response.json({
+    message: "Foto do veículo deletada com sucesso",
+    data: defaultPicture
+  })
 })
 
 export default vehiclesRouter;

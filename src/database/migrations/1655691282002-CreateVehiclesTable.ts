@@ -58,6 +58,11 @@ export class CreateVehiclesTable1655691282002 implements MigrationInterface {
             isNullable: true
           },
           {
+            name: 'picture',
+            type: 'varchar',
+            isNullable: true
+          },
+          {
             name: 'created_at',
             type: 'timestamp',
             default: 'now()',

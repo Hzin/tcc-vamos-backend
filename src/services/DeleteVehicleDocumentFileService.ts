@@ -1,13 +1,11 @@
 import fs from 'fs'
+import path from 'path'
 import { getRepository } from 'typeorm';
 
 import { vehiclesRoutesDocumentPostPath } from '../constants/multerConfig';
-import { vehicleDocumentTypes } from '../constants/vehicleDocumentTypes';
 
-import AppError from '../errors/AppError';
 import VehicleDocument from '../models/VehicleDocument';
 import FindVehicleDocumentsByDocumentTypeService from './FindVehicleDocumentsByDocumentTypeService';
-import FindVehicleDocumentsService from './FindVehicleDocumentsService';
 
 interface Request {
   vehicle_plate: string,

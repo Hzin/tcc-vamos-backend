@@ -45,6 +45,9 @@ class Vehicle {
   @Column()
   locator_state: string;
 
+  @Column()
+  picture: string;
+
   @ManyToOne(() => User, user => user.vehicle)
   @JoinColumn({ name: 'user_id' })
   user: User;
