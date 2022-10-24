@@ -1,23 +1,20 @@
 import { Router } from 'express';
 import { getRepository } from 'typeorm';
-import User from '../models/User';
 
 import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 
-import CreateUserService from '../services/CreateUserService';
-import FindUserService from '../services/FindUserService';
-import FindUserSocialService from '../services/FindUserSocialService';
-import UpdateUserSocialService from '../services/UpdateUserSocialService';
-import UpdateUserService from '../services/UpdateUserService';
-import UpdateUserAvatarService from '../services/UpdateUserAvatarService';
-import UpdateUserPasswordService from '../services/UpdateUserPasswordService';
-import AuthenticateUserService from '../services/AuthenticateUserService';
 import CheckIfUserHasVehiclesService from '../services/CheckIfUserHasVehiclesService';
 import Trip from '../models/Trip';
 import FindTripService from '../services/FindTripService';
 import CreateTripService from '../services/CreateTripService';
 import UpdateTripStatusService from '../services/UpdateTripStatusService';
 import UpdateTripNicknameService from '../services/UpdateTripNicknameService';
+import GetUserTripsFeedService from '../services/GetUserTripsFeedService';
+import DateUtils from '../services/utils/Date';
+import GetItineraryTodaysTripStatusService from '../services/GetItineraryTodaysTripStatusService';
+import { tripStatus } from '../constants/tripStatus';
+import FindTripsServiceByItineraryId from '../services/FindTripsServiceByItineraryId';
+import FindTodaysTripByItineraryIdService from '../services/FindTodaysTripByItineraryIdService';
 
 const tripsRouter = Router();
 
@@ -46,16 +43,39 @@ tripsRouter.get('/:id', ensureAuthenticated, async (request, response) => {
   return response.json({ data: trip });
 });
 
-tripsRouter.post('/', async (request, response) => {
+tripsRouter.get('/itinerary/:id_itinerary', ensureAuthenticated, async (request, response) => {
+  const { id_itinerary } = request.params;
+
+  const findTodaysTripByItineraryIdService = new FindTodaysTripByItineraryIdService();
+  const trip = await findTodaysTripByItineraryIdService.execute(id_itinerary)
+
+  return response.json({ data: trip });
+});
+
+tripsRouter.post('/update/confirm', async (request, response) => {
   const { id_itinerary } = request.body;
 
   const createTripService = new CreateTripService();
 
-  const trip = await createTripService.execute({
-    id_itinerary
-  });
+  const trip = await createTripService.execute(
+    id_itinerary,
+    tripStatus.confirmed
+  );
 
   return response.json({ message: 'Viagem confirmada com sucesso!', data: trip });
+});
+
+tripsRouter.post('/update/cancel', async (request, response) => {
+  const { id_itinerary } = request.body;
+
+  const createTripService = new CreateTripService();
+
+  await createTripService.execute(
+    id_itinerary,
+    tripStatus.canceled
+  );
+
+  return response.json({ message: 'Viagem cancelada com sucesso.' });
 });
 
 tripsRouter.patch('/update/nickname', ensureAuthenticated, async (request, response) => {
@@ -74,7 +94,6 @@ tripsRouter.patch('/update/status', ensureAuthenticated, async (request, respons
   const { id_trip, new_status, description } = request.body;
 
   const updateTripStatusService = new UpdateTripStatusService();
-
   await updateTripStatusService.execute({
     id_trip, new_status, description
   });
@@ -82,7 +101,7 @@ tripsRouter.patch('/update/status', ensureAuthenticated, async (request, respons
   return response.json({ message: 'Status da viagem atualizado com sucesso!' });
 });
 
-// TODO, incluir filtros
+// TODO, incluir filtros dependendo de status
 tripsRouter.get(
   '/user/:id_user',
   ensureAuthenticated,
@@ -99,19 +118,49 @@ tripsRouter.get(
   },
 );
 
+// get trip info about an itinerary
+// should ask the driver if they want to confirm or cancel the trip for the day
+// you can confirm the trip if trip's status is 'pending'
+// you can cancel the trip if trip's status is 'pending' or 'confirmed'
+// if a trip is confirmed, then a trip registry for the itinerary for the day should be created and its status updated
+// if a trip is canceled, then a existing trip registry for the itinerary for the day should have its status updated
+
+// how to inform front that the user can do certain actions?
+// knowing the trip's status, the front can show specific buttons that will trigger the route that update the its status
+// and the trip card can always show the trip status. It will be delivered by this route
+// valid statuses: 'pending', 'confirmed'
 tripsRouter.get(
-  '/today',
+  '/today/status/itinerary/:id_itinerary',
   ensureAuthenticated,
   async (request, response) => {
-    const { id_user } = request.params;
+    const { id_itinerary } = request.params;
 
-    const checkIfUserHasVehiclesService = new CheckIfUserHasVehiclesService();
+    const getItineraryTodaysTripStatusService = new GetItineraryTodaysTripStatusService()
+    const tripStatus = await getItineraryTodaysTripStatusService.execute(id_itinerary)
 
-    const userHasVehicles = await checkIfUserHasVehiclesService.execute({
-      id_user,
-    });
+    return response.json({ data: tripStatus });
+  },
+);
 
-    return response.json({ result: userHasVehicles });
+tripsRouter.get(
+  '/feed/today',
+  ensureAuthenticated,
+  async (request, response) => {
+    const getUserTripsFeedService = new GetUserTripsFeedService();
+    const userTripsFeed = await getUserTripsFeedService.execute(request.user.id_user, true);
+
+    return response.json({ data: userTripsFeed });
+  },
+);
+
+tripsRouter.get(
+  '/feed/nottoday',
+  ensureAuthenticated,
+  async (request, response) => {
+    const getUserTripsFeedService = new GetUserTripsFeedService();
+    const userTripsFeed = await getUserTripsFeedService.execute(request.user.id_user, false);
+
+    return response.json({ data: userTripsFeed });
   },
 );
 

@@ -34,7 +34,7 @@ class Trip {
       default: tripStatus.pending,
     }
   )
-  status: string;
+  status: tripStatus;
 
   @OneToMany(() => TripHistory, tripHistory => tripHistory.trip, { eager: true, cascade: true, nullable: true })
   trip_histories: TripHistory[];

@@ -1,23 +1,21 @@
 import { getRepository } from 'typeorm';
 
-import AppError from '../errors/AppError';
-
 import Vehicle from '../models/Vehicle';
 import FindVehicleService from './FindVehicleService';
 
 interface Request {
-  oldPlate: string;
-  newPlate: string;
+  vehicle_plate: string;
+  path: string;
 }
 
-class UpdateVehiclePlateService {
-  public async execute({ oldPlate, newPlate }: Request): Promise<Vehicle> {
+class UpdateVehiclePictureService {
+  public async execute({ vehicle_plate, path }: Request): Promise<Vehicle> {
     const vehiclesRepository = getRepository(Vehicle);
 
     const findVehicleService = new FindVehicleService()
-    const vehicle = await findVehicleService.execute(oldPlate)
+    const vehicle = await findVehicleService.execute(vehicle_plate)
 
-    vehicle.plate = newPlate
+    vehicle.picture = path
 
     await vehiclesRepository.save(vehicle);
 
@@ -25,4 +23,4 @@ class UpdateVehiclePlateService {
   }
 }
 
-export default UpdateVehiclePlateService;
+export default UpdateVehiclePictureService;

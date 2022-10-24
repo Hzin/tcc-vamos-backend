@@ -4,7 +4,7 @@ import AppError from '../errors/AppError';
 
 import User from '../models/User';
 
-class CreateUserService {
+class FindUserService {
   public async execute(id: string): Promise<User> {
     const usersRepository = getRepository(User);
 
@@ -20,4 +20,4 @@ class CreateUserService {
   }
 }
 
-export default CreateUserService;
+export default FindUserService;
