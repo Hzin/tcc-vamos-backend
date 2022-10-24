@@ -1,44 +1,35 @@
 import { MigrationInterface, QueryRunner, Table, TableForeignKey } from 'typeorm';
 
-export class CreateSocialInformationTable1653956028190
-  implements MigrationInterface
-{
+export class CreateVehiclesDocumentsTable1655691282003 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'socialInformation',
+        name: 'vehicles_documents',
         columns: [
           {
-            name: 'id_social',
+            name: 'id_vehicles_documents',
             type: 'integer',
             isPrimary: true,
             isGenerated: true,
             generationStrategy: 'increment',
           },
           {
-            name: 'user_id',
-            type: 'uuid',
-            isNullable: true,
+            name: 'vehicle_plate',
+            type: 'varchar',
           },
           {
-            name: 'phone',
+            name: 'document_type',
             type: 'varchar',
-            isNullable: true,
           },
           {
-            name: 'whatsapp',
+            name: 'path',
             type: 'varchar',
-            isNullable: true,
+            isNullable: true
           },
           {
-            name: 'facebook',
+            name: 'status',
             type: 'varchar',
-            isNullable: true,
-          },
-          {
-            name: 'telegram',
-            type: 'varchar',
-            isNullable: true,
+            default: false
           },
           {
             name: 'created_at',
@@ -55,12 +46,12 @@ export class CreateSocialInformationTable1653956028190
     );
 
     await queryRunner.createForeignKey(
-      'socialInformation',
+      'vehicles_documents',
       new TableForeignKey({
-        name: 'SocialInformationUser', // nome da FK, serve para referenciar numa exclusão pelo QueryRunner se necessário
-        columnNames: ['user_id'], // coluna que vai virar FK
-        referencedColumnNames: ['id_user'], // coluna PK da primeira tabela
-        referencedTableName: 'users', // nome da tabela que possui a PK
+        name: 'vehicles_documents_vehicle_plate_fk', // nome da FK, serve para referenciar numa exclusão pelo QueryRunner se necessário
+        columnNames: ['vehicle_plate'], // coluna que vai virar FK
+        referencedColumnNames: ['plate'], // coluna PK da tabela referenciada
+        referencedTableName: 'vehicles', // nome da tabela que possui a PK
         onDelete: 'SET NULL',
         onUpdate: 'CASCADE',
       }),
@@ -68,8 +59,11 @@ export class CreateSocialInformationTable1653956028190
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropForeignKey('socialInformation', 'SocialInformationUser');
+    await queryRunner.dropForeignKey(
+      'vehicles_documents',
+      'vehicles_documents_vehicle_plate_fk',
+    );
 
-    await queryRunner.dropTable('socials');
+    await queryRunner.dropTable('vehicles_documents');
   }
 }
