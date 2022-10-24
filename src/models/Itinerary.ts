@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import Destination from './Destination';
 import NeighborhoodServed from './NeighborhoodServed';
+import Passenger from './Passenger';
 import Trip from './Trip';
 import Vehicle from './Vehicle';
 
@@ -69,6 +70,9 @@ class Itinerary {
 
   @OneToMany(() => Trip, trip => trip.itinerary, { eager: true, cascade: true, nullable: true })
   trips?: Trip[];
+
+  @OneToMany(() => Passenger, passenger => passenger.itinerary, { eager: true, cascade: true, nullable: true })
+  passengers?: Passenger[];
 
   @CreateDateColumn()
   created_at: Date;
