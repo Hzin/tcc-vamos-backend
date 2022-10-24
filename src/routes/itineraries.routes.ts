@@ -111,4 +111,15 @@ itinerariesRouter.post('/search/inradius', async (request, response) => {
   return response.json({ data: itinerariesFiltered });
 });
 
+itinerariesRouter.get('/:id/passengers', async (request, response) => {
+  const { id } = request.params;
+  const itinerariesRepository = getRepository(Itinerary);
+
+  const itinerary = await itinerariesRepository.findOneOrFail(id);
+
+  const passengers = itinerary.passengers;
+
+  return response.json({ data: passengers });
+})
+
 export default itinerariesRouter;
