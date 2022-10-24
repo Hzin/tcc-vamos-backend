@@ -1,15 +1,5 @@
-import { schoolPeriods } from "../constants/schoolPeriods";
-import AppError from "../errors/AppError";
-
-interface Props {
-  timeFrom: string;
-  timeTo: string;
-}
-
-interface xxx {
-  hour: number,
-  minutes: number
-}
+import { schoolPeriods } from "../../constants/schoolPeriods";
+import AppError from "../../errors/AppError";
 
 class Time {
   hour: number
@@ -21,14 +11,39 @@ class Time {
     this.minutes = parseInt(t[1]);
   }
 
-  public isBiggerThan(other: Time) {
+  private isBiggerThan(other: Time) {
     return (this.hour > other.hour) || (this.hour === other.hour) && (this.minutes > other.minutes);
   };
-}
 
-function timeIsBetween(start: Time, end: Time, check: Time) {
-  return (start.hour <= end.hour) ? check.isBiggerThan(start) && !check.isBiggerThan(end)
-    : (check.isBiggerThan(start) && check.isBiggerThan(end)) || (!check.isBiggerThan(start) && !check.isBiggerThan(end));
+  private timeIsBetween(start: Time, end: Time, check: Time) {
+    return (start.hour <= end.hour) ? check.isBiggerThan(start) && !check.isBiggerThan(end)
+      : (check.isBiggerThan(start) && check.isBiggerThan(end)) || (!check.isBiggerThan(start) && !check.isBiggerThan(end));
+  }
+
+  public getSchoolPeriod(timeFrom: string, timeTo: string): schoolPeriods | undefined {
+    // se o horário de início estiver entre 05:00 e 08:00
+    // e se o horário de fim estiver entre 16:00 e 18:30
+    if (this.timeIsBetween(new Time('05:00'), new Time('08:00'), new Time(timeFrom))
+      && this.timeIsBetween(new Time('17:00'), new Time('18:00'), new Time(timeTo))) {
+      return schoolPeriods.integral
+    }
+
+    // se o horário de término for antes das 14:00
+    if (!new Time(timeTo).isBiggerThan(new Time('14:00'))) {
+      return schoolPeriods.diurnal
+    }
+
+    // se o horário de término for antes das 18:00
+    if (!new Time(timeTo).isBiggerThan(new Time('18:00'))) {
+      return schoolPeriods.evening
+    }
+
+    // se o horário de término for antes das 23:00
+    if (!new Time(timeTo).isBiggerThan(new Time('23:00'))) {
+      return schoolPeriods.night
+    }
+  }
+
 }
 
 // export function CalculateSchoolPeriod(timeFrom: string, timeTo: string): schoolPeriods {
@@ -66,26 +81,3 @@ function timeIsBetween(start: Time, end: Time, check: Time) {
 //   return schoolPeriods.integral
 // }
 
-export function CalculateSchoolPeriod(timeFrom: string, timeTo: string): schoolPeriods | undefined {
-  // se o horário de início estiver entre 05:00 e 08:00
-  // e se o horário de fim estiver entre 16:00 e 18:30
-  if (timeIsBetween(new Time('05:00'), new Time('08:00'), new Time(timeFrom))
-    && timeIsBetween(new Time('17:00'), new Time('18:00'), new Time(timeTo))) {
-    return schoolPeriods.integral
-  }
-
-  // se o horário de término for antes das 14:00
-  if (!new Time(timeTo).isBiggerThan(new Time('14:00'))) {
-    return schoolPeriods.diurnal
-  }
-
-  // se o horário de término for antes das 18:00
-  if (!new Time(timeTo).isBiggerThan(new Time('18:00'))) {
-    return schoolPeriods.evening
-  }
-
-  // se o horário de término for antes das 23:00
-  if (!new Time(timeTo).isBiggerThan(new Time('23:00'))) {
-    return schoolPeriods.night
-  }
-}
