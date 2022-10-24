@@ -1,8 +1,7 @@
 import fs from 'fs'
-import path from 'path'
 import { getRepository } from 'typeorm';
 
-import { vehiclesRoutesDocumentPostPath } from '../constants/multerConfig';
+import { basePath, vehiclesRoutesDocumentPostPath } from '../constants/multerConfig';
 
 import VehicleDocument from '../models/VehicleDocument';
 import FindVehicleDocumentsByDocumentTypeService from './FindVehicleDocumentsByDocumentTypeService';
@@ -21,12 +20,14 @@ class DeleteVehicleDocumentFileService {
     const findVehicleDocumentsByDocumentTypeService = new FindVehicleDocumentsByDocumentTypeService();
     const vehicleDocument = await findVehicleDocumentsByDocumentTypeService.execute(vehicle_plate, document_type);
 
-    await vehicleDocumentsRepository.delete(vehicleDocument)
+    console.log(vehicleDocument)
 
-    // TODO, não está apagando
+    await vehicleDocumentsRepository.remove(vehicleDocument)
+
     try {
-      fs.unlinkSync(`${vehiclesRoutesDocumentPostPath}/${vehicleDocument.path}`)
+      fs.unlinkSync(`${basePath}/${vehiclesRoutesDocumentPostPath}/${vehicleDocument.path}`)
     } catch (e) { }
+
   }
 }
 
