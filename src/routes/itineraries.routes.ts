@@ -7,6 +7,7 @@ import CreateItineraryService from '../services/CreateItineraryService';
 
 import maxRadius from '../constants/mapRadiusConfig';
 import { SortArrayOfObjects } from '../services/SortArrayOfObjects';
+import UpdateItineraryService from '../services/UpdateItineraryService';
 
 const itinerariesRouter = Router();
 
@@ -56,6 +57,48 @@ itinerariesRouter.post('/', async (request, response) => {
   });
 
   return response.status(201).json({ data: itinerary, message: 'Itinerário criado com sucesso!' });
+});
+
+itinerariesRouter.patch('/', async (request, response) => {
+  const {
+    id,
+    vehicle_plate,
+    days_of_week,
+    specific_day,
+    estimated_departure_time,
+    estimated_arrival_time,
+    monthly_price,
+    daily_price,
+    accept_daily,
+    itinerary_nickname,
+    estimated_departure_address,
+    departure_latitude,
+    departure_longitude,
+    neighborhoods_served,
+    destinations
+  } = request.body;
+
+  const updateItineraryService = new UpdateItineraryService();
+
+  const itinerary = await updateItineraryService.execute({
+    id,
+    vehicle_plate,
+    days_of_week,
+    specific_day,
+    estimated_departure_time,
+    estimated_arrival_time,
+    monthly_price,
+    daily_price,
+    accept_daily,
+    itinerary_nickname,
+    estimated_departure_address,
+    departure_latitude,
+    departure_longitude,
+    neighborhoods_served,
+    destinations
+  });
+
+  return response.status(200).json({ data: itinerary, message: 'Itinerário atualizado com sucesso!' });
 });
 
 itinerariesRouter.post('/search/inradius', async (request, response) => {
