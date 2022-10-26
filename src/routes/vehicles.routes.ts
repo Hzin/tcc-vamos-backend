@@ -220,8 +220,8 @@ vehiclesRouter.patch('/picture/update', ensureAuthenticated, uploadPicture.singl
     throw new AppError("Arquivo não foi informado")
   }
 
-  const uploadVehiclePictureFileServiceuploadVehicleDocumentFileService = new UploadVehiclePictureFileService();
-  const vehicle = await uploadVehiclePictureFileServiceuploadVehicleDocumentFileService.execute({
+  const uploadVehiclePictureFileService = new UploadVehiclePictureFileService();
+  const picturePath = await uploadVehiclePictureFileService.execute({
     vehicle_plate,
     fileName: request.file.filename,
     originalFileName: request.file.originalname
@@ -229,7 +229,7 @@ vehiclesRouter.patch('/picture/update', ensureAuthenticated, uploadPicture.singl
 
   return response.json({
     message: "Foto do veículo atualizada com sucesso",
-    data: vehicle.picture
+    data: picturePath
   })
 })
 

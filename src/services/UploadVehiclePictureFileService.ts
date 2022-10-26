@@ -1,7 +1,7 @@
 import fs from 'fs'
+import path from 'path'
 
-import { basePath, vehiclesUploadPicturePath } from '../constants/multerConfig';
-import Vehicle from '../models/Vehicle';
+import { basePath, vehiclesRoutesPicturesPostPath, vehiclesUploadPicturePath } from '../constants/multerConfig';
 
 import UpdateVehiclePictureService from './UpdateVehiclePictureService';
 
@@ -14,7 +14,7 @@ interface Request {
 class UploadVehiclePictureFileService {
   public async execute({
     vehicle_plate, fileName, originalFileName
-  }: Request): Promise<Vehicle> {
+  }: Request): Promise<string> {
     const fileExtension = originalFileName.split('.').at(-1)
 
     // rename file
@@ -30,7 +30,9 @@ class UploadVehiclePictureFileService {
     const updateVehiclePictureService = new UpdateVehiclePictureService();
     const vehicle = await updateVehiclePictureService.execute({ vehicle_plate, path: savedFileName })
 
-    return vehicle
+    console.log(vehicle)
+
+    return path.join(vehiclesRoutesPicturesPostPath, vehicle.picture)
   }
 }
 
