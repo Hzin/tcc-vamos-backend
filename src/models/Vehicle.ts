@@ -28,9 +28,6 @@ class Vehicle {
   seats_number: string;
 
   @Column()
-  document_status: boolean
-
-  @Column()
   locator_name: string;
 
   @Column()

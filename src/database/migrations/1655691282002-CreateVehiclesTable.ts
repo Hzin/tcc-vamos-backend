@@ -28,11 +28,6 @@ export class CreateVehiclesTable1655691282002 implements MigrationInterface {
             type: 'numeric',
           },
           {
-            name: 'document_status',
-            type: 'boolean',
-            isNullable: true
-          },
-          {
             name: 'locator_name',
             type: 'varchar',
             isNullable: true
