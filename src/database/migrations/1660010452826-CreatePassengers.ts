@@ -51,6 +51,7 @@ export class CreatePassengers1660010452826 implements MigrationInterface {
           {
             name: 'end_date',
             type: 'date',
+            isNullable: true,
           },
           {
             name: 'is_single',

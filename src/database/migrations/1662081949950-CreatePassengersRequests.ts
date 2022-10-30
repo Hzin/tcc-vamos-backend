@@ -51,6 +51,10 @@ export class CreatePassengersRequests1662081949950
             name: 'longitude_address',
             type: 'numeric',
           },
+          {
+            name: 'is_single',
+            type: 'boolean',
+          }
         ],
       }),
     );
