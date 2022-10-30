@@ -20,6 +20,7 @@ import UpdateVehicleDocumentStatusService from '../services/UpdateVehicleDocumen
 import UploadVehiclePictureFileService from '../services/UploadVehiclePictureFileService';
 import DeleteVehiclePictureFileService from '../services/DeleteVehiclePictureFileService';
 import { defaultPictureVehicle } from '../constants/defaultPictures';
+import GetVehiclesWithPendingDocuments from '../services/GetVehiclesWithPendingDocuments';
 
 const vehiclesRouter = Router();
 
@@ -169,9 +170,14 @@ vehiclesRouter.patch('/document/status', ensureAuthenticated, async (request, re
   const { vehicle_plate, document_type, status } = request.body;
 
   const updateVehicleDocumentStatusService = new UpdateVehicleDocumentStatusService();
-  await updateVehicleDocumentStatusService.execute({
-    vehicle_plate, document_type, status
-  });
+
+  try {
+    await updateVehicleDocumentStatusService.execute({
+      vehicle_plate, document_type, status
+    });
+  } catch(e) {
+    console.log(e)
+  }
 
   return response.json({ message: 'Status do documento do veículo atualizado com sucesso!' });
 });
@@ -244,6 +250,15 @@ vehiclesRouter.patch('/picture/delete', ensureAuthenticated, async (request, res
   return response.json({
     message: "Foto do veículo deletada com sucesso",
     data: defaultPicture
+  })
+})
+
+vehiclesRouter.get('/documents/pending', ensureAuthenticated, async (request, response) => {
+  const getVehiclesWithPendingDocuments = new GetVehiclesWithPendingDocuments();
+  const documents = await getVehiclesWithPendingDocuments.execute();
+
+  return response.json({
+    data: documents
   })
 })
 

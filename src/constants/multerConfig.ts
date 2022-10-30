@@ -3,7 +3,7 @@ import multer from 'multer';
 
 export const basePath = path.join(__dirname, '..', '..', 'public')
 
-export const defaultVehiclePictureFilename = 'vehicle.webp'
+export const defaultVehiclePictureFilename = 'default.png'
 export const defaultVehiclePicturePath = path.join('vehicles', 'pictures', 'default', defaultVehiclePictureFilename)
 
 export const vehiclesRoutesPicturesPostPath = path.join('vehicles', 'pictures')

@@ -1,17 +1,48 @@
 import {  getRepository } from 'typeorm';
+import { vehicleDocumentStatus } from '../constants/vehicleDocumentStatus';
 import Vehicle from '../models/Vehicle';
 
+interface ReturnObj {
+  vehicle_brand: string;
+  vehicle_model: string;
+  vehicle_picture: string;
+
+  document_type: string;
+  document_status: string;
+  document_url: string;
+}
+
 class GetVehiclesWithPendingDocuments {
-  public async execute(): Promise<Vehicle[]> {
+  public async execute(): Promise<ReturnObj[]> {
     const vehiclesRepository = getRepository(Vehicle)
 
     const vehicles = await vehiclesRepository.find()
-    const filteredVehicles = vehicles.filter((vehicle) => {
-      if (!vehicle.documents || vehicle.documents.length === 0) return false
-      return true
+
+    let obj: ReturnObj[] = []
+
+    vehicles.forEach((vehicle) => {
+      if (vehicle.documents) {
+        vehicle.documents.forEach((document) => {
+          // tá escrito sem "return" porque vai dar errado
+          if (document.status === vehicleDocumentStatus.pending)  {
+            const newElement = {
+              vehicle_brand: vehicle.brand,
+              vehicle_model: vehicle.model,
+              vehicle_plate: vehicle.plate,
+              vehicle_picture: vehicle.picture,
+
+              document_type: document.document_type,
+              document_status: document.status,
+              document_url: document.path,
+            }
+
+            obj.push(newElement)
+          }
+        })
+      }
     })
 
-    return filteredVehicles
+    return obj
   }
 }
 
