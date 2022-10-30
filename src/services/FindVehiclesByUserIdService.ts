@@ -1,4 +1,5 @@
 import { getRepository } from 'typeorm';
+import { defaultVehiclePicturePath } from '../constants/multerConfig';
 
 import AppError from '../errors/AppError';
 
@@ -26,7 +27,15 @@ class FindVehiclesByUserIdService {
       throw new AppError('Não há nenhum veículo cadastrada para esse usuário.');
     };
 
-    return vehicles;
+    const newVehicles = vehicles.map((vehicle) => {
+      if (!vehicle.picture) {
+        vehicle.picture = defaultVehiclePicturePath
+      }
+
+      return vehicle
+    })
+
+    return newVehicles;
   }
 }
 

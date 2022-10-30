@@ -18,11 +18,6 @@ class UploadVehicleDocumentFileService {
   }: Request): Promise<VehicleDocument> {
     const fileExtension = originalFileName.split('.').at(-1)
 
-    console.log(vehicle_plate)
-    console.log(document_type)
-    console.log(fileName)
-    console.log(originalFileName)
-
     // rename file
     // <timestamp>-<vehicle_plate>-<document_type>.<file_extension>
     const finalFilename = `${fileName}-${vehicle_plate}-${document_type}.${fileExtension}`
@@ -30,7 +25,7 @@ class UploadVehicleDocumentFileService {
 
     try {
       fs.renameSync(`${basePath}/${vehiclesRoutesDocumentPostPath}/${savedFileName}`, `${basePath}/${vehiclesRoutesDocumentPostPath}/${finalFilename}`)
-      savedFileName = finalFilename
+      savedFileName = `${vehiclesRoutesDocumentPostPath}/${finalFilename}`
     } catch (e) { }
 
     const createVehicleDocumentFileService = new CreateVehicleDocumentService();

@@ -24,7 +24,7 @@ class UploadVehiclePictureFileService {
 
     try {
       fs.renameSync(`${basePath}/${vehiclesUploadPicturePath}/${savedFileName}`, `${basePath}/${vehiclesUploadPicturePath}/${finalFilename}`)
-      savedFileName = finalFilename
+      savedFileName = `${vehiclesUploadPicturePath}/${finalFilename}`
     } catch (e) { }
 
     const updateVehiclePictureService = new UpdateVehiclePictureService();

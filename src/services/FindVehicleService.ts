@@ -1,7 +1,6 @@
-import path from 'path'
 
 import { getRepository } from 'typeorm';
-import { defaultVehiclePicturePath, vehiclesRoutesPicturesPostPath } from '../constants/multerConfig';
+import { defaultVehiclePicturePath } from '../constants/multerConfig';
 
 import AppError from '../errors/AppError';
 
@@ -21,8 +20,6 @@ class FindVehicleService {
 
     if (!vehicle.picture) {
       vehicle.picture = defaultVehiclePicturePath
-    } else {
-      vehicle.picture = path.join(vehiclesRoutesPicturesPostPath, vehicle.picture)
     }
 
     return vehicle;

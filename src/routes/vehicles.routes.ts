@@ -1,7 +1,4 @@
 import { Router } from 'express';
-import { getRepository } from 'typeorm';
-
-import Vehicle from '../models/Vehicle';
 
 import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 
@@ -19,15 +16,14 @@ import FindVehicleDocumentsByDocumentTypeService from '../services/FindVehicleDo
 import UpdateVehicleDocumentStatusService from '../services/UpdateVehicleDocumentStatusService';
 import UploadVehiclePictureFileService from '../services/UploadVehiclePictureFileService';
 import DeleteVehiclePictureFileService from '../services/DeleteVehiclePictureFileService';
-import { defaultPictureVehicle } from '../constants/defaultPictures';
 import GetVehiclesWithPendingDocuments from '../services/GetVehiclesWithPendingDocuments';
+import FindVehiclesService from '../services/FindVehiclesService';
 
 const vehiclesRouter = Router();
 
 vehiclesRouter.get('/list', async (request, response) => {
-  const vehiclesRepository = getRepository(Vehicle);
-
-  const vehicles = await vehiclesRepository.find();
+  const findVehiclesService = new FindVehiclesService();
+  const vehicles = await findVehiclesService.execute();
 
   return response.json({ data: vehicles });
 });
@@ -39,7 +35,6 @@ vehiclesRouter.get(
     const { plate } = request.params;
 
     const findVehicleService = new FindVehicleService();
-
     const vehicle = await findVehicleService.execute(plate);
 
     return response.json({ data: vehicle });
@@ -52,7 +47,6 @@ vehiclesRouter.get(
     const { id_user } = request.params;
 
     const findVehicleByUserIdService = new FindVehicleByUserIdService();
-
     const vehicles = await findVehicleByUserIdService.execute(id_user);
 
     return response.json({ data: vehicles });
@@ -175,7 +169,7 @@ vehiclesRouter.patch('/document/status', ensureAuthenticated, async (request, re
     await updateVehicleDocumentStatusService.execute({
       vehicle_plate, document_type, status
     });
-  } catch(e) {
+  } catch (e) {
     console.log(e)
   }
 
