@@ -10,11 +10,11 @@ export default function ensureAdmin(
   response: Response,
   next: NextFunction,
 ): void {
-  ensureAuthenticated(request, response, next)
-
-  if (!admin.users.includes(request.user.id_user)) {
-    throw new AppError('Invalid admin JWT token', 401);
-  }
+  ensureAuthenticated(request, response, () => {
+    if (!admin.users.includes(request.user.id_user)) {
+      throw new AppError('Invalid admin JWT token', 401);
+    }
+  })
 
   return next();
 }
