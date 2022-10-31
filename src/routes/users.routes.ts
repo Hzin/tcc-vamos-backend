@@ -24,6 +24,10 @@ interface userWithoutSensitiveInfo {
   avatar_image: string;
 }
 
+usersRouter.get('/is_admin', ensureAdmin, async (request, response) => {
+  return response.json({ data: true });
+});
+
 usersRouter.get('/list', ensureAdmin, async (request, response) => {
   const usersRepository = getRepository(User);
 
