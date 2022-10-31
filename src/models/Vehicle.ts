@@ -45,8 +45,8 @@ class Vehicle {
   @Column()
   picture: string;
 
-  // @ManyToOne(() => User, user => user.vehicle)
-  @ManyToOne(() => User, user => user.vehicles)
+  @ManyToOne(() => User, user => user.vehicle)
+  // @ManyToOne(() => User, user => user.vehicles)
   @JoinColumn({ name: 'user_id' })
   user: User;
 
