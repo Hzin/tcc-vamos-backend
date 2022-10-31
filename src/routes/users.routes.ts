@@ -3,6 +3,7 @@ import { getRepository } from 'typeorm';
 import User from '../models/User';
 
 import ensureAuthenticated from '../middlewares/ensureAuthenticated';
+import ensureAdmin from '../middlewares/ensureAdmin';
 
 import CreateUserService from '../services/CreateUserService';
 import FindUserService from '../services/FindUserService';
@@ -13,7 +14,6 @@ import UpdateUserAvatarService from '../services/UpdateUserAvatarService';
 import UpdateUserPasswordService from '../services/UpdateUserPasswordService';
 import AuthenticateUserService from '../services/AuthenticateUserService';
 import CheckIfUserHasVehiclesService from '../services/CheckIfUserHasVehiclesService';
-import ensureAdmin from '../middlewares/ensureAdmin';
 
 const usersRouter = Router();
 
