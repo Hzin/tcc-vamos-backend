@@ -178,7 +178,7 @@ vehiclesRouter.post('/document/search', ensureAuthenticated, async (request, res
   });
 })
 
-vehiclesRouter.patch('/document/status', ensureAuthenticated, async (request, response) => {
+vehiclesRouter.patch('/document/status', ensureAdmin, async (request, response) => {
   const { vehicle_plate, document_type, status } = request.body;
 
   const updateVehicleDocumentStatusService = new UpdateVehicleDocumentStatusService();
