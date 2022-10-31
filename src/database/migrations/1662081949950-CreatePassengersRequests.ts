@@ -7,8 +7,7 @@ import {
 } from 'typeorm';
 
 export class CreatePassengersRequests1662081949950
-  implements MigrationInterface
-{
+  implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
@@ -51,6 +50,10 @@ export class CreatePassengersRequests1662081949950
             name: 'longitude_address',
             type: 'numeric',
           },
+          {
+            name: 'is_single',
+            type: 'boolean',
+          }
         ],
       }),
     );

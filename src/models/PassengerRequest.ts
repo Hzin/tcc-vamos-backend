@@ -4,23 +4,29 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   JoinColumn,
+  CreateDateColumn,
 } from 'typeorm';
 import Itinerary from './Itinerary';
 import User from './User';
 
-@Entity('passengers')
-class Passenger {
+@Entity('passengers_requests')
+class PassengerRequest {
   @PrimaryGeneratedColumn('increment')
-  id_passenger: number;
+  id_request: number;
 
-  @ManyToOne(() => Itinerary, itinerary => itinerary.passengers)
+  @ManyToOne(() => Itinerary, itinerary => itinerary.neighborhoods_served)
   @JoinColumn({ name: 'itinerary_id' })
   itinerary: Itinerary;
 
   @ManyToOne(() => User, { eager: true })
-  // @JoinColumn({ name: 'user_id' })
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id_user' })
   user: User;
+
+  @Column()
+  status: 'pending' | 'accepted' | 'rejected';
+
+  @CreateDateColumn()
+  created_at: Date;
 
   @Column()
   address: string;
@@ -32,16 +38,7 @@ class Passenger {
   longitude_address: number;
 
   @Column()
-  payment_status: boolean;
-
-  @Column()
-  start_date: Date;
-
-  @Column()
-  end_date: Date;
-
-  @Column()
   is_single: boolean;
 }
 
-export default Passenger;
+export default PassengerRequest;
