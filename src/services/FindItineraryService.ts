@@ -3,6 +3,8 @@ import { getRepository } from 'typeorm';
 import AppError from '../errors/AppError';
 import Itinerary from '../models/Itinerary';
 
+import GetDriverNameOfItinerary from './GetDriverNameOfItineraryService';
+
 class FindItineraryService {
   public async execute(id_itinerary: string): Promise<Itinerary> {
     const itinerariesRepository = getRepository(Itinerary);

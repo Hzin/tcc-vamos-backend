@@ -12,6 +12,7 @@ import CreatePassengerRequest from '../services/CreatePassengerRequest';
 import CreatePassenger from '../services/CreatePassenger';
 import FindItineraryService from '../services/FindItineraryService';
 import GetDriverNameOfItinerary from '../services/GetDriverNameOfItineraryService';
+import AddDriverNamePropertyToItineraryObject from '../services/AddDriverNamePropertyToItineraryObject';
 
 const itinerariesRouter = Router();
 
@@ -27,12 +28,14 @@ itinerariesRouter.get('/:id', async (request, response) => {
   const { id } = request.params
 
   const findItineraryService = new FindItineraryService();
-  const itinerary = await findItineraryService.execute(id)
+  let itinerary = await findItineraryService.execute(id)
 
-  const getDriverNameOfItinerary = new GetDriverNameOfItinerary();
-  const driverName = await getDriverNameOfItinerary.execute(itinerary.id_itinerary)
+  const addDriverNamePropertyToItineraryObject = new AddDriverNamePropertyToItineraryObject()
+  try {
+    itinerary = await addDriverNamePropertyToItineraryObject.execute(itinerary)
+  } catch { }
 
-  return response.json({ data: driverName });
+  return response.json({ data: itinerary });
 })
 
 itinerariesRouter.post('/', async (request, response) => {
@@ -123,6 +126,14 @@ itinerariesRouter.post('/search/inradius', async (request, response) => {
     case "available_seats":
       itinerariesFiltered = SortArrayOfObjects(itinerariesFiltered, 'available_seats', orderBy ? orderBy : 'ascending')
       break;
+  }
+
+  const addDriverNamePropertyToItineraryObject = new AddDriverNamePropertyToItineraryObject()
+
+  for (let i = 0; i < itinerariesFiltered.length; i++) {
+    try {
+      itinerariesFiltered[i] = await addDriverNamePropertyToItineraryObject.execute(itinerariesFiltered[i])
+    } catch (e) { console.log(e) }
   }
 
   return response.json({ data: itinerariesFiltered });
