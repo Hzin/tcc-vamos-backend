@@ -1,17 +1,13 @@
 import { Router } from 'express';
-import { getRepository } from 'typeorm';
-
-import Vehicle from '../models/Vehicle';
 
 import ensureAuthenticated from '../middlewares/ensureAuthenticated';
+import { vehiclesRoutesDocumentPostMulter, vehiclesRoutesDocumentPostPath, vehiclesUploadPictureMulter } from '../constants/multerConfig';
 
 import FindVehicleService from '../services/FindVehicleService';
 import CreateVehicleService from '../services/CreateVehicleService';
 import UpdateVehicleService from '../services/UpdateVehicleService';
 import UpdateVehiclePlateService from '../services/UpdateVehiclePlateService';
 import FindVehicleByUserIdService from '../services/FindVehiclesByUserIdService';
-
-import { vehiclesRoutesDocumentPostMulter, vehiclesRoutesDocumentPostPath, vehiclesUploadPictureMulter } from '../constants/multerConfig';
 import UploadVehicleDocumentFileService from '../services/UploadVehicleDocumentFileService';
 import AppError from '../errors/AppError';
 import DeleteVehicleDocumentFileService from '../services/DeleteVehicleDocumentFileService';
@@ -19,14 +15,17 @@ import FindVehicleDocumentsByDocumentTypeService from '../services/FindVehicleDo
 import UpdateVehicleDocumentStatusService from '../services/UpdateVehicleDocumentStatusService';
 import UploadVehiclePictureFileService from '../services/UploadVehiclePictureFileService';
 import DeleteVehiclePictureFileService from '../services/DeleteVehiclePictureFileService';
-import { defaultPictureVehicle } from '../constants/defaultPictures';
+import GetVehiclesWithPendingDocuments from '../services/GetVehiclesWithPendingDocuments';
+import FindVehiclesService from '../services/FindVehiclesService';
+import DeleteVehicleService from '../services/DeleteVehicleService';
+import CheckIfVehicleCanCreateItineraries from '../services/CheckIfVehicleCanCreateItineraries';
+import ensureAdmin from '../middlewares/ensureAdmin';
 
 const vehiclesRouter = Router();
 
 vehiclesRouter.get('/list', async (request, response) => {
-  const vehiclesRepository = getRepository(Vehicle);
-
-  const vehicles = await vehiclesRepository.find();
+  const findVehiclesService = new FindVehiclesService();
+  const vehicles = await findVehiclesService.execute();
 
   return response.json({ data: vehicles });
 });
@@ -38,7 +37,6 @@ vehiclesRouter.get(
     const { plate } = request.params;
 
     const findVehicleService = new FindVehicleService();
-
     const vehicle = await findVehicleService.execute(plate);
 
     return response.json({ data: vehicle });
@@ -51,7 +49,6 @@ vehiclesRouter.get(
     const { id_user } = request.params;
 
     const findVehicleByUserIdService = new FindVehicleByUserIdService();
-
     const vehicles = await findVehicleByUserIdService.execute(id_user);
 
     return response.json({ data: vehicles });
@@ -147,6 +144,22 @@ vehiclesRouter.patch(
   },
 );
 
+vehiclesRouter.delete(
+  '/:plate',
+  ensureAuthenticated,
+  async (request, response) => {
+    const { plate } = request.params;
+
+    const deleteVehicleService = new DeleteVehicleService();
+
+    await deleteVehicleService.execute(plate);
+
+    return response.json({
+      message: 'Veículo deletado com sucesso.',
+    });
+  },
+);
+
 vehiclesRouter.post('/document/search', ensureAuthenticated, async (request, response) => {
   const { vehicle_plate, document_type } = request.body
 
@@ -165,13 +178,18 @@ vehiclesRouter.post('/document/search', ensureAuthenticated, async (request, res
   });
 })
 
-vehiclesRouter.patch('/document/status', ensureAuthenticated, async (request, response) => {
+vehiclesRouter.patch('/document/status', ensureAdmin, async (request, response) => {
   const { vehicle_plate, document_type, status } = request.body;
 
   const updateVehicleDocumentStatusService = new UpdateVehicleDocumentStatusService();
-  await updateVehicleDocumentStatusService.execute({
-    vehicle_plate, document_type, status
-  });
+
+  try {
+    await updateVehicleDocumentStatusService.execute({
+      vehicle_plate, document_type, status
+    });
+  } catch (e) {
+    console.log(e)
+  }
 
   return response.json({ message: 'Status do documento do veículo atualizado com sucesso!' });
 });
@@ -212,6 +230,25 @@ vehiclesRouter.patch('/document/delete', ensureAuthenticated, async (request, re
   });
 })
 
+vehiclesRouter.get(
+  '/can_create_itineraries/:plate',
+  ensureAuthenticated,
+  async (request, response) => {
+    const { plate } = request.params;
+
+    const checkIfVehicleCanCreateItineraries = new CheckIfVehicleCanCreateItineraries();
+    const result = await checkIfVehicleCanCreateItineraries.execute({ vehicle_plate: plate });
+
+    let message = 'O seu veículo não pode criar itinerários.'
+    if (result) message = 'O seu veículo pode criar itinerários!'
+
+    return response.json({
+      message: message,
+      data: result,
+    });
+  },
+);
+
 const uploadPicture = vehiclesUploadPictureMulter
 vehiclesRouter.patch('/picture/update', ensureAuthenticated, uploadPicture.single('file'), async (request, response) => {
   const { vehicle_plate } = request.body
@@ -220,8 +257,8 @@ vehiclesRouter.patch('/picture/update', ensureAuthenticated, uploadPicture.singl
     throw new AppError("Arquivo não foi informado")
   }
 
-  const uploadVehiclePictureFileServiceuploadVehicleDocumentFileService = new UploadVehiclePictureFileService();
-  const vehicle = await uploadVehiclePictureFileServiceuploadVehicleDocumentFileService.execute({
+  const uploadVehiclePictureFileService = new UploadVehiclePictureFileService();
+  const picturePath = await uploadVehiclePictureFileService.execute({
     vehicle_plate,
     fileName: request.file.filename,
     originalFileName: request.file.originalname
@@ -229,7 +266,7 @@ vehiclesRouter.patch('/picture/update', ensureAuthenticated, uploadPicture.singl
 
   return response.json({
     message: "Foto do veículo atualizada com sucesso",
-    data: vehicle.picture
+    data: picturePath
   })
 })
 
@@ -244,6 +281,15 @@ vehiclesRouter.patch('/picture/delete', ensureAuthenticated, async (request, res
   return response.json({
     message: "Foto do veículo deletada com sucesso",
     data: defaultPicture
+  })
+})
+
+vehiclesRouter.get('/documents/pending', ensureAdmin, async (request, response) => {
+  const getVehiclesWithPendingDocuments = new GetVehiclesWithPendingDocuments();
+  const documents = await getVehiclesWithPendingDocuments.execute();
+
+  return response.json({
+    data: documents
   })
 })
 

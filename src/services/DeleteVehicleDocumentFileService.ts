@@ -5,6 +5,7 @@ import { basePath, vehiclesRoutesDocumentPostPath } from '../constants/multerCon
 
 import VehicleDocument from '../models/VehicleDocument';
 import FindVehicleDocumentsByDocumentTypeService from './FindVehicleDocumentsByDocumentTypeService';
+import StringUtils from './utils/String';
 
 interface Request {
   vehicle_plate: string,
@@ -25,7 +26,7 @@ class DeleteVehicleDocumentFileService {
     await vehicleDocumentsRepository.remove(vehicleDocument)
 
     try {
-      fs.unlinkSync(`${basePath}/${vehiclesRoutesDocumentPostPath}/${vehicleDocument.path}`)
+      fs.unlinkSync(`${basePath}/${vehiclesRoutesDocumentPostPath}/${StringUtils.getFilenameFromPath(vehicleDocument.path)}`)
     } catch (e) { }
 
   }

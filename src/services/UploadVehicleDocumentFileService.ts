@@ -25,7 +25,7 @@ class UploadVehicleDocumentFileService {
 
     try {
       fs.renameSync(`${basePath}/${vehiclesRoutesDocumentPostPath}/${savedFileName}`, `${basePath}/${vehiclesRoutesDocumentPostPath}/${finalFilename}`)
-      savedFileName = finalFilename
+      savedFileName = `${vehiclesRoutesDocumentPostPath}/${finalFilename}`
     } catch (e) { }
 
     const createVehicleDocumentFileService = new CreateVehicleDocumentService();
