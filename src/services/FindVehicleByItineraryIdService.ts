@@ -16,22 +16,20 @@ class FindVehicleByItineraryId {
     const vehicles = await vehiclesRepository.find()
     let flagFoundVehicle: Vehicle | undefined
 
-    vehicles.every((vehicle) => {
-      if (!vehicle.itineraries) return
+    for (let i = 0; i < vehicles.length; i++) {
+      const vehicle = vehicles[i]
 
-      vehicle.itineraries.every((itinerary) => {
+      if (!vehicle.itineraries) continue
+
+      for (let j = 0; j < vehicle.itineraries.length; j++) {
+        const itinerary = vehicle.itineraries[j];
+
         if ("" + itinerary.id_itinerary === id_itinerary) {
           flagFoundVehicle = vehicle
-          return false
+          break
         }
-
-        return true
-      })
-
-      if (!!flagFoundVehicle) {
-        return false
       }
-    })
+    }
 
     if (!flagFoundVehicle) throw new AppError("O itinerário informado não está associado a nenhum veículo.")
 
