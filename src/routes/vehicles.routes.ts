@@ -1,14 +1,13 @@
 import { Router } from 'express';
 
 import ensureAuthenticated from '../middlewares/ensureAuthenticated';
+import { vehiclesRoutesDocumentPostMulter, vehiclesRoutesDocumentPostPath, vehiclesUploadPictureMulter } from '../constants/multerConfig';
 
 import FindVehicleService from '../services/FindVehicleService';
 import CreateVehicleService from '../services/CreateVehicleService';
 import UpdateVehicleService from '../services/UpdateVehicleService';
 import UpdateVehiclePlateService from '../services/UpdateVehiclePlateService';
 import FindVehicleByUserIdService from '../services/FindVehiclesByUserIdService';
-
-import { vehiclesRoutesDocumentPostMulter, vehiclesRoutesDocumentPostPath, vehiclesUploadPictureMulter } from '../constants/multerConfig';
 import UploadVehicleDocumentFileService from '../services/UploadVehicleDocumentFileService';
 import AppError from '../errors/AppError';
 import DeleteVehicleDocumentFileService from '../services/DeleteVehicleDocumentFileService';
@@ -18,6 +17,9 @@ import UploadVehiclePictureFileService from '../services/UploadVehiclePictureFil
 import DeleteVehiclePictureFileService from '../services/DeleteVehiclePictureFileService';
 import GetVehiclesWithPendingDocuments from '../services/GetVehiclesWithPendingDocuments';
 import FindVehiclesService from '../services/FindVehiclesService';
+import DeleteVehicleService from '../services/DeleteVehicleService';
+import CheckIfVehicleCanCreateItineraries from '../services/CheckIfVehicleCanCreateItineraries';
+import ensureAdmin from '../middlewares/ensureAdmin';
 
 const vehiclesRouter = Router();
 
@@ -142,6 +144,22 @@ vehiclesRouter.patch(
   },
 );
 
+vehiclesRouter.delete(
+  '/:plate',
+  ensureAuthenticated,
+  async (request, response) => {
+    const { plate } = request.params;
+
+    const deleteVehicleService = new DeleteVehicleService();
+
+    await deleteVehicleService.execute(plate);
+
+    return response.json({
+      message: 'Veículo deletado com sucesso.',
+    });
+  },
+);
+
 vehiclesRouter.post('/document/search', ensureAuthenticated, async (request, response) => {
   const { vehicle_plate, document_type } = request.body
 
@@ -212,6 +230,25 @@ vehiclesRouter.patch('/document/delete', ensureAuthenticated, async (request, re
   });
 })
 
+vehiclesRouter.get(
+  '/can_create_itineraries/:plate',
+  ensureAuthenticated,
+  async (request, response) => {
+    const { plate } = request.params;
+
+    const checkIfVehicleCanCreateItineraries = new CheckIfVehicleCanCreateItineraries();
+    const result = await checkIfVehicleCanCreateItineraries.execute({ vehicle_plate: plate });
+
+    let message = 'O seu veículo não pode criar itinerários.'
+    if (result) message = 'O seu veículo pode criar itinerários!'
+
+    return response.json({
+      message: message,
+      data: result,
+    });
+  },
+);
+
 const uploadPicture = vehiclesUploadPictureMulter
 vehiclesRouter.patch('/picture/update', ensureAuthenticated, uploadPicture.single('file'), async (request, response) => {
   const { vehicle_plate } = request.body
@@ -247,7 +284,7 @@ vehiclesRouter.patch('/picture/delete', ensureAuthenticated, async (request, res
   })
 })
 
-vehiclesRouter.get('/documents/pending', ensureAuthenticated, async (request, response) => {
+vehiclesRouter.get('/documents/pending', ensureAdmin, async (request, response) => {
   const getVehiclesWithPendingDocuments = new GetVehiclesWithPendingDocuments();
   const documents = await getVehiclesWithPendingDocuments.execute();
 
