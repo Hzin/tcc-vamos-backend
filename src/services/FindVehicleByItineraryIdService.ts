@@ -17,11 +17,9 @@ class FindVehicleByItineraryId {
     let flagFoundVehicle: Vehicle | undefined
 
     vehicles.every((vehicle) => {
-      console.log(vehicle)
       if (!vehicle.itineraries) return
 
       vehicle.itineraries.every((itinerary) => {
-        console.log(itinerary.id_itinerary)
         if ("" + itinerary.id_itinerary === id_itinerary) {
           flagFoundVehicle = vehicle
           return false

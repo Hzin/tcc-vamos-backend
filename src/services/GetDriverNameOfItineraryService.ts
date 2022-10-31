@@ -13,7 +13,7 @@ class GetDriverNameOfItinerary {
 
     if (!user) throw new AppError("Não foi encontrado o motorista desse veículo.")
 
-    return user.name
+    return `${user.name} ${user.lastname}`
   }
 }
 
