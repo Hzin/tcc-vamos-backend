@@ -1,4 +1,6 @@
+
 import { getRepository } from 'typeorm';
+import { defaultVehiclePicturePath } from '../constants/multerConfig';
 
 import AppError from '../errors/AppError';
 
@@ -13,8 +15,12 @@ class FindVehicleService {
     });
 
     if (!vehicle) {
-      throw new AppError('A vehicle informada não existe.');
+      throw new AppError('O veículo informado não existe.');
     };
+
+    if (!vehicle.picture) {
+      vehicle.picture = defaultVehiclePicturePath
+    }
 
     return vehicle;
   }

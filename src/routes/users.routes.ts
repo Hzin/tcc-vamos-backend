@@ -13,6 +13,7 @@ import UpdateUserAvatarService from '../services/UpdateUserAvatarService';
 import UpdateUserPasswordService from '../services/UpdateUserPasswordService';
 import AuthenticateUserService from '../services/AuthenticateUserService';
 import CheckIfUserHasVehiclesService from '../services/CheckIfUserHasVehiclesService';
+import ensureAdmin from '../middlewares/ensureAdmin';
 
 const usersRouter = Router();
 
@@ -23,7 +24,11 @@ interface userWithoutSensitiveInfo {
   avatar_image: string;
 }
 
-usersRouter.get('/list', async (request, response) => {
+usersRouter.get('/is_admin', ensureAdmin, async (request, response) => {
+  return response.json({ data: true });
+});
+
+usersRouter.get('/list', ensureAdmin, async (request, response) => {
   const usersRepository = getRepository(User);
 
   const users = await usersRepository.find();

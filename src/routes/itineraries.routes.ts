@@ -156,5 +156,15 @@ itinerariesRouter.post('/accept-user', async (request, response) => {
 
   return response.status(201).json({ data: passenger, message: 'Usuário aceito com sucesso!' });
 });
+itinerariesRouter.get('/:id/passengers', async (request, response) => {
+  const { id } = request.params;
+  const itinerariesRepository = getRepository(Itinerary);
+
+  const itinerary = await itinerariesRepository.findOneOrFail(id);
+
+  const passengers = itinerary.passengers;
+
+  return response.json({ data: passengers });
+})
 
 export default itinerariesRouter;

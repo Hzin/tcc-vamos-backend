@@ -13,7 +13,7 @@ class Passenger {
   @PrimaryGeneratedColumn('increment')
   id_passenger: number;
 
-  @ManyToOne(() => Itinerary, itinerary => itinerary.neighborhoods_served)
+  @ManyToOne(() => Itinerary, itinerary => itinerary.passengers)
   @JoinColumn({ name: 'itinerary_id' })
   itinerary: Itinerary;
 
@@ -35,7 +35,7 @@ class Passenger {
 
   @Column()
   start_date: Date;
-  
+
   @Column()
   end_date: Date;
 

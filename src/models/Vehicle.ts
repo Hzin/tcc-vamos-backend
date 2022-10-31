@@ -1,17 +1,17 @@
 import {
   Entity,
   Column,
-  PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
   JoinColumn,
-  OneToOne,
   PrimaryColumn,
   OneToMany,
   ManyToOne,
 } from 'typeorm';
 import Itinerary from './Itinerary';
 import User from './User';
+import VehicleDocument from './VehicleDocument';
+import VehicleDocuments from './VehicleDocument';
 
 @Entity('vehicles')
 class Vehicle {
@@ -28,9 +28,6 @@ class Vehicle {
   seats_number: string;
 
   @Column()
-  document_status: boolean
-
-  @Column()
   locator_name: string;
 
   @Column()
@@ -45,12 +42,18 @@ class Vehicle {
   @Column()
   locator_state: string;
 
+  @Column()
+  picture: string;
+
   @ManyToOne(() => User, user => user.vehicle)
   @JoinColumn({ name: 'user_id' })
   user: User;
 
   @OneToMany(() => Itinerary, itinerary => itinerary.vehicle, { eager: true, cascade: true, nullable: true })
   itineraries?: Itinerary[];
+
+  @OneToMany(() => VehicleDocument, vehicleDocuments => vehicleDocuments.vehicle, { eager: true, cascade: true, nullable: true })
+  documents?: VehicleDocuments[];
 
   @CreateDateColumn()
   created_at: Date;
