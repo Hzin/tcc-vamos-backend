@@ -10,6 +10,8 @@ import { SortArrayOfObjects } from '../services/SortArrayOfObjects';
 
 import CreatePassengerRequest from '../services/CreatePassengerRequest';
 import CreatePassenger from '../services/CreatePassenger';
+import FindItineraryService from '../services/FindItineraryService';
+import GetDriverNameOfItinerary from '../services/GetDriverNameOfItineraryService';
 
 const itinerariesRouter = Router();
 
@@ -19,6 +21,18 @@ itinerariesRouter.get('/', async (request, response) => {
   const itineraries = await itinerariesRepository.find();
 
   return response.json({ data: itineraries });
+})
+
+itinerariesRouter.get('/:id', async (request, response) => {
+  const { id } = request.params
+
+  const findItineraryService = new FindItineraryService();
+  const itinerary = await findItineraryService.execute(id)
+
+  const getDriverNameOfItinerary = new GetDriverNameOfItinerary();
+  const driverName = await getDriverNameOfItinerary.execute(itinerary.id_itinerary)
+
+  return response.json({ data: driverName });
 })
 
 itinerariesRouter.post('/', async (request, response) => {
