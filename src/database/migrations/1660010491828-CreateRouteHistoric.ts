@@ -1,5 +1,6 @@
 import { MigrationInterface, QueryRunner, Table, TableForeignKey, TableIndex } from 'typeorm';
 
+// TODO, está sem model
 export class CreateRouteHistoric1660010491828 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
@@ -58,7 +59,7 @@ export class CreateRouteHistoric1660010491828 implements MigrationInterface {
     );
 
     await queryRunner.createIndex(
-      'route_historic', 
+      'route_historic',
       new TableIndex({
         name: 'itinerary_historic_idx',
         columnNames: ['itinerary_id', 'user_id', 'is_return', 'date'],

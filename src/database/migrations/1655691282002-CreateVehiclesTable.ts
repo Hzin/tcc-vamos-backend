@@ -74,7 +74,7 @@ export class CreateVehiclesTable1655691282002 implements MigrationInterface {
     await queryRunner.createForeignKey(
       'vehicles',
       new TableForeignKey({
-        name: 'UserIdVehicle', // nome da FK, serve para referenciar numa exclusão pelo QueryRunner se necessário
+        name: 'vehicles_user_id_fk', // nome da FK, serve para referenciar numa exclusão pelo QueryRunner se necessário
         columnNames: ['user_id'], // coluna que vai virar FK
         referencedColumnNames: ['id_user'], // coluna PK da primeira tabela
         referencedTableName: 'users', // nome da tabela que possui a PK
@@ -85,10 +85,7 @@ export class CreateVehiclesTable1655691282002 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropForeignKey(
-      'vehicles',
-      'UserIdVehicle',
-    );
+    await queryRunner.dropForeignKey('vehicles', 'vehicles_user_id_fk');
 
     await queryRunner.dropTable('vehicles');
   }
