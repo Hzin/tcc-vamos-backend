@@ -17,10 +17,15 @@ class Passenger {
   @JoinColumn({ name: 'itinerary_id' })
   itinerary: Itinerary;
 
-  @ManyToOne(() => User, { eager: true })
-  // @JoinColumn({ name: 'user_id' })
-  @JoinColumn({ name: 'user_id', referencedColumnName: 'id_user' })
+  @Column()
+  itinerary_id: string;
+
+  @ManyToOne(() => User, user => user.passengers)
+  @JoinColumn({ name: 'user_id' })
   user: User;
+
+  @Column()
+  user_id: string;
 
   @Column()
   address: string;

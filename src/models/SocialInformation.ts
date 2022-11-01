@@ -5,7 +5,6 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   JoinColumn,
-  PrimaryColumn,
   OneToOne,
 } from 'typeorm';
 
@@ -19,6 +18,9 @@ class Social {
   @OneToOne(() => User)
   @JoinColumn({ name: 'user_id' })
   user: User;
+
+  @Column()
+  user_id: string;
 
   @Column()
   phone: string;

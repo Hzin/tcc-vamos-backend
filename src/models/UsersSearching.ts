@@ -14,9 +14,12 @@ class UserSearching {
   @PrimaryGeneratedColumn('increment')
   id_search: string;
 
-  @ManyToOne(() => User, {eager: true})
-  @JoinColumn({ name: 'user_id', referencedColumnName: 'id_user' })
+  @ManyToOne(() => User, user => user.usersSearching)
+  @JoinColumn({ name: 'user_id' })
   user: User;
+
+  @Column()
+  user_id: number;
 
   @Column()
   latitude_from: number;
@@ -29,7 +32,7 @@ class UserSearching {
 
   @Column()
   longitude_to: number;
-  
+
   @Column()
   address_to: string;
 

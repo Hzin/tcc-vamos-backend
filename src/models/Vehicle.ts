@@ -8,8 +8,9 @@ import {
   OneToMany,
   ManyToOne,
 } from 'typeorm';
-import Itinerary from './Itinerary';
+
 import User from './User';
+import Itinerary from './Itinerary';
 import VehicleDocument from './VehicleDocument';
 import VehicleDocuments from './VehicleDocument';
 
@@ -17,6 +18,17 @@ import VehicleDocuments from './VehicleDocument';
 class Vehicle {
   @PrimaryColumn()
   plate: string;
+
+  // serve para o pai (User) referenciar os seus veículos com a propriedade 'vehicles'
+  // no entanto, não consigo referenciar o usuário de um veículo pela sua propriedade 'user'
+  @ManyToOne(() => User, user => user.vehicles)
+  @JoinColumn({ name: 'user_id' })
+  user: User;
+
+  // para sanar o problema de "não consigo referenciar o usuário de um veículo pela sua propriedade 'user'"
+  // coloco essa simples coluna para ao menos saber qual o ID do usuário
+  @Column()
+  user_id: string;
 
   @Column()
   brand: string;
@@ -44,11 +56,6 @@ class Vehicle {
 
   @Column()
   picture: string;
-
-  @ManyToOne(() => User, user => user.vehicle)
-  // @ManyToOne(() => User, user => user.vehicles)
-  @JoinColumn({ name: 'user_id' })
-  user: User;
 
   @OneToMany(() => Itinerary, itinerary => itinerary.vehicle, { eager: true, cascade: true, nullable: true })
   itineraries?: Itinerary[];

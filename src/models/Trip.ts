@@ -21,6 +21,9 @@ class Trip {
   @JoinColumn({ name: 'itinerary_id' })
   itinerary: Itinerary;
 
+  @Column()
+  itinerary_id: string;
+
   @Column({ nullable: true })
   nickname: string;
 
@@ -36,8 +39,8 @@ class Trip {
   )
   status: tripStatus;
 
-  @OneToMany(() => TripHistory, tripHistory => tripHistory.trip, { eager: true, cascade: true, nullable: true })
-  trip_histories: TripHistory[];
+  @OneToMany(() => TripHistory, tripHistory => tripHistory.trip)
+  trip_histories?: TripHistory[];
 
   @CreateDateColumn()
   created_at: Date;
