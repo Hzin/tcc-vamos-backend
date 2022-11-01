@@ -13,7 +13,7 @@ class FindUserService {
     });
 
     if (!user) {
-      throw new AppError('Usuário não existe.');
+      throw new AppError('O usuário informado não existe.');
     }
 
     return user;

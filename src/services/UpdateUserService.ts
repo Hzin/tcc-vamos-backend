@@ -3,7 +3,7 @@ import { getRepository } from 'typeorm';
 import AppError from '../errors/AppError';
 
 import User from '../models/User';
-import Social from '../models/SocialInformation';
+import SocialInformation from '../models/SocialInformation';
 
 interface Request {
   id_user: string;
@@ -20,7 +20,7 @@ interface Request {
 class UpdateUserService {
   public async execute({ id_user, name, lastname,  bio, email, phone_number, birth_date, document_type, document }: Request): Promise<User> {
     const usersRepository = getRepository(User);
-    const socialRepository = getRepository(Social);
+    const socialRepository = getRepository(SocialInformation);
 
     const user = await usersRepository.findOne({
       where: { id_user }

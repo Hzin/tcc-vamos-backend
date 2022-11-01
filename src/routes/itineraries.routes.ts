@@ -11,15 +11,20 @@ import { SortArrayOfObjects } from '../services/SortArrayOfObjects';
 import CreatePassengerRequest from '../services/CreatePassengerRequest';
 import CreatePassenger from '../services/CreatePassenger';
 import FindItineraryService from '../services/FindItineraryService';
-import GetDriverNameOfItinerary from '../services/GetDriverNameOfItineraryService';
-import AddDriverNamePropertyToItineraryObject from '../services/AddDriverNamePropertyToItineraryObject';
+import AddOptionalPropertiesToItineraryObjectService from '../services/AddOptionalPropertiesToItineraryObjectService';
 
 const itinerariesRouter = Router();
 
 itinerariesRouter.get('/', async (request, response) => {
   const itinerariesRepository = getRepository(Itinerary);
 
-  const itineraries = await itinerariesRepository.find();
+  let itineraries = await itinerariesRepository.find();
+
+  const addOptionalPropertiesToItineraryObjectService = new AddOptionalPropertiesToItineraryObjectService()
+
+  for (let i = 0; i < itineraries.length; i++) {
+    itineraries[i] = await addOptionalPropertiesToItineraryObjectService.execute(itineraries[i])
+  }
 
   return response.json({ data: itineraries });
 })
@@ -30,10 +35,8 @@ itinerariesRouter.get('/:id', async (request, response) => {
   const findItineraryService = new FindItineraryService();
   let itinerary = await findItineraryService.execute(id)
 
-  const addDriverNamePropertyToItineraryObject = new AddDriverNamePropertyToItineraryObject()
-  try {
-    itinerary = await addDriverNamePropertyToItineraryObject.execute(itinerary)
-  } catch { }
+  const addOptionalPropertiesToItineraryObjectService = new AddOptionalPropertiesToItineraryObjectService()
+  itinerary = await addOptionalPropertiesToItineraryObjectService.execute(itinerary)
 
   return response.json({ data: itinerary });
 })
@@ -128,12 +131,10 @@ itinerariesRouter.post('/search/inradius', async (request, response) => {
       break;
   }
 
-  const addDriverNamePropertyToItineraryObject = new AddDriverNamePropertyToItineraryObject()
+  const addOptionalPropertiesToItineraryObjectService = new AddOptionalPropertiesToItineraryObjectService()
 
   for (let i = 0; i < itinerariesFiltered.length; i++) {
-    try {
-      itinerariesFiltered[i] = await addDriverNamePropertyToItineraryObject.execute(itinerariesFiltered[i])
-    } catch (e) { console.log(e) }
+    itinerariesFiltered[i] = await addOptionalPropertiesToItineraryObjectService.execute(itinerariesFiltered[i])
   }
 
   return response.json({ data: itinerariesFiltered });
