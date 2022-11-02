@@ -12,6 +12,7 @@ import Destination from './Destination';
 import NeighborhoodServed from './NeighborhoodServed';
 import Passenger from './Passenger';
 import Trip from './Trip';
+import User from './User';
 import Vehicle from './Vehicle';
 
 @Entity('itineraries')
@@ -22,6 +23,9 @@ class Itinerary {
   @ManyToOne(() => Vehicle, vehicle => vehicle.itineraries)
   @JoinColumn({ name: 'vehicle_plate' })
   vehicle: Vehicle;
+
+  @Column()
+  vehicle_plate: string;
 
   @Column()
   days_of_week?: string;
@@ -63,10 +67,10 @@ class Itinerary {
   departure_longitude: number;
 
   @OneToMany(() => NeighborhoodServed, neighborhoodServed => neighborhoodServed.itinerary, { eager: true, cascade: true })
-  neighborhoods_served: NeighborhoodServed[];
+  neighborhoods_served?: NeighborhoodServed[];
 
   @OneToMany(() => Destination, destination => destination.itinerary, { eager: true, cascade: true })
-  destinations: Destination[];
+  destinations?: Destination[];
 
   @OneToMany(() => Trip, trip => trip.itinerary, { eager: true, cascade: true, nullable: true })
   trips?: Trip[];
@@ -80,7 +84,8 @@ class Itinerary {
   @UpdateDateColumn()
   updated_at: Date;
 
-  driverName?: string
+  // optional
+  user?: User
 }
 
 export default Itinerary;

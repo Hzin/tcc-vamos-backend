@@ -2,21 +2,18 @@ import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
-  CreateDateColumn,
-  ManyToOne,
-  JoinColumn
+  CreateDateColumn
 } from 'typeorm';
 
-import User from './User';
-
 @Entity('transport_offers')
-class UserSearching {
+class TransportOffers {
   @PrimaryGeneratedColumn('increment')
   id_offer: string;
 
-  @ManyToOne(() => User, {eager: true})
-  @JoinColumn({ name: 'user_id', referencedColumnName: 'id_user' })
-  user: User;
+  // unused
+  // @ManyToOne(() => User, user => user.transportOffers)
+  // @JoinColumn({ name: 'user_id' })
+  // user: User;
 
   @Column()
   latitude_from: number;
@@ -34,4 +31,4 @@ class UserSearching {
   created_at: Date;
 }
 
-export default UserSearching;
+export default TransportOffers;

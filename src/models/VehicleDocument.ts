@@ -22,6 +22,9 @@ class VehicleDocument {
   vehicle: Vehicle;
 
   @Column()
+  vehicle_plate: string;
+
+  @Column()
   document_type: string;
 
   @Column({ nullable: true })

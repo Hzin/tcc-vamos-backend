@@ -19,6 +19,9 @@ class TripHistory {
   @JoinColumn({ name: 'trip_id' })
   trip: Trip;
 
+  @Column()
+  trip_id: string;
+
   @Column(
     {
       type: "enum",

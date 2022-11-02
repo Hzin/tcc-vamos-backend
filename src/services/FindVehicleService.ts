@@ -1,4 +1,3 @@
-
 import { getRepository } from 'typeorm';
 import { defaultVehiclePicturePath } from '../constants/multerConfig';
 

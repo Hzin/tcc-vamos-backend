@@ -183,13 +183,9 @@ vehiclesRouter.patch('/document/status', ensureAdmin, async (request, response) 
 
   const updateVehicleDocumentStatusService = new UpdateVehicleDocumentStatusService();
 
-  try {
-    await updateVehicleDocumentStatusService.execute({
-      vehicle_plate, document_type, status
-    });
-  } catch (e) {
-    console.log(e)
-  }
+  await updateVehicleDocumentStatusService.execute({
+    vehicle_plate, document_type, status
+  });
 
   return response.json({ message: 'Status do documento do veículo atualizado com sucesso!' });
 });

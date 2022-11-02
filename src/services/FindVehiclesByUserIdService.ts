@@ -24,7 +24,7 @@ class FindVehiclesByUserIdService {
     });
 
     if (!vehicles) {
-      throw new AppError('Não há nenhum veículo cadastrada para esse usuário.');
+      throw new AppError('Não há nenhum veículo cadastrado para esse usuário.');
     };
 
     const newVehicles = vehicles.map((vehicle) => {

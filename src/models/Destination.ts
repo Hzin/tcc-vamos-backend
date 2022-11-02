@@ -19,6 +19,9 @@ class Destination {
   itinerary: Itinerary;
 
   @Column()
+  itinerary_id: string;
+
+  @Column()
   formatted_address: string;
 
   @Column()

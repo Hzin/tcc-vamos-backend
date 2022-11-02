@@ -3,7 +3,7 @@ import { getRepository } from 'typeorm';
 import AppError from '../errors/AppError';
 
 import User from '../models/User';
-import Social from '../models/SocialInformation';
+import SocialInformation from '../models/SocialInformation';
 
 interface Request {
   id_user: string;
@@ -21,9 +21,9 @@ class UpdateUserSocialService {
     id_user,
     social_info_request,
     username,
-  }: Request): Promise<Social> {
+  }: Request): Promise<SocialInformation> {
     const usersRepository = getRepository(User);
-    const socialInformationRepository = getRepository(Social);
+    const socialInformationRepository = getRepository(SocialInformation);
 
     const user = await usersRepository.findOne({
       where: { id_user },
@@ -33,33 +33,33 @@ class UpdateUserSocialService {
       throw new AppError('User does not exist.', 404);
     }
 
-    let social = await socialInformationRepository.findOne({
+    let socialInformation = await socialInformationRepository.findOne({
       where: { user },
     });
 
-    if (!social) {
-      social = socialInformationRepository.create({ user, phone: "", whatsapp: "", facebook: "", telegram: "" });
+    if (!socialInformation) {
+      socialInformation = socialInformationRepository.create({ user, phone: "", whatsapp: "", facebook: "", telegram: "" });
     }
 
     if (social_info_request.phone) {
-      social.phone = social_info_request.phone
+      socialInformation.phone = social_info_request.phone
     }
 
     if (social_info_request.whatsapp) {
-      social.whatsapp = social_info_request.whatsapp
+      socialInformation.whatsapp = social_info_request.whatsapp
     }
 
     if (social_info_request.facebook) {
-      social.facebook = social_info_request.facebook
+      socialInformation.facebook = social_info_request.facebook
     }
-    
+
     if (social_info_request.telegram) {
-      social.telegram = social_info_request.telegram
+      socialInformation.telegram = social_info_request.telegram
     }
 
-    await socialInformationRepository.save(social);
+    await socialInformationRepository.save(socialInformation);
 
-    return social;
+    return socialInformation;
   }
 }
 

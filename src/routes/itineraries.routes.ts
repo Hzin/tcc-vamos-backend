@@ -8,14 +8,37 @@ import CreateItineraryService from '../services/CreateItineraryService';
 import maxRadius from '../constants/mapRadiusConfig';
 import { SortArrayOfObjects } from '../services/SortArrayOfObjects';
 
+import CreatePassengerRequest from '../services/CreatePassengerRequest';
+import CreatePassenger from '../services/CreatePassenger';
+import FindItineraryService from '../services/FindItineraryService';
+import AddOptionalPropertiesToItineraryObjectService from '../services/AddOptionalPropertiesToItineraryObjectService';
+
 const itinerariesRouter = Router();
 
 itinerariesRouter.get('/', async (request, response) => {
   const itinerariesRepository = getRepository(Itinerary);
 
-  const itineraries = await itinerariesRepository.find();
+  let itineraries = await itinerariesRepository.find();
+
+  const addOptionalPropertiesToItineraryObjectService = new AddOptionalPropertiesToItineraryObjectService()
+
+  for (let i = 0; i < itineraries.length; i++) {
+    itineraries[i] = await addOptionalPropertiesToItineraryObjectService.execute(itineraries[i])
+  }
 
   return response.json({ data: itineraries });
+})
+
+itinerariesRouter.get('/:id', async (request, response) => {
+  const { id } = request.params
+
+  const findItineraryService = new FindItineraryService();
+  let itinerary = await findItineraryService.execute(id)
+
+  const addOptionalPropertiesToItineraryObjectService = new AddOptionalPropertiesToItineraryObjectService()
+  itinerary = await addOptionalPropertiesToItineraryObjectService.execute(itinerary)
+
+  return response.json({ data: itinerary });
 })
 
 itinerariesRouter.post('/', async (request, response) => {
@@ -108,7 +131,57 @@ itinerariesRouter.post('/search/inradius', async (request, response) => {
       break;
   }
 
+  const addOptionalPropertiesToItineraryObjectService = new AddOptionalPropertiesToItineraryObjectService()
+
+  for (let i = 0; i < itinerariesFiltered.length; i++) {
+    itinerariesFiltered[i] = await addOptionalPropertiesToItineraryObjectService.execute(itinerariesFiltered[i])
+  }
+
   return response.json({ data: itinerariesFiltered });
+});
+
+itinerariesRouter.post('/request', async (request, response) => {
+  const {
+    user_id,
+    itinerary_id,
+    address,
+    latitude_address,
+    longitude_address,
+    is_single,
+  } = request.body;
+
+  const solicitacao = await CreatePassengerRequest({
+    user_id,
+    itinerary_id,
+    address,
+    latitude_address,
+    longitude_address,
+    is_single,
+  });
+
+  return response.status(201).json({ data: solicitacao, message: 'Solicitação enviada com sucesso!' });
+});
+
+itinerariesRouter.post('/accept-user', async (request, response) => {
+  const {
+    user_id,
+    itinerary_id,
+    address,
+    latitude_address,
+    longitude_address,
+    is_single
+  } = request.body;
+
+  const passenger = await CreatePassenger({
+    user_id,
+    itinerary_id,
+    address,
+    latitude_address,
+    longitude_address,
+    is_single,
+  });
+
+  return response.status(201).json({ data: passenger, message: 'Usuário aceito com sucesso!' });
 });
 
 itinerariesRouter.get('/:id/passengers', async (request, response) => {
