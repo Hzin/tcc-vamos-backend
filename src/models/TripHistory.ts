@@ -29,7 +29,7 @@ class TripHistory {
       nullable: true
     }
   )
-  old_status: string;
+  old_status: tripStatus;
 
   @Column(
     {
@@ -37,7 +37,7 @@ class TripHistory {
       enum: tripStatus,
     }
   )
-  new_status: string;
+  new_status: tripStatus;
 
   @Column({ nullable: true })
   description: string;

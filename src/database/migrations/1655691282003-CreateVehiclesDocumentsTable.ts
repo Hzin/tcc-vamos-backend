@@ -1,4 +1,7 @@
 import { MigrationInterface, QueryRunner, Table, TableForeignKey } from 'typeorm';
+import { vehicleDocumentTypes } from '../../constants/vehicleDocumentTypes';
+
+import Utils from '../../services/utils/Utils';
 
 export class CreateVehiclesDocumentsTable1655691282003 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -28,8 +31,8 @@ export class CreateVehiclesDocumentsTable1655691282003 implements MigrationInter
           },
           {
             name: 'status',
-            type: 'varchar',
-            default: false
+            type: 'enum',
+            enum: Utils.convertEnumValuesToStringArray(vehicleDocumentTypes)
           },
           {
             name: 'created_at',
