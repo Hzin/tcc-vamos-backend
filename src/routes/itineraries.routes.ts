@@ -18,6 +18,7 @@ import UpdatePassengerRequestService from '../services/UpdatePassengerRequestSer
 import FindPassengerRequestServiceByFields from '../services/FindPassengerRequestServiceByFields';
 import { passengerRequestTypes } from '../constants/passengerRequestTypes';
 import ensureAuthenticated from '../middlewares/ensureAuthenticated';
+import FindItineraryPendingRequests from '../services/FindItineraryPendingRequests';
 
 const itinerariesRouter = Router();
 
@@ -205,9 +206,18 @@ itinerariesRouter.get('/:id/passengers', async (request, response) => {
   const { id } = request.params;
 
   const findItineraryService = new FindItineraryService()
-  const passengerRequest = await findItineraryService.execute(id);
+  const itinerary = await findItineraryService.execute(id);
 
-  return response.json({ data: passengerRequest.passengers });
+  return response.json({ data: itinerary.passengers });
+})
+
+itinerariesRouter.get('/:id/contracts/pending', async (request, response) => {
+  const { id } = request.params;
+
+  const findItineraryPendingRequests = new FindItineraryPendingRequests()
+  const pendingRequests = await findItineraryPendingRequests.execute(id);
+
+  return response.json({ data: pendingRequests });
 })
 
 export default itinerariesRouter;
