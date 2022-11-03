@@ -177,7 +177,7 @@ itinerariesRouter.post('/contract/:id_itinerary', ensureAuthenticated, async (re
   return response.json({ data: passengerRequest, message: 'Solicitação enviada com sucesso!' });
 });
 
-itinerariesRouter.post('/contract/status/update', async (request, response) => {
+itinerariesRouter.patch('/contract/status', async (request, response) => {
   const { id_user, id_itinerary, status } = request.body;
 
   const findPassengerRequestServiceByFields = new FindPassengerRequestServiceByFields()
