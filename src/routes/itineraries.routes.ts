@@ -13,43 +13,65 @@ import AddOptionalPropertiesToItineraryObjectService from '../services/AddOption
 import FindItineraryService from '../services/FindItineraryService';
 
 import CreatePassengerRequestService from '../services/CreatePassengerRequestService';
-import CreatePassengerService from '../services/CreatePassengerService';
 import UpdatePassengerRequestService from '../services/UpdatePassengerRequestService';
 import FindPassengerRequestServiceByFields from '../services/FindPassengerRequestServiceByFields';
-import { passengerRequestStatusTypes } from '../constants/passengerRequestStatusTypes';
 import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 import FindItineraryPendingRequests from '../services/FindItineraryPendingRequests';
 import FindUserService from '../services/FindUserService';
+import FindItinerariesByDriverUserIdService from '../services/FindItinerariesByDriverUserIdService';
+import FindItinerariesByPassengerUserIdService from '../services/FindItinerariesByPassengerUserIdService';
+import ensureAdmin from '../middlewares/ensureAdmin';
 
 const itinerariesRouter = Router();
 
-itinerariesRouter.get('/', async (request, response) => {
+itinerariesRouter.get('/', ensureAdmin, async (request, response) => {
   const itinerariesRepository = getRepository(Itinerary);
 
   let itineraries = await itinerariesRepository.find();
 
   const addOptionalPropertiesToItineraryObjectService = new AddOptionalPropertiesToItineraryObjectService()
-
-  for (let i = 0; i < itineraries.length; i++) {
-    itineraries[i] = await addOptionalPropertiesToItineraryObjectService.execute(itineraries[i])
-  }
+  itineraries = await addOptionalPropertiesToItineraryObjectService.executeArr(itineraries)
 
   return response.json({ data: itineraries });
 })
 
-itinerariesRouter.get('/:id', async (request, response) => {
+itinerariesRouter.get('/:id', ensureAuthenticated, async (request, response) => {
   const { id } = request.params
 
   const findItineraryService = new FindItineraryService();
   let itinerary = await findItineraryService.execute(id)
 
   const addOptionalPropertiesToItineraryObjectService = new AddOptionalPropertiesToItineraryObjectService()
-  itinerary = await addOptionalPropertiesToItineraryObjectService.execute(itinerary)
+  itinerary = await addOptionalPropertiesToItineraryObjectService.executeSingle(itinerary)
 
   return response.json({ data: itinerary });
 })
 
-itinerariesRouter.post('/', async (request, response) => {
+itinerariesRouter.get('/driver/:id', ensureAuthenticated, async (request, response) => {
+  const { id } = request.params
+
+  const findItinerariesByDriverUserIdService = new FindItinerariesByDriverUserIdService();
+  let itineraries = await findItinerariesByDriverUserIdService.execute(id)
+
+  const addOptionalPropertiesToItineraryObjectService = new AddOptionalPropertiesToItineraryObjectService()
+  itineraries = await addOptionalPropertiesToItineraryObjectService.executeArr(itineraries)
+
+  return response.json({ data: itineraries });
+})
+
+itinerariesRouter.get('/passenger/:id', ensureAuthenticated, async (request, response) => {
+  const { id } = request.params
+
+  const findItinerariesByPassengerUserIdService = new FindItinerariesByPassengerUserIdService();
+  let itineraries = await findItinerariesByPassengerUserIdService.execute(id)
+
+  const addOptionalPropertiesToItineraryObjectService = new AddOptionalPropertiesToItineraryObjectService()
+  itineraries = await addOptionalPropertiesToItineraryObjectService.executeArr(itineraries)
+
+  return response.json({ data: itineraries });
+})
+
+itinerariesRouter.post('/', ensureAuthenticated, async (request, response) => {
   const {
     vehicle_plate,
     days_of_week,
@@ -89,7 +111,7 @@ itinerariesRouter.post('/', async (request, response) => {
   return response.status(201).json({ data: itinerary, message: 'Itinerário criado com sucesso!' });
 });
 
-itinerariesRouter.post('/search/inradius', async (request, response) => {
+itinerariesRouter.post('/search/inradius', ensureAuthenticated, async (request, response) => {
   const { coordinatesFrom, coordinatesTo, orderOption, orderBy, preference_AvulseSeat, preference_A_C, preference_PrioritySeat } = request.body;
 
   const itinerariesRepository = getRepository(Itinerary);
@@ -140,10 +162,7 @@ itinerariesRouter.post('/search/inradius', async (request, response) => {
   }
 
   const addOptionalPropertiesToItineraryObjectService = new AddOptionalPropertiesToItineraryObjectService()
-
-  for (let i = 0; i < itinerariesFiltered.length; i++) {
-    itinerariesFiltered[i] = await addOptionalPropertiesToItineraryObjectService.execute(itinerariesFiltered[i])
-  }
+  itinerariesFiltered = await addOptionalPropertiesToItineraryObjectService.executeArr(itinerariesFiltered)
 
   return response.json({ data: itinerariesFiltered });
 });
@@ -178,7 +197,7 @@ itinerariesRouter.post('/contract/:id_itinerary', ensureAuthenticated, async (re
   return response.json({ data: passengerRequest, message: 'Solicitação enviada com sucesso!' });
 });
 
-itinerariesRouter.patch('/contract/status', async (request, response) => {
+itinerariesRouter.patch('/contract/status', ensureAuthenticated, async (request, response) => {
   const { id_user, id_itinerary, status } = request.body;
 
   const findUserService = new FindUserService()
@@ -200,7 +219,7 @@ itinerariesRouter.patch('/contract/status', async (request, response) => {
   return response.json({ data: passenger, message: 'Passageiro aceito com sucesso!' });
 });
 
-itinerariesRouter.get('/:id/passengers', async (request, response) => {
+itinerariesRouter.get('/:id/passengers', ensureAuthenticated, async (request, response) => {
   const { id } = request.params;
 
   const findItineraryService = new FindItineraryService()
@@ -209,7 +228,7 @@ itinerariesRouter.get('/:id/passengers', async (request, response) => {
   return response.json({ data: itinerary.passengers });
 })
 
-itinerariesRouter.get('/:id/contracts/pending', async (request, response) => {
+itinerariesRouter.get('/:id/contracts/pending', ensureAuthenticated, async (request, response) => {
   const { id } = request.params;
 
   const findItineraryPendingRequests = new FindItineraryPendingRequests()
