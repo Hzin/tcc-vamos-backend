@@ -8,18 +8,20 @@ import PassengerRequest from '../models/PassengerRequest';
 interface Request {
   id_itinerary: number;
   id_user: string;
+  status?: passengerRequestTypes
 }
 
 class FindPassengerRequestServiceByFields {
-  public async execute({ id_itinerary, id_user }: Request): Promise<PassengerRequest> {
+  public async execute({ id_itinerary, id_user, status }: Request): Promise<PassengerRequest> {
     const passengerRequestRepository = getRepository(PassengerRequest)
 
-    const passengerRequest = await passengerRequestRepository.findOne({
-      where: { id_itinerary, id_user },
-    });
+    let passengerRequest: PassengerRequest | undefined
+
+    if (status) passengerRequest = await passengerRequestRepository.findOne({ where: { id_itinerary, id_user, status } });
+    else passengerRequest = await passengerRequestRepository.findOne({ where: { id_itinerary, id_user } });
 
     if (!passengerRequest) {
-      throw new AppError('Não foi encontrado uma requisição de contrato do usuário no itinerário com status informado.')
+      throw new AppError('Não foi encontrado uma requisição de contrato do usuário no itinerário.')
     }
 
     return passengerRequest

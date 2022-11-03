@@ -163,7 +163,7 @@ itinerariesRouter.post('/contract/:id_itinerary', async (request, response) => {
     address,
     latitude_address,
     longitude_address,
-    is_single
+    is_single,
   })
 
   return response.json({ data: passengerRequest, message: 'Solicitação enviada com sucesso!' });
