@@ -9,18 +9,23 @@ import FindUserService from "./FindUserService";
 
 import PassengerRequest from "../models/PassengerRequest";
 import FindPassengerRequestServiceByFields from "./FindPassengerRequestServiceByFields";
+import { itineraryContractTypes } from "../constants/itineraryContractTypes";
 
 interface Request {
   id_user: string;
   id_itinerary: number;
-  address: string;
-  latitude_address: number;
-  longitude_address: number;
-  is_single: boolean;
+  contract_type: itineraryContractTypes;
+  lat_origin: number;
+  lng_origin: number;
+  formatted_address_origin: string;
+  lat_destination: number;
+  lng_destination: number;
+  formatted_address_destination: string;
 }
 
+
 class CreatePassengerRequestService {
-  public async execute({ id_user, id_itinerary, address, latitude_address, longitude_address, is_single }: Request): Promise<PassengerRequest> {
+  public async execute({ id_user, id_itinerary, contract_type, lat_origin, lng_origin, formatted_address_origin, lat_destination, lng_destination, formatted_address_destination, }: Request): Promise<PassengerRequest> {
     const passengersRequestsRepository = getRepository(PassengerRequest);
 
     const findUserService = new FindUserService()
@@ -41,11 +46,14 @@ class CreatePassengerRequestService {
     const passengerRequest = passengersRequestsRepository.create({
       itinerary,
       user,
-      address,
-      latitude_address,
-      longitude_address,
-      is_single,
+      contract_type,
       status: passengerRequestStatusTypes.pending,
+      lat_origin,
+      lng_origin,
+      formatted_address_origin,
+      lat_destination,
+      lng_destination,
+      formatted_address_destination,
     });
 
     await passengersRequestsRepository.save(passengerRequest);

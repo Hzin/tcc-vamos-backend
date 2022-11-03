@@ -5,6 +5,9 @@ import { passengerRequestStatusTypes } from "../constants/passengerRequestStatus
 import PassengerRequest from "../models/PassengerRequest";
 import FindPassengerRequestServiceById from "./FindPassengerRequestServiceById";
 
+import Utils from '../services/utils/Utils'
+import AppError from "../errors/AppError";
+
 interface Request {
   id_passenger_request: number;
   status: passengerRequestStatusTypes
@@ -12,17 +15,20 @@ interface Request {
 
 class UpdatePassengerRequestService {
   public async execute({ id_passenger_request, status }: Request): Promise<PassengerRequest> {
-  const passengersRequestsRepository = getRepository(PassengerRequest);
 
-  const findPassengerRequestServiceById = new FindPassengerRequestServiceById()
-  let passengerRequest = await findPassengerRequestServiceById.execute(id_passenger_request);
+    if (!Utils.stringIsInEnum(status, passengerRequestStatusTypes)) throw new AppError('O status informado é inválido')
 
-  passengerRequest.status = status
+    const passengersRequestsRepository = getRepository(PassengerRequest);
 
-  await passengersRequestsRepository.save(passengerRequest);
+    const findPassengerRequestServiceById = new FindPassengerRequestServiceById()
+    let passengerRequest = await findPassengerRequestServiceById.execute(id_passenger_request);
 
-  return passengerRequest;
-}
+    passengerRequest.status = status
+
+    await passengersRequestsRepository.save(passengerRequest);
+
+    return passengerRequest;
+  }
 }
 
 export default UpdatePassengerRequestService;

@@ -1,6 +1,7 @@
 import { getRepository } from 'typeorm';
 
 import AppError from '../errors/AppError';
+
 import Itinerary from '../models/Itinerary';
 
 class FindItineraryService {

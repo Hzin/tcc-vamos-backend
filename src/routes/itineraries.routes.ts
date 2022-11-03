@@ -147,12 +147,16 @@ itinerariesRouter.post('/search/inradius', async (request, response) => {
   return response.json({ data: itinerariesFiltered });
 });
 
+// cria registro na tabela passenger_requests
 itinerariesRouter.post('/contract/:id_itinerary', ensureAuthenticated, async (request, response) => {
   const {
-    address,
-    latitude_address,
-    longitude_address,
-    is_single,
+    contract_type,
+    lat_origin,
+    lng_origin,
+    formatted_address_origin,
+    lat_destination,
+    lng_destination,
+    formatted_address_destination,
   } = request.body;
 
   const { id_itinerary } = request.params
@@ -161,17 +165,20 @@ itinerariesRouter.post('/contract/:id_itinerary', ensureAuthenticated, async (re
   const passengerRequest = await createPassengerRequestService.execute({
     id_user: request.user.id_user,
     id_itinerary: +id_itinerary,
-    address,
-    latitude_address,
-    longitude_address,
-    is_single,
+    contract_type,
+    lat_origin,
+    lng_origin,
+    formatted_address_origin,
+    lat_destination,
+    lng_destination,
+    formatted_address_destination,
   })
 
   return response.json({ data: passengerRequest, message: 'Solicitação enviada com sucesso!' });
 });
 
-itinerariesRouter.post('/contract/accept', async (request, response) => {
-  const { id_user, id_itinerary } = request.body;
+itinerariesRouter.post('/contract/status/update', async (request, response) => {
+  const { id_user, id_itinerary, status } = request.body;
 
   const findPassengerRequestServiceByFields = new FindPassengerRequestServiceByFields()
   const passengerRequest = await findPassengerRequestServiceByFields.execute({
@@ -180,26 +187,10 @@ itinerariesRouter.post('/contract/accept', async (request, response) => {
 
   const updatePassengerRequestService = new UpdatePassengerRequestService()
   const passenger = await updatePassengerRequestService.execute({
-    id_passenger_request: passengerRequest.id_passenger_request, status: passengerRequestStatusTypes.accepted
+    id_passenger_request: passengerRequest.id_passenger_request, status
   });
 
-  return response.status(201).json({ data: passenger, message: 'Passageiro aceito com sucesso!' });
-});
-
-itinerariesRouter.post('/contract/reject', async (request, response) => {
-  const { id_user, id_itinerary } = request.body;
-
-  const findPassengerRequestServiceByFields = new FindPassengerRequestServiceByFields()
-  const passengerRequest = await findPassengerRequestServiceByFields.execute({
-    id_itinerary, id_user
-  });
-
-  const updatePassengerRequestService = new UpdatePassengerRequestService()
-  const passenger = await updatePassengerRequestService.execute({
-    id_passenger_request: passengerRequest.id_passenger_request, status: passengerRequestStatusTypes.rejected
-  });
-
-  return response.status(201).json({ data: passenger, message: 'Passageiro recusado com sucesso.' });
+  return response.json({ data: passenger, message: 'Passageiro aceito com sucesso!' });
 });
 
 itinerariesRouter.get('/:id/passengers', async (request, response) => {
