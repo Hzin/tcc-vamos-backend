@@ -6,6 +6,7 @@ import {
   JoinColumn,
   CreateDateColumn,
 } from 'typeorm';
+import { itineraryContractTypes } from '../constants/itineraryContractTypes';
 import { passengerRequestStatusTypes } from '../constants/passengerRequestStatusTypes';
 import Itinerary from './Itinerary';
 import User from './User';
@@ -32,6 +33,14 @@ class PassengerRequest {
   @Column(
     {
       type: "enum",
+      enum: itineraryContractTypes
+    }
+  )
+  contract_type: itineraryContractTypes;
+
+  @Column(
+    {
+      type: "enum",
       enum: passengerRequestStatusTypes,
       default: passengerRequestStatusTypes.pending,
     }
@@ -42,16 +51,22 @@ class PassengerRequest {
   created_at: Date;
 
   @Column()
-  address: string;
+  lat_origin: number;
 
   @Column()
-  latitude_address: number;
+  lng_origin: number;
 
   @Column()
-  longitude_address: number;
+  formatted_address_origin: string;
 
   @Column()
-  is_single: boolean;
+  lat_destination: number;
+
+  @Column()
+  lng_destination: number;
+
+  @Column()
+  formatted_address_destination: string;
 }
 
 export default PassengerRequest;
