@@ -12,7 +12,7 @@ const routes = Router();
 
 routes.use('/users', usersRouter);
 routes.use('/sessions', sessionsRouter);
-routes.use('/search', searchRoutes);
+routes.use('/searches', searchRoutes);
 routes.use('/itineraries', itinerariesRouter);
 routes.use('/cars', carsRouter);
 routes.use('/vehicles', vehiclesRouter);

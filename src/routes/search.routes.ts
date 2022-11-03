@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { getRepository } from 'typeorm';
+import ensureAdmin from '../middlewares/ensureAdmin';
 import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 import UserSearching from '../models/UsersSearching';
 import CalculateDistanceBetweenCoords from '../services/CalculateDistanceBetweenCoords';
@@ -15,7 +16,7 @@ interface userWithoutSensitiveInfo {
   avatar_image: string;
 }
 
-searchRoutes.get('/list', async (request, response) => {
+searchRoutes.get('/list', ensureAdmin, async (request, response) => {
   const usersSearchingRepository = getRepository(UserSearching);
 
   const searches = await usersSearchingRepository.find();
@@ -54,7 +55,7 @@ searchRoutes.post('/', ensureAuthenticated, async (request, response) => {
     longitude_to,
   });
 
-  return response.json({ message: 'Busca de usuário criada.' });
+  return response.json({ data: search, message: 'Busca de usuário criada.' });
 });
 
 export default searchRoutes;
@@ -65,7 +66,7 @@ searchRoutes.post('/inraio', async (request, response) => {
   const usersSearchingRepository = getRepository(UserSearching);
   const searches = await usersSearchingRepository.find();
   var searchesFiltered;
-  
+
   let lat1:number = +latitude;
   let lng1:number = +longitude;
 
