@@ -1,4 +1,5 @@
 import { MigrationInterface, QueryRunner, Table, TableForeignKey } from 'typeorm';
+import { vehicleDocumentStatus } from '../../constants/vehicleDocumentStatus';
 import { vehicleDocumentTypes } from '../../constants/vehicleDocumentTypes';
 
 import Utils from '../../services/utils/Utils';
@@ -22,7 +23,8 @@ export class CreateVehiclesDocumentsTable1655691282003 implements MigrationInter
           },
           {
             name: 'document_type',
-            type: 'varchar',
+            type: 'enum',
+            enum: Utils.convertEnumValuesToStringArray(vehicleDocumentTypes)
           },
           {
             name: 'path',
@@ -32,7 +34,8 @@ export class CreateVehiclesDocumentsTable1655691282003 implements MigrationInter
           {
             name: 'status',
             type: 'enum',
-            enum: Utils.convertEnumValuesToStringArray(vehicleDocumentTypes)
+            enum: Utils.convertEnumValuesToStringArray(vehicleDocumentStatus),
+            // default: vehicleDocumentStatus.pending
           },
           {
             name: 'created_at',

@@ -40,7 +40,7 @@ class VehicleDocument {
     {
       type: "enum",
       enum: vehicleDocumentStatus,
-      nullable: true
+      default: vehicleDocumentStatus.pending
     }
   )
   status: vehicleDocumentStatus;

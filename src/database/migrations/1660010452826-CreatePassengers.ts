@@ -40,7 +40,7 @@ export class CreatePassengers1660010452826 implements MigrationInterface {
             name: 'status',
             type: 'enum',
             enum: Utils.convertEnumValuesToStringArray(passengerStatusTypes),
-            default: passengerStatusTypes.ongoing
+            // default: passengerStatusTypes.ongoing.toString()
           },
           {
             name: 'lat_origin',

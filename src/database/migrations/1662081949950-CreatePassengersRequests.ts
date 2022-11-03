@@ -42,7 +42,7 @@ export class CreatePassengersRequests1662081949950
             name: 'status',
             type: 'enum',
             enum: Utils.convertEnumValuesToStringArray(passengerRequestStatusTypes),
-            default: passengerRequestStatusTypes.pending
+            // default: passengerRequestStatusTypes.pending.toString()
           },
           {
             name: 'created_at',

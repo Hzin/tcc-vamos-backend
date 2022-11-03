@@ -32,7 +32,8 @@ export class CreateTripsTable1663371092720 implements MigrationInterface {
           {
             name: 'status',
             type: 'enum',
-            enum: Utils.convertEnumValuesToStringArray(tripStatus)
+            enum: Utils.convertEnumValuesToStringArray(tripStatus),
+            // default: tripStatus.pending.toString()
           },
           {
             name: 'created_at',
