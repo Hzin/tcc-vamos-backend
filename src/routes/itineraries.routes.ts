@@ -16,7 +16,7 @@ import CreatePassengerRequestService from '../services/CreatePassengerRequestSer
 import CreatePassengerService from '../services/CreatePassengerService';
 import UpdatePassengerRequestService from '../services/UpdatePassengerRequestService';
 import FindPassengerRequestServiceByFields from '../services/FindPassengerRequestServiceByFields';
-import { passengerRequestTypes } from '../constants/passengerRequestTypes';
+import { passengerRequestStatusTypes } from '../constants/passengerRequestStatusTypes';
 import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 import FindItineraryPendingRequests from '../services/FindItineraryPendingRequests';
 
@@ -170,7 +170,7 @@ itinerariesRouter.post('/contract/:id_itinerary', ensureAuthenticated, async (re
   return response.json({ data: passengerRequest, message: 'Solicitação enviada com sucesso!' });
 });
 
-itinerariesRouter.post('/contract/request/accept', async (request, response) => {
+itinerariesRouter.post('/contract/accept', async (request, response) => {
   const { id_user, id_itinerary } = request.body;
 
   const findPassengerRequestServiceByFields = new FindPassengerRequestServiceByFields()
@@ -180,13 +180,13 @@ itinerariesRouter.post('/contract/request/accept', async (request, response) => 
 
   const updatePassengerRequestService = new UpdatePassengerRequestService()
   const passenger = await updatePassengerRequestService.execute({
-    id_passenger_request: passengerRequest.id_passenger_request, status: passengerRequestTypes.accepted
+    id_passenger_request: passengerRequest.id_passenger_request, status: passengerRequestStatusTypes.accepted
   });
 
   return response.status(201).json({ data: passenger, message: 'Passageiro aceito com sucesso!' });
 });
 
-itinerariesRouter.post('/contract/request/reject', async (request, response) => {
+itinerariesRouter.post('/contract/reject', async (request, response) => {
   const { id_user, id_itinerary } = request.body;
 
   const findPassengerRequestServiceByFields = new FindPassengerRequestServiceByFields()
@@ -196,7 +196,7 @@ itinerariesRouter.post('/contract/request/reject', async (request, response) => 
 
   const updatePassengerRequestService = new UpdatePassengerRequestService()
   const passenger = await updatePassengerRequestService.execute({
-    id_passenger_request: passengerRequest.id_passenger_request, status: passengerRequestTypes.rejected
+    id_passenger_request: passengerRequest.id_passenger_request, status: passengerRequestStatusTypes.rejected
   });
 
   return response.status(201).json({ data: passenger, message: 'Passageiro recusado com sucesso.' });

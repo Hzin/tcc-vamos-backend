@@ -6,7 +6,6 @@ import Itinerary from '../models/Itinerary';
 import NeighborhoodServed from '../models/NeighborhoodServed';
 import Destination from '../models/Destination';
 import FindVehicleService from './FindVehicleService';
-import Vehicle from '../models/Vehicle';
 
 interface Request {
   vehicle_plate: string;

@@ -1,5 +1,5 @@
 import { getRepository } from "typeorm";
-import { passengerRequestTypes } from "../constants/passengerRequestTypes";
+import { passengerRequestStatusTypes } from "../constants/passengerRequestStatusTypes";
 import AppError from "../errors/AppError";
 import Passenger from "../models/Passenger";
 import PassengerRequest from "../models/PassengerRequest";
@@ -17,7 +17,7 @@ interface Request {
   longitude_address: number;
   is_single: boolean;
 
-  // newStatus: passengerRequestTypes
+  // newStatus: passengerRequestStatusTypes
 }
 
 class CreatePassengerService {
@@ -39,7 +39,7 @@ class CreatePassengerService {
     }
 
     const passengerRequest = await passengersRequestsRepository.findOne({
-      where: { itinerary, user, status: passengerRequestTypes.pending },
+      where: { itinerary, user, status: passengerRequestStatusTypes.pending },
     });
 
     if (!passengerRequest) {
@@ -47,7 +47,7 @@ class CreatePassengerService {
     }
 
     const updatePassengerRequestService = new UpdatePassengerRequestService()
-    await updatePassengerRequestService.execute({ id_passenger_request: passengerRequest.id_passenger_request, status: passengerRequestTypes.accepted })
+    await updatePassengerRequestService.execute({ id_passenger_request: passengerRequest.id_passenger_request, status: passengerRequestStatusTypes.accepted })
 
     const passenger = passengersRepository.create({
       user,

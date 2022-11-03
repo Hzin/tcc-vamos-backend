@@ -1,6 +1,6 @@
 import { getRepository } from "typeorm";
 
-import { passengerRequestTypes } from "../constants/passengerRequestTypes";
+import { passengerRequestStatusTypes } from "../constants/passengerRequestStatusTypes";
 import PassengerRequest from "../models/PassengerRequest";
 import FindItineraryService from "./FindItineraryService";
 
@@ -12,7 +12,7 @@ class FindItineraryPendingRequests {
     const itinerary = await findItineraryService.execute(id_itinerary);
 
     const pendingItineraryRequests = await passengerRequestsRepository.find(
-      { where: { itinerary, status: passengerRequestTypes.pending } }
+      { where: { itinerary, status: passengerRequestStatusTypes.pending } }
     )
 
     return pendingItineraryRequests

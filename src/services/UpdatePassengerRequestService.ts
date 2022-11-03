@@ -1,13 +1,13 @@
 import { getRepository } from "typeorm";
 
-import { passengerRequestTypes } from "../constants/passengerRequestTypes";
+import { passengerRequestStatusTypes } from "../constants/passengerRequestStatusTypes";
 
 import PassengerRequest from "../models/PassengerRequest";
 import FindPassengerRequestServiceById from "./FindPassengerRequestServiceById";
 
 interface Request {
   id_passenger_request: number;
-  status: passengerRequestTypes
+  status: passengerRequestStatusTypes
 }
 
 class UpdatePassengerRequestService {

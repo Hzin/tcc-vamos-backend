@@ -2,7 +2,7 @@ import { getRepository } from "typeorm";
 
 import AppError from "../errors/AppError";
 
-import { passengerRequestTypes } from "../constants/passengerRequestTypes";
+import { passengerRequestStatusTypes } from "../constants/passengerRequestStatusTypes";
 
 import FindItineraryService from "./FindItineraryService";
 import FindUserService from "./FindUserService";
@@ -31,7 +31,7 @@ class CreatePassengerRequestService {
 
     const findPassengerRequestServiceByFields = new FindPassengerRequestServiceByFields()
     const passengerHasPendingRequest = await findPassengerRequestServiceByFields.execute({
-      id_itinerary: itinerary.id_itinerary, id_user: user.id_user, status: passengerRequestTypes.pending
+      id_itinerary: itinerary.id_itinerary, id_user: user.id_user, status: passengerRequestStatusTypes.pending
     });
 
     if (passengerHasPendingRequest) {
@@ -45,7 +45,7 @@ class CreatePassengerRequestService {
       latitude_address,
       longitude_address,
       is_single,
-      status: passengerRequestTypes.pending,
+      status: passengerRequestStatusTypes.pending,
     });
 
     await passengersRequestsRepository.save(passengerRequest);

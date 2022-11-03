@@ -1,5 +1,5 @@
 import { getRepository } from 'typeorm';
-import { passengerRequestTypes } from '../constants/passengerRequestTypes';
+import { passengerRequestStatusTypes } from '../constants/passengerRequestStatusTypes';
 
 import AppError from '../errors/AppError';
 
@@ -8,7 +8,7 @@ import PassengerRequest from '../models/PassengerRequest';
 interface Request {
   id_itinerary: number;
   id_user: string;
-  status?: passengerRequestTypes
+  status?: passengerRequestStatusTypes
 }
 
 class FindPassengerRequestServiceByFields {
