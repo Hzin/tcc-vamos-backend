@@ -8,10 +8,15 @@ import CreateItineraryService from '../services/CreateItineraryService';
 import maxRadius from '../constants/mapRadiusConfig';
 import { SortArrayOfObjects } from '../services/SortArrayOfObjects';
 
-import CreatePassengerRequest from '../services/CreatePassengerRequest';
-import CreatePassenger from '../services/CreatePassenger';
-import FindItineraryService from '../services/FindItineraryService';
 import AddOptionalPropertiesToItineraryObjectService from '../services/AddOptionalPropertiesToItineraryObjectService';
+
+import FindItineraryService from '../services/FindItineraryService';
+
+import CreatePassengerRequestService from '../services/CreatePassengerRequestService';
+import CreatePassengerService from '../services/CreatePassengerService';
+import UpdatePassengerRequestService from '../services/UpdatePassengerRequestService';
+import FindPassengerRequestServiceByFields from '../services/FindPassengerRequestServiceByFields';
+import { passengerRequestTypes } from '../constants/passengerRequestTypes';
 
 const itinerariesRouter = Router();
 
@@ -140,59 +145,69 @@ itinerariesRouter.post('/search/inradius', async (request, response) => {
   return response.json({ data: itinerariesFiltered });
 });
 
-itinerariesRouter.post('/request', async (request, response) => {
+itinerariesRouter.post('/contract/:id_itinerary', async (request, response) => {
   const {
-    user_id,
-    itinerary_id,
+    id_user,
     address,
     latitude_address,
     longitude_address,
     is_single,
   } = request.body;
 
-  const solicitacao = await CreatePassengerRequest({
-    user_id,
-    itinerary_id,
-    address,
-    latitude_address,
-    longitude_address,
-    is_single,
-  });
+  const { id_itinerary } = request.params
 
-  return response.status(201).json({ data: solicitacao, message: 'Solicitação enviada com sucesso!' });
-});
-
-itinerariesRouter.post('/accept-user', async (request, response) => {
-  const {
-    user_id,
-    itinerary_id,
+  const createPassengerRequestService = new CreatePassengerRequestService()
+  const passengerRequest = await createPassengerRequestService.execute({
+    id_user,
+    id_itinerary: +id_itinerary,
     address,
     latitude_address,
     longitude_address,
     is_single
-  } = request.body;
+  })
 
-  const passenger = await CreatePassenger({
-    user_id,
-    itinerary_id,
-    address,
-    latitude_address,
-    longitude_address,
-    is_single,
+  return response.json({ data: passengerRequest, message: 'Solicitação enviada com sucesso!' });
+});
+
+itinerariesRouter.post('/contract/request/accept', async (request, response) => {
+  const { id_user, id_itinerary } = request.body;
+
+  const findPassengerRequestServiceByFields = new FindPassengerRequestServiceByFields()
+  const passengerRequest = await findPassengerRequestServiceByFields.execute({
+    id_itinerary, id_user
   });
 
-  return response.status(201).json({ data: passenger, message: 'Usuário aceito com sucesso!' });
+  const updatePassengerRequestService = new UpdatePassengerRequestService()
+  const passenger = await updatePassengerRequestService.execute({
+    id_passenger_request: passengerRequest.id_passenger_request, status: passengerRequestTypes.accepted
+  });
+
+  return response.status(201).json({ data: passenger, message: 'Passageiro aceito com sucesso!' });
+});
+
+itinerariesRouter.post('/contract/request/reject', async (request, response) => {
+  const { id_user, id_itinerary } = request.body;
+
+  const findPassengerRequestServiceByFields = new FindPassengerRequestServiceByFields()
+  const passengerRequest = await findPassengerRequestServiceByFields.execute({
+    id_itinerary, id_user
+  });
+
+  const updatePassengerRequestService = new UpdatePassengerRequestService()
+  const passenger = await updatePassengerRequestService.execute({
+    id_passenger_request: passengerRequest.id_passenger_request, status: passengerRequestTypes.rejected
+  });
+
+  return response.status(201).json({ data: passenger, message: 'Passageiro recusado com sucesso.' });
 });
 
 itinerariesRouter.get('/:id/passengers', async (request, response) => {
   const { id } = request.params;
-  const itinerariesRepository = getRepository(Itinerary);
 
-  const itinerary = await itinerariesRepository.findOneOrFail(id);
+  const findItineraryService = new FindItineraryService()
+  const passengerRequest = await findItineraryService.execute(id);
 
-  const passengers = itinerary.passengers;
-
-  return response.json({ data: passengers });
+  return response.json({ data: passengerRequest.passengers });
 })
 
 export default itinerariesRouter;

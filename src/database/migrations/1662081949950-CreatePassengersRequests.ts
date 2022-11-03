@@ -14,7 +14,7 @@ export class CreatePassengersRequests1662081949950
         name: 'passengers_requests',
         columns: [
           {
-            name: 'id_request',
+            name: 'id_passenger_request',
             type: 'integer',
             isPrimary: true,
             isGenerated: true,

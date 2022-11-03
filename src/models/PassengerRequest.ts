@@ -6,13 +6,14 @@ import {
   JoinColumn,
   CreateDateColumn,
 } from 'typeorm';
+import { passengerRequestTypes } from '../constants/passengerRequestTypes';
 import Itinerary from './Itinerary';
 import User from './User';
 
 @Entity('passengers_requests')
 class PassengerRequest {
   @PrimaryGeneratedColumn('increment')
-  id_request: number;
+  id_passenger_request: number;
 
   @ManyToOne(() => Itinerary, itinerary => itinerary.neighborhoods_served)
   @JoinColumn({ name: 'itinerary_id' })
@@ -28,8 +29,14 @@ class PassengerRequest {
   @Column()
   user_id: string;
 
-  @Column()
-  status: 'pending' | 'accepted' | 'rejected';
+  @Column(
+    {
+      type: "enum",
+      enum: passengerRequestTypes,
+      default: passengerRequestTypes.pending,
+    }
+  )
+  status: passengerRequestTypes;
 
   @CreateDateColumn()
   created_at: Date;
