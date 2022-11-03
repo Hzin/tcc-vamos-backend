@@ -19,6 +19,7 @@ import FindPassengerRequestServiceByFields from '../services/FindPassengerReques
 import { passengerRequestStatusTypes } from '../constants/passengerRequestStatusTypes';
 import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 import FindItineraryPendingRequests from '../services/FindItineraryPendingRequests';
+import FindUserService from '../services/FindUserService';
 
 const itinerariesRouter = Router();
 
@@ -180,9 +181,15 @@ itinerariesRouter.post('/contract/:id_itinerary', ensureAuthenticated, async (re
 itinerariesRouter.patch('/contract/status', async (request, response) => {
   const { id_user, id_itinerary, status } = request.body;
 
+  const findUserService = new FindUserService()
+  const user = await findUserService.execute(id_user);
+
+  const findItineraryService = new FindItineraryService()
+  const itinerary = await findItineraryService.execute(id_itinerary);
+
   const findPassengerRequestServiceByFields = new FindPassengerRequestServiceByFields()
   const passengerRequest = await findPassengerRequestServiceByFields.execute({
-    id_itinerary, id_user
+    user, itinerary
   });
 
   const updatePassengerRequestService = new UpdatePassengerRequestService()

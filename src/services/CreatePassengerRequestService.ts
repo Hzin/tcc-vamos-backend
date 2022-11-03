@@ -35,9 +35,13 @@ class CreatePassengerRequestService {
     const itinerary = await findItineraryService.execute("" + id_itinerary);
 
     const findPassengerRequestServiceByFields = new FindPassengerRequestServiceByFields()
-    const passengerHasPendingRequest = await findPassengerRequestServiceByFields.execute({
-      id_itinerary: itinerary.id_itinerary, id_user: user.id_user, status: passengerRequestStatusTypes.pending
-    });
+
+    let passengerHasPendingRequest: PassengerRequest | undefined
+    try {
+      passengerHasPendingRequest = await findPassengerRequestServiceByFields.execute({
+        itinerary, user, status: passengerRequestStatusTypes.pending
+      });
+    } catch { }
 
     if (passengerHasPendingRequest) {
       throw new AppError('A solicitação de contrato está em análise.', 202)
