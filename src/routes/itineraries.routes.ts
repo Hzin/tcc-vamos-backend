@@ -17,6 +17,7 @@ import CreatePassengerService from '../services/CreatePassengerService';
 import UpdatePassengerRequestService from '../services/UpdatePassengerRequestService';
 import FindPassengerRequestServiceByFields from '../services/FindPassengerRequestServiceByFields';
 import { passengerRequestTypes } from '../constants/passengerRequestTypes';
+import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 
 const itinerariesRouter = Router();
 
@@ -145,9 +146,8 @@ itinerariesRouter.post('/search/inradius', async (request, response) => {
   return response.json({ data: itinerariesFiltered });
 });
 
-itinerariesRouter.post('/contract/:id_itinerary', async (request, response) => {
+itinerariesRouter.post('/contract/:id_itinerary', ensureAuthenticated, async (request, response) => {
   const {
-    id_user,
     address,
     latitude_address,
     longitude_address,
@@ -158,7 +158,7 @@ itinerariesRouter.post('/contract/:id_itinerary', async (request, response) => {
 
   const createPassengerRequestService = new CreatePassengerRequestService()
   const passengerRequest = await createPassengerRequestService.execute({
-    id_user,
+    id_user: request.user.id_user,
     id_itinerary: +id_itinerary,
     address,
     latitude_address,
