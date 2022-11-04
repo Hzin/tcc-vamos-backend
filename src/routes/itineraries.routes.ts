@@ -19,17 +19,14 @@ import FindUserService from '../services/FindUserService';
 import FindItinerariesByDriverUserIdService from '../services/FindItinerariesByDriverUserIdService';
 import FindItinerariesByPassengerUserIdService from '../services/FindItinerariesByPassengerUserIdService';
 import FindItineraryBySearchFiltersService from '../services/FindItineraryBySearchFiltersService';
+import FindItinerariesExceptUserss from '../services/FindItinerariesExceptUserss';
 
 const itinerariesRouter = Router();
 
 // itinerariesRouter.get('/', ensureAdmin, async (request, response) => {
 itinerariesRouter.get('/', ensureAuthenticated, async (request, response) => {
-  const itinerariesRepository = getRepository(Itinerary);
-
-  let itineraries = await itinerariesRepository.find();
-
-  const addOptionalPropertiesToObjectService = new AddOptionalPropertiesToObjectService()
-  itineraries = await addOptionalPropertiesToObjectService.executeArrItinerary(itineraries)
+  const findItinerariesExceptUserss = new FindItinerariesExceptUserss()
+  const itineraries = await findItinerariesExceptUserss.execute(request.user.id_user)
 
   return response.json({ data: itineraries });
 })
