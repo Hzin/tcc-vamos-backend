@@ -6,9 +6,9 @@ import CalculateDistanceBetweenCoords from '../services/CalculateDistanceBetween
 import CreateItineraryService from '../services/CreateItineraryService';
 
 import maxRadius from '../constants/mapRadiusConfig';
-import { SortArrayOfObjects } from '../services/SortArrayOfObjects';
+import { SortArrayOfObjects } from '../services/utils/SortArrayOfObjects';
 
-import AddOptionalPropertiesToItineraryObjectService from '../services/AddOptionalPropertiesToItineraryObjectService';
+import AddOptionalPropertiesToObjectService from '../services/utils/AddOptionalPropertiesToObjectService';
 
 import FindItineraryService from '../services/FindItineraryService';
 
@@ -29,8 +29,8 @@ itinerariesRouter.get('/', ensureAdmin, async (request, response) => {
 
   let itineraries = await itinerariesRepository.find();
 
-  const addOptionalPropertiesToItineraryObjectService = new AddOptionalPropertiesToItineraryObjectService()
-  itineraries = await addOptionalPropertiesToItineraryObjectService.executeArr(itineraries)
+  const addOptionalPropertiesToObjectService = new AddOptionalPropertiesToObjectService()
+  itineraries = await addOptionalPropertiesToObjectService.executeArrItinerary(itineraries)
 
   return response.json({ data: itineraries });
 })
@@ -41,8 +41,8 @@ itinerariesRouter.get('/:id', ensureAuthenticated, async (request, response) => 
   const findItineraryService = new FindItineraryService();
   let itinerary = await findItineraryService.execute(id)
 
-  const addOptionalPropertiesToItineraryObjectService = new AddOptionalPropertiesToItineraryObjectService()
-  itinerary = await addOptionalPropertiesToItineraryObjectService.executeSingle(itinerary)
+  const addOptionalPropertiesToObjectService = new AddOptionalPropertiesToObjectService()
+  itinerary = await addOptionalPropertiesToObjectService.executeSingleItinerary(itinerary)
 
   return response.json({ data: itinerary });
 })
@@ -53,8 +53,8 @@ itinerariesRouter.get('/driver/:id', ensureAuthenticated, async (request, respon
   const findItinerariesByDriverUserIdService = new FindItinerariesByDriverUserIdService();
   let itineraries = await findItinerariesByDriverUserIdService.execute(id)
 
-  const addOptionalPropertiesToItineraryObjectService = new AddOptionalPropertiesToItineraryObjectService()
-  itineraries = await addOptionalPropertiesToItineraryObjectService.executeArr(itineraries)
+  const addOptionalPropertiesToObjectService = new AddOptionalPropertiesToObjectService()
+  itineraries = await addOptionalPropertiesToObjectService.executeArrItinerary(itineraries)
 
   return response.json({ data: itineraries });
 })
@@ -65,8 +65,8 @@ itinerariesRouter.get('/passenger/:id', ensureAuthenticated, async (request, res
   const findItinerariesByPassengerUserIdService = new FindItinerariesByPassengerUserIdService();
   let itineraries = await findItinerariesByPassengerUserIdService.execute(id)
 
-  const addOptionalPropertiesToItineraryObjectService = new AddOptionalPropertiesToItineraryObjectService()
-  itineraries = await addOptionalPropertiesToItineraryObjectService.executeArr(itineraries)
+  const addOptionalPropertiesToObjectService = new AddOptionalPropertiesToObjectService()
+  itineraries = await addOptionalPropertiesToObjectService.executeArrItinerary(itineraries)
 
   return response.json({ data: itineraries });
 })
@@ -161,8 +161,8 @@ itinerariesRouter.post('/search/inradius', ensureAuthenticated, async (request, 
       break;
   }
 
-  const addOptionalPropertiesToItineraryObjectService = new AddOptionalPropertiesToItineraryObjectService()
-  itinerariesFiltered = await addOptionalPropertiesToItineraryObjectService.executeArr(itinerariesFiltered)
+  const addOptionalPropertiesToObjectService = new AddOptionalPropertiesToObjectService()
+  itinerariesFiltered = await addOptionalPropertiesToObjectService.executeArrItinerary(itinerariesFiltered)
 
   return response.json({ data: itinerariesFiltered });
 });
@@ -232,7 +232,10 @@ itinerariesRouter.get('/:id/contracts/pending', ensureAuthenticated, async (requ
   const { id } = request.params;
 
   const findItineraryPendingRequests = new FindItineraryPendingRequests()
-  const pendingRequests = await findItineraryPendingRequests.execute(id);
+  let pendingRequests = await findItineraryPendingRequests.execute(id);
+
+  const addOptionalPropertiesToObjectService = new AddOptionalPropertiesToObjectService()
+  pendingRequests = await addOptionalPropertiesToObjectService.executeArrPassengerRequest(pendingRequests)
 
   return response.json({ data: pendingRequests });
 })
