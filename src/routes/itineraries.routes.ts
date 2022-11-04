@@ -177,15 +177,6 @@ itinerariesRouter.patch('/contract/status', ensureAuthenticated, async (request,
   return response.json({ data: passengerRequestWithUpdatedStatus, message: message });
 });
 
-itinerariesRouter.get('/:id/passengers', ensureAuthenticated, async (request, response) => {
-  const { id } = request.params;
-
-  const findItineraryService = new FindItineraryService()
-  const itinerary = await findItineraryService.execute(id);
-
-  return response.json({ data: itinerary.passengers });
-})
-
 itinerariesRouter.get('/:id/contracts/pending', ensureAuthenticated, async (request, response) => {
   const { id } = request.params;
 

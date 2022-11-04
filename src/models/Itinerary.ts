@@ -77,7 +77,7 @@ class Itinerary {
   trips?: Trip[];
 
   @OneToMany(() => Passenger, passenger => passenger.itinerary, { eager: true, cascade: true, nullable: true })
-  passengers?: Passenger[];
+  passengers: Passenger[];
 
   @OneToMany(() => PassengerRequest, passengerRequest => passengerRequest.itinerary, { eager: true, cascade: true, nullable: true })
   passengerRequests?: PassengerRequest[];

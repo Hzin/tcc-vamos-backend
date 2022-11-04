@@ -1,4 +1,5 @@
 import Itinerary from "../../models/Itinerary";
+import Passenger from "../../models/Passenger";
 import PassengerRequest from "../../models/PassengerRequest";
 import FindItineraryService from "../FindItineraryService";
 import FindUserService from "../FindUserService";
@@ -55,6 +56,33 @@ class AddOptionalPropertiesToItineraryObjectService {
     }
 
     return newPassengerRequests
+  }
+
+  // Passenger
+  // duplicado de PassengerRequest
+  private async addPropertiesPassenger(passenger: Passenger): Promise<Passenger> {
+    const findItineraryService = new FindItineraryService()
+    const findUserService = new FindUserService()
+
+    passenger.itinerary = await findItineraryService.execute(passenger.itinerary_id)
+    passenger.user = await findUserService.execute(passenger.user_id)
+
+    return passenger
+  }
+
+  public async executeSinglePassenger(passenger: Passenger): Promise<Passenger> {
+    return this.addPropertiesPassenger(passenger)
+  }
+
+  public async executeArrPassenger(passengers: Passenger[]): Promise<Passenger[]> {
+    let newPassengers = passengers
+
+    for (let i = 0; i < newPassengers.length; i++) {
+      const passenger = newPassengers[i]
+      newPassengers[i] = await this.addPropertiesPassenger(passenger)
+    }
+
+    return newPassengers
   }
 }
 
