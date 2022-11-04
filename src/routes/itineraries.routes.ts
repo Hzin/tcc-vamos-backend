@@ -24,7 +24,8 @@ import ensureAdmin from '../middlewares/ensureAdmin';
 
 const itinerariesRouter = Router();
 
-itinerariesRouter.get('/', ensureAdmin, async (request, response) => {
+// itinerariesRouter.get('/', ensureAdmin, async (request, response) => {
+itinerariesRouter.get('/', ensureAuthenticated, async (request, response) => {
   const itinerariesRepository = getRepository(Itinerary);
 
   let itineraries = await itinerariesRepository.find();
@@ -46,6 +47,62 @@ itinerariesRouter.get('/:id', ensureAuthenticated, async (request, response) => 
 
   return response.json({ data: itinerary });
 })
+
+itinerariesRouter.post('/search/inradius', ensureAuthenticated, async (request, response) => {
+  const { coordinatesFrom, coordinatesTo, orderOption, orderBy, preference_AvulseSeat, preference_A_C, preference_PrioritySeat } = request.body;
+
+  const itinerariesRepository = getRepository(Itinerary);
+
+  const lat_from: number = +coordinatesFrom.lat;
+  const lng_from: number = +coordinatesFrom.lng;
+  const lat_to: number = +coordinatesTo.lat;
+  const lng_to: number = +coordinatesTo.lng;
+
+  const itineraries = await itinerariesRepository.find();
+
+  let itinerariesFiltered = itineraries.filter(itinerary => {
+    if (!itinerary.neighborhoods_served || !itinerary.destinations) return false
+
+    var distanceOrigins = 0;
+    var distanceDestinations = 0;
+
+    for (const neighborhoodServed of itinerary.neighborhoods_served) {
+      let lat2: number = +neighborhoodServed.lat;
+      let lng2: number = +neighborhoodServed.lng;
+      distanceOrigins = CalculateDistanceBetweenCoords({ lat1: lat_from, lng1: lng_from, lat2, lng2 });
+      if (distanceOrigins <= maxRadius) break;
+    }
+
+    for (const destination of itinerary.destinations) {
+      let lat2: number = +destination.lat;
+      let lng2: number = +destination.lng;
+      distanceDestinations = CalculateDistanceBetweenCoords({ lat1: lat_to, lng1: lng_to, lat2, lng2 });
+      if (distanceDestinations <= maxRadius) break;
+    }
+
+    return (distanceOrigins <= maxRadius && distanceDestinations <= maxRadius);
+  });
+
+  switch (orderOption) {
+    case "monthly_price":
+      itinerariesFiltered = SortArrayOfObjects(itinerariesFiltered, 'monthly_price', orderBy ? orderBy : 'ascending')
+      break;
+    case "daily_price":
+      itinerariesFiltered = SortArrayOfObjects(itinerariesFiltered, 'daily_price', orderBy ? orderBy : 'ascending')
+      break;
+    // case "rating":
+    //   itinerariesFiltered = SortArrayOfObjects(itinerariesFiltered, 'rating', orderBy ? orderBy : 'ascending')
+    //   break;
+    case "available_seats":
+      itinerariesFiltered = SortArrayOfObjects(itinerariesFiltered, 'available_seats', orderBy ? orderBy : 'ascending')
+      break;
+  }
+
+  const addOptionalPropertiesToObjectService = new AddOptionalPropertiesToObjectService()
+  itinerariesFiltered = await addOptionalPropertiesToObjectService.executeArrItinerary(itinerariesFiltered)
+
+  return response.json({ data: itinerariesFiltered });
+});
 
 itinerariesRouter.get('/driver/:id', ensureAuthenticated, async (request, response) => {
   const { id } = request.params
@@ -109,62 +166,6 @@ itinerariesRouter.post('/', ensureAuthenticated, async (request, response) => {
   });
 
   return response.status(201).json({ data: itinerary, message: 'Itinerário criado com sucesso!' });
-});
-
-itinerariesRouter.post('/search/inradius', ensureAuthenticated, async (request, response) => {
-  const { coordinatesFrom, coordinatesTo, orderOption, orderBy, preference_AvulseSeat, preference_A_C, preference_PrioritySeat } = request.body;
-
-  const itinerariesRepository = getRepository(Itinerary);
-
-  const lat_from: number = +coordinatesFrom.lat;
-  const lng_from: number = +coordinatesFrom.lng;
-  const lat_to: number = +coordinatesTo.lat;
-  const lng_to: number = +coordinatesTo.lng;
-
-  const itineraries = await itinerariesRepository.find();
-
-  let itinerariesFiltered = itineraries.filter(itinerary => {
-    if (!itinerary.neighborhoods_served || !itinerary.destinations) return false
-
-    var distanceOrigins = 0;
-    var distanceDestinations = 0;
-
-    for (const neighborhoodServed of itinerary.neighborhoods_served) {
-      let lat2: number = +neighborhoodServed.lat;
-      let lng2: number = +neighborhoodServed.lng;
-      distanceOrigins = CalculateDistanceBetweenCoords({ lat1: lat_from, lng1: lng_from, lat2, lng2 });
-      if (distanceOrigins <= maxRadius) break;
-    }
-
-    for (const destination of itinerary.destinations) {
-      let lat2: number = +destination.lat;
-      let lng2: number = +destination.lng;
-      distanceDestinations = CalculateDistanceBetweenCoords({ lat1: lat_to, lng1: lng_to, lat2, lng2 });
-      if (distanceDestinations <= maxRadius) break;
-    }
-
-    return (distanceOrigins <= maxRadius && distanceDestinations <= maxRadius);
-  });
-
-  switch (orderOption) {
-    case "monthly_price":
-      itinerariesFiltered = SortArrayOfObjects(itinerariesFiltered, 'monthly_price', orderBy ? orderBy : 'ascending')
-      break;
-    case "daily_price":
-      itinerariesFiltered = SortArrayOfObjects(itinerariesFiltered, 'daily_price', orderBy ? orderBy : 'ascending')
-      break;
-    // case "rating":
-    //   itinerariesFiltered = SortArrayOfObjects(itinerariesFiltered, 'rating', orderBy ? orderBy : 'ascending')
-    //   break;
-    case "available_seats":
-      itinerariesFiltered = SortArrayOfObjects(itinerariesFiltered, 'available_seats', orderBy ? orderBy : 'ascending')
-      break;
-  }
-
-  const addOptionalPropertiesToObjectService = new AddOptionalPropertiesToObjectService()
-  itinerariesFiltered = await addOptionalPropertiesToObjectService.executeArrItinerary(itinerariesFiltered)
-
-  return response.json({ data: itinerariesFiltered });
 });
 
 // cria registro na tabela passenger_requests
