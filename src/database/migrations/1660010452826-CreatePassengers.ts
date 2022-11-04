@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 import { itineraryContractTypes } from '../../constants/itineraryContractTypes';
 import { passengerStatusTypes } from '../../constants/passengerStatusTypes';
+import { schoolPeriods } from '../../constants/schoolPeriods';
 
 import Utils from '../../services/utils/Utils';
 
@@ -35,6 +36,11 @@ export class CreatePassengers1660010452826 implements MigrationInterface {
             name: 'contract_type',
             type: 'enum',
             enum: Utils.convertEnumValuesToStringArray(itineraryContractTypes)
+          },
+          {
+            name: 'period',
+            type: 'enum',
+            enum: Utils.convertEnumValuesToStringArray(schoolPeriods)
           },
           {
             name: 'status',

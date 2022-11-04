@@ -11,6 +11,7 @@ import {
 import Destination from './Destination';
 import NeighborhoodServed from './NeighborhoodServed';
 import Passenger from './Passenger';
+import PassengerRequest from './PassengerRequest';
 import Trip from './Trip';
 import User from './User';
 import Vehicle from './Vehicle';
@@ -77,6 +78,9 @@ class Itinerary {
 
   @OneToMany(() => Passenger, passenger => passenger.itinerary, { eager: true, cascade: true, nullable: true })
   passengers?: Passenger[];
+
+  @OneToMany(() => PassengerRequest, passengerRequest => passengerRequest.itinerary, { eager: true, cascade: true, nullable: true })
+  passengerRequests?: PassengerRequest[];
 
   @CreateDateColumn()
   created_at: Date;

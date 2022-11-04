@@ -10,11 +10,13 @@ import FindUserService from "./FindUserService";
 import PassengerRequest from "../models/PassengerRequest";
 import FindPassengerRequestServiceByFields from "./FindPassengerRequestServiceByFields";
 import { itineraryContractTypes } from "../constants/itineraryContractTypes";
+import { schoolPeriods } from "../constants/schoolPeriods";
 
 interface Request {
   id_user: string;
   id_itinerary: number;
   contract_type: itineraryContractTypes;
+  period: schoolPeriods;
   lat_origin: number;
   lng_origin: number;
   formatted_address_origin: string;
@@ -25,7 +27,7 @@ interface Request {
 
 
 class CreatePassengerRequestService {
-  public async execute({ id_user, id_itinerary, contract_type, lat_origin, lng_origin, formatted_address_origin, lat_destination, lng_destination, formatted_address_destination, }: Request): Promise<PassengerRequest> {
+  public async execute({ id_user, id_itinerary, contract_type, period, lat_origin, lng_origin, formatted_address_origin, lat_destination, lng_destination, formatted_address_destination, }: Request): Promise<PassengerRequest> {
     const passengersRequestsRepository = getRepository(PassengerRequest);
 
     const findUserService = new FindUserService()
@@ -50,6 +52,7 @@ class CreatePassengerRequestService {
     const passengerRequest = passengersRequestsRepository.create({
       itinerary,
       user,
+      period,
       contract_type,
       status: passengerRequestStatusTypes.pending,
       lat_origin,

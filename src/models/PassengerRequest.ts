@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { itineraryContractTypes } from '../constants/itineraryContractTypes';
 import { passengerRequestStatusTypes } from '../constants/passengerRequestStatusTypes';
+import { schoolPeriods } from '../constants/schoolPeriods';
 import Itinerary from './Itinerary';
 import User from './User';
 
@@ -37,6 +38,9 @@ class PassengerRequest {
     }
   )
   contract_type: itineraryContractTypes;
+
+  @Column()
+  period: schoolPeriods;
 
   @Column(
     {

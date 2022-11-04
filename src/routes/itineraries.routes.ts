@@ -1,25 +1,21 @@
 import { Router } from 'express';
-import { getRepository } from 'typeorm';
-
-import Itinerary from '../models/Itinerary';
 
 import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 import ensureAdmin from '../middlewares/ensureAdmin';
-
-import { SortArrayOfObjects } from '../services/utils/SortArrayOfObjects';
-import AddOptionalPropertiesToObjectService from '../services/utils/AddOptionalPropertiesToObjectService';
 
 import CreateItineraryService from '../services/CreateItineraryService';
 import FindItineraryService from '../services/FindItineraryService';
 import CreatePassengerRequestService from '../services/CreatePassengerRequestService';
 import UpdatePassengerRequestService from '../services/UpdatePassengerRequestService';
 import FindPassengerRequestServiceByFields from '../services/FindPassengerRequestServiceByFields';
-import FindItineraryPendingRequests from '../services/FindItineraryPendingRequests';
 import FindUserService from '../services/FindUserService';
 import FindItinerariesByDriverUserIdService from '../services/FindItinerariesByDriverUserIdService';
 import FindItinerariesByPassengerUserIdService from '../services/FindItinerariesByPassengerUserIdService';
 import FindItineraryBySearchFiltersService from '../services/FindItineraryBySearchFiltersService';
 import FindItinerariesExceptUserss from '../services/FindItinerariesExceptUserss';
+
+import AddOptionalPropertiesToObjectService from '../services/utils/AddOptionalPropertiesToObjectService';
+import FindItineraryPendingRequests from '../services/FindItineraryPendingRequests';
 
 const itinerariesRouter = Router();
 
@@ -128,6 +124,7 @@ itinerariesRouter.post('/', ensureAuthenticated, async (request, response) => {
 // cria registro na tabela passenger_requests
 itinerariesRouter.post('/contract/:id_itinerary', ensureAuthenticated, async (request, response) => {
   const {
+    period,
     contract_type,
     lat_origin,
     lng_origin,
@@ -144,6 +141,7 @@ itinerariesRouter.post('/contract/:id_itinerary', ensureAuthenticated, async (re
     id_user: request.user.id_user,
     id_itinerary: +id_itinerary,
     contract_type,
+    period,
     lat_origin,
     lng_origin,
     formatted_address_origin,
@@ -169,12 +167,13 @@ itinerariesRouter.patch('/contract/status', ensureAuthenticated, async (request,
     user, itinerary
   });
 
+  // cria registro na tabela passengers se status for 'APPROVED'
   const updatePassengerRequestService = new UpdatePassengerRequestService()
-  const passenger = await updatePassengerRequestService.execute({
+  const { passengerRequestWithUpdatedStatus, message } = await updatePassengerRequestService.execute({
     id_passenger_request: passengerRequest.id_passenger_request, status
   });
 
-  return response.json({ data: passenger, message: 'Passageiro aceito com sucesso!' });
+  return response.json({ data: passengerRequestWithUpdatedStatus, message: message });
 });
 
 itinerariesRouter.get('/:id/passengers', ensureAuthenticated, async (request, response) => {
