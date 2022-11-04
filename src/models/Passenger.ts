@@ -38,7 +38,12 @@ class Passenger {
   )
   contract_type: itineraryContractTypes;
 
-  @Column()
+  @Column(
+    {
+      type: "enum",
+      enum: schoolPeriods
+    }
+  )
   period: schoolPeriods;
 
   @Column(
