@@ -51,7 +51,14 @@ itinerariesRouter.post('/search/inradius', ensureAuthenticated, async (request, 
 
   const findItineraryBySearchFiltersService = new FindItineraryBySearchFiltersService()
   const itineraries = await findItineraryBySearchFiltersService.execute({
-    coordinatesFrom, coordinatesTo, orderOption, orderBy, preference_AvulseSeat, preference_A_C, preference_PrioritySeat
+    user_id: request.user.id_user,
+    coordinatesFrom,
+    coordinatesTo,
+    orderOption,
+    orderBy,
+    preference_AvulseSeat,
+    preference_A_C,
+    preference_PrioritySeat
   })
 
   return response.json({ data: itineraries });
