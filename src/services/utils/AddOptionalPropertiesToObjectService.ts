@@ -1,7 +1,9 @@
 import Itinerary from "../../models/Itinerary";
 import Passenger from "../../models/Passenger";
 import PassengerRequest from "../../models/PassengerRequest";
+import Trip from "../../models/Trip";
 import FindItineraryService from "../FindItineraryService";
+import FindUserByVehiclePlateService from "../FindUserByVehiclePlateService";
 import FindUserService from "../FindUserService";
 import FindVehicleService from "../FindVehicleService";
 
@@ -36,8 +38,10 @@ class AddOptionalPropertiesToItineraryObjectService {
   private async addPropertiesPassengerRequest(passengerRequest: PassengerRequest): Promise<PassengerRequest> {
     const findItineraryService = new FindItineraryService()
     const findUserService = new FindUserService()
+    const findUserByVehiclePlateService = new FindUserByVehiclePlateService()
 
     passengerRequest.itinerary = await findItineraryService.execute(passengerRequest.itinerary_id)
+    passengerRequest.itinerary.user = await findUserByVehiclePlateService.execute(passengerRequest.itinerary.vehicle_plate)
     passengerRequest.user = await findUserService.execute(passengerRequest.user_id)
 
     return passengerRequest
@@ -83,6 +87,34 @@ class AddOptionalPropertiesToItineraryObjectService {
     }
 
     return newPassengers
+  }
+
+  // Trip
+  private async addPropertiesTrip(trip: Trip): Promise<Trip> {
+    const findItineraryService = new FindItineraryService()
+    const findVehicleService = new FindVehicleService()
+    const findUserService = new FindUserService()
+
+    trip.itinerary = await findItineraryService.execute(trip.itinerary_id)
+    trip.itinerary.vehicle = await findVehicleService.execute(trip.itinerary.vehicle_plate)
+    trip.itinerary.user = await findUserService.execute(trip.itinerary.vehicle.user_id)
+
+    return trip
+  }
+
+  public async executeSingleTrip(trip: Trip): Promise<Trip> {
+    return this.addPropertiesTrip(trip)
+  }
+
+  public async executeArrTrip(trips: Trip[]): Promise<Trip[]> {
+    let newTrips = trips
+
+    for (let i = 0; i < trips.length; i++) {
+      const trip = trips[i]
+      newTrips[i] = await this.addPropertiesTrip(trip)
+    }
+
+    return newTrips
   }
 }
 
