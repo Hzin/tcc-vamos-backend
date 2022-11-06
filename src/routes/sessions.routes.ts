@@ -20,12 +20,12 @@ sessionsRouter.post('/', async (request, response) => {
 
   const authenticateUserService = new AuthenticateUserService();
 
-  const token = await authenticateUserService.execute({
+  const {token, user} = await authenticateUserService.execute({
     login,
     password,
   });
 
-  return response.json({ message: 'Usuário autenticado com sucesso!', token: token });
+  return response.json({ message: 'Usuário autenticado com sucesso!', token: token, user: user });
 });
 
 sessionsRouter.post('/refresh', async(request, response) => {

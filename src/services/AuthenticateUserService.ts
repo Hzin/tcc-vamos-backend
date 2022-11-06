@@ -14,7 +14,7 @@ interface Request {
 
 interface Response {
   token: string;
-  id_user: string;
+  user: User;
 }
 
 const failedLoginMessage = { message: 'Combinação incorreta de login e senha.', statusCode: 200 }
@@ -53,7 +53,7 @@ class AuthenticateUserService {
       // estratégias de refresh token
     });
 
-    return { token, id_user: user.id_user };
+    return { token, user };
   }
 }
 
