@@ -6,6 +6,7 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
+import AttendanceList from './AttendanceList';
 import Passenger from './Passenger';
 import PassengerRequest from './PassengerRequest';
 import UserSearching from './UsersSearching';
@@ -63,10 +64,13 @@ class User {
   // transportOffers?: TransportOffers[];
 
   @OneToMany(() => PassengerRequest, passengerRequest => passengerRequest.user, { eager: true, cascade: true, nullable: true })
-  passengerRequest?: PassengerRequest[];
+  passenger_request?: PassengerRequest[];
 
   @OneToMany(() => Passenger, passenger => passenger.user, { eager: true, cascade: true, nullable: true })
   passengers?: Passenger[];
+  
+  @OneToMany(() => AttendanceList, attendanceList => attendanceList.user, { eager: true, cascade: true, nullable: true })
+  attendance_lists?: AttendanceList[];
 
   @CreateDateColumn()
   created_at: Date;

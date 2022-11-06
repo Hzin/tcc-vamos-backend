@@ -9,6 +9,7 @@ import {
   ManyToOne,
 } from 'typeorm';
 import { tripStatus } from '../constants/tripStatus';
+import AttendanceList from './AttendanceList';
 import Itinerary from './Itinerary';
 import TripHistory from './TripHistory';
 
@@ -41,6 +42,9 @@ class Trip {
 
   @OneToMany(() => TripHistory, tripHistory => tripHistory.trip)
   trip_histories?: TripHistory[];
+  
+  @OneToMany(() => AttendanceList, attendanceList => attendanceList.trip)
+  attendance_lists?: AttendanceList[];
 
   @CreateDateColumn()
   created_at: Date;
