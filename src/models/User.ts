@@ -57,7 +57,7 @@ class User {
   vehicles?: Vehicle[];
 
   @OneToMany(() => UserSearching, userSearching => userSearching.user, { eager: true, cascade: true, nullable: true })
-  usersSearching?: UserSearching[];
+  users_searching?: UserSearching[];
 
   // unused
   // @OneToMany(() => TransportOffers, transportOffers => transportOffers.user, { eager: true, cascade: true, nullable: true })

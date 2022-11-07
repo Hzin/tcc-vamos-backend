@@ -14,7 +14,7 @@ class UserSearching {
   @PrimaryGeneratedColumn('increment')
   id_search: string;
 
-  @ManyToOne(() => User, user => user.usersSearching)
+  @ManyToOne(() => User, user => user.users_searching)
   @JoinColumn({ name: 'user_id' })
   user: User;
 

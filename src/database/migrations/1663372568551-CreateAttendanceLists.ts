@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner, Table, TableForeignKey, TableIndex } from 'typeorm';
 
 // TODO, está sem model
-export class CreateAttendanceLists1660010491828 implements MigrationInterface {
+export class CreateAttendanceLists1663372568551 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
@@ -29,6 +29,16 @@ export class CreateAttendanceLists1660010491828 implements MigrationInterface {
           {
             name: 'date',
             type: 'date',
+          },
+          {
+            name: 'created_at',
+            type: 'timestamp',
+            default: 'now()',
+          },
+          {
+            name: 'updated_at',
+            type: 'timestamp',
+            default: 'now()',
           },
         ],
       }),
