@@ -7,6 +7,8 @@ import GetItineraryTodaysTripStatusService from './GetItineraryTodaysTripStatusS
 import DateUtils from './utils/Date';
 import AppError from '../errors/AppError';
 import GetItineraryTodaysTripByItineraryId from './GetItineraryTodaysTripByItineraryId';
+import FindItinerariesByDriverUserIdService from './FindItinerariesByDriverUserIdService';
+import FindItinerariesByPassengerUserIdService from './FindItinerariesByPassengerUserIdService';
 
 interface Return {
   itinerary: Itinerary;
@@ -14,8 +16,14 @@ interface Return {
   tripId?: number;
 }
 
+interface Request {
+  id_user: string,
+  tripsType: 'today' | 'not_today',
+  userType: 'driver' | 'passenger'
+}
+
 class GetUserTripsFeedService {
-  public async execute(id_user: string, bringTodaysTrips: boolean): Promise<Return[]> {
+  public async execute({ id_user, tripsType, userType }: Request): Promise<Return[]> {
     const findUserService = new FindUserService();
     const user = await findUserService.execute(id_user);
 
@@ -24,9 +32,19 @@ class GetUserTripsFeedService {
 
     let userItineraries: Itinerary[] = []
 
-    vehicles.forEach(vehicle => {
-      if (vehicle.itineraries) userItineraries.push(...vehicle.itineraries)
-    })
+    switch (userType) {
+      case 'driver':
+        const findItinerariesByDriverUserIdService = new FindItinerariesByDriverUserIdService()
+        userItineraries = await findItinerariesByDriverUserIdService.execute(id_user)
+        break;
+      case 'passenger':
+        const findItinerariesByPassengerUserIdService = new FindItinerariesByPassengerUserIdService()
+        userItineraries = await findItinerariesByPassengerUserIdService.execute(id_user)
+        break;
+      default:
+        throw new AppError('Tipo de usuário inválido para recuperar feed de viagens.')
+        break;
+    }
 
     // today's trips can have its own status
     // like "late", "ongoing"
@@ -45,7 +63,7 @@ class GetUserTripsFeedService {
       if (!itinerary.days_of_week) continue
 
       const isToday = itinerary.days_of_week.split('').at(DateUtils.getTodaysDayOfWeekAsNumberForSplitComparison()) === '1'
-      if (isToday !== bringTodaysTrips) continue
+      if (isToday && (tripsType !== 'today')) continue
 
       const getItineraryTodaysTripStatusService = new GetItineraryTodaysTripStatusService()
       const tripStatus = await getItineraryTodaysTripStatusService.execute(itinerary.id_itinerary.toString())

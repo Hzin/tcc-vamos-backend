@@ -169,7 +169,11 @@ tripsRouter.get(
   ensureAuthenticated,
   async (request, response) => {
     const getUserTripsFeedService = new GetUserTripsFeedService();
-    const userTripsFeed = await getUserTripsFeedService.execute(request.user.id_user, true);
+    const userTripsFeed = await getUserTripsFeedService.execute({
+      id_user: request.user.id_user,
+      tripsType: 'today',
+      userType: 'driver',
+    });
 
     return response.json({ data: userTripsFeed });
   },
@@ -180,7 +184,41 @@ tripsRouter.get(
   ensureAuthenticated,
   async (request, response) => {
     const getUserTripsFeedService = new GetUserTripsFeedService();
-    const userTripsFeed = await getUserTripsFeedService.execute(request.user.id_user, false);
+    const userTripsFeed = await getUserTripsFeedService.execute({
+      id_user: request.user.id_user,
+      tripsType: 'not_today',
+      userType: 'driver',
+    });
+
+    return response.json({ data: userTripsFeed });
+  },
+);
+
+tripsRouter.get(
+  '/feed/passenger/today',
+  ensureAuthenticated,
+  async (request, response) => {
+    const getUserTripsFeedService = new GetUserTripsFeedService();
+    const userTripsFeed = await getUserTripsFeedService.execute({
+      id_user: request.user.id_user,
+      tripsType: 'today',
+      userType: 'passenger',
+    });
+
+    return response.json({ data: userTripsFeed });
+  },
+);
+
+tripsRouter.get(
+  '/feed/passenger/nottoday',
+  ensureAuthenticated,
+  async (request, response) => {
+    const getUserTripsFeedService = new GetUserTripsFeedService();
+    const userTripsFeed = await getUserTripsFeedService.execute({
+      id_user: request.user.id_user,
+      tripsType: 'not_today',
+      userType: 'passenger',
+    });
 
     return response.json({ data: userTripsFeed });
   },
