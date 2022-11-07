@@ -17,6 +17,7 @@ import FindItinerariesExceptUserss from '../services/FindItinerariesExceptUserss
 import AddOptionalPropertiesToObjectService from '../services/utils/AddOptionalPropertiesToObjectService';
 import FindItineraryPendingRequests from '../services/FindItineraryPendingRequests';
 import FindDriverItinerariesOnlyWithPendingRequests from '../services/FindDriverItinerariesOnlyWithPendingRequests';
+import CountItinerariesPendingPassengerRequestsByDriverId from '../services/CountItinerariesPendingPassengerRequestsByDriverId';
 
 const itinerariesRouter = Router();
 
@@ -187,6 +188,13 @@ itinerariesRouter.get('/:id/contracts/pending', ensureAuthenticated, async (requ
   pendingRequests = await addOptionalPropertiesToObjectService.executeArrPassengerRequest(pendingRequests)
 
   return response.json({ data: pendingRequests });
+})
+
+itinerariesRouter.get('/driver/contracts/pending/count', ensureAuthenticated, async (request, response) => {
+  const countItinerariesPendingPassengerRequestsByDriverId = new CountItinerariesPendingPassengerRequestsByDriverId()
+  let pendingContractsCount = await countItinerariesPendingPassengerRequestsByDriverId.execute({ id_user: request.user.id_user });
+
+  return response.json({ data: pendingContractsCount });
 })
 
 itinerariesRouter.get('/driver/:id/onlypendingrequests', ensureAuthenticated, async (request, response) => {
