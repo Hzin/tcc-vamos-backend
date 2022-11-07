@@ -190,13 +190,6 @@ itinerariesRouter.get('/:id/contracts/pending', ensureAuthenticated, async (requ
   return response.json({ data: pendingRequests });
 })
 
-itinerariesRouter.get('/driver/contracts/pending/count', ensureAuthenticated, async (request, response) => {
-  const countItinerariesPendingPassengerRequestsByDriverId = new CountItinerariesPendingPassengerRequestsByDriverId()
-  let pendingContractsCount = await countItinerariesPendingPassengerRequestsByDriverId.execute({ id_user: request.user.id_user });
-
-  return response.json({ data: pendingContractsCount });
-})
-
 itinerariesRouter.get('/driver/:id/onlypendingrequests', ensureAuthenticated, async (request, response) => {
   const { id } = request.params;
 
@@ -207,6 +200,13 @@ itinerariesRouter.get('/driver/:id/onlypendingrequests', ensureAuthenticated, as
   itineraries = await addOptionalPropertiesToObjectService.executeArrItinerary(itineraries)
 
   return response.json({ data: itineraries });
+})
+
+itinerariesRouter.get('/driver/contracts/pending/count', ensureAuthenticated, async (request, response) => {
+  const countItinerariesPendingPassengerRequestsByDriverId = new CountItinerariesPendingPassengerRequestsByDriverId()
+  let pendingContractsCount = await countItinerariesPendingPassengerRequestsByDriverId.execute({ id_user: request.user.id_user });
+
+  return response.json({ data: pendingContractsCount });
 })
 
 export default itinerariesRouter;

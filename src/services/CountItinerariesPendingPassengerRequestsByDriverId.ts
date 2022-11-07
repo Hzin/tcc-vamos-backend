@@ -16,7 +16,9 @@ class CountItinerariesPendingPassengerRequestsByDriverId {
     let count = 0
 
     itineraries.forEach(itinerary => {
-      if (itinerary.passengerRequests?.length) count += itinerary.passengerRequests?.length
+      if (!itinerary.passengerRequests) return
+      
+      count += itinerary.passengerRequests?.length
     });
 
     return count

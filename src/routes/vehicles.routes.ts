@@ -20,6 +20,7 @@ import FindVehiclesService from '../services/FindVehiclesService';
 import DeleteVehicleService from '../services/DeleteVehicleService';
 import CheckIfVehicleCanCreateItineraries from '../services/CheckIfVehicleCanCreateItineraries';
 import ensureAdmin from '../middlewares/ensureAdmin';
+import CountVehiclesPendingDocuments from '../services/CountVehiclesPendingDocuments';
 
 const vehiclesRouter = Router();
 
@@ -287,6 +288,13 @@ vehiclesRouter.get('/documents/pending', ensureAdmin, async (request, response) 
   return response.json({
     data: documents
   })
+})
+
+vehiclesRouter.get('/documents/pending/count', ensureAdmin, async (request, response) => {
+  const countVehiclesPendingDocuments = new CountVehiclesPendingDocuments()
+  const pendingVehiclesDocumentsCount = await countVehiclesPendingDocuments.execute();
+
+  return response.json({ data: pendingVehiclesDocumentsCount });
 })
 
 export default vehiclesRouter;

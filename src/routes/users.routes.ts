@@ -24,7 +24,7 @@ interface userWithoutSensitiveInfo {
   avatar_image: string;
 }
 
-usersRouter.get('/is_admin', ensureAdmin, async (request, response) => {
+usersRouter.get('/admin/check', ensureAdmin, async (request, response) => {
   return response.json({ data: true });
 });
 
