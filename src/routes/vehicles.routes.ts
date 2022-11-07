@@ -171,10 +171,10 @@ vehiclesRouter.post('/document/search', ensureAuthenticated, async (request, res
     ("" + document_type).toUpperCase(),
   );
 
-  const vehicleDocumentPath = `${vehiclesRoutesDocumentPostPath}/${vehicleDocument.path}`
+  // const vehicleDocumentPath = `${vehiclesRoutesDocumentPostPath}/${vehicleDocument.path}`
 
   return response.json({
-    path: vehicleDocumentPath,
+    path: vehicleDocument.path,
     status: vehicleDocument.status
   });
 })

@@ -30,7 +30,8 @@ class UploadVehiclePictureFileService {
     const updateVehiclePictureService = new UpdateVehiclePictureService();
     const vehicle = await updateVehiclePictureService.execute({ vehicle_plate, path: savedFileName })
 
-    return path.join(vehiclesRoutesPicturesPostPath, vehicle.picture)
+    // return path.join(vehiclesRoutesPicturesPostPath, vehicle.picture)
+    return vehicle.picture
   }
 }
 
