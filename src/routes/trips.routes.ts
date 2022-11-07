@@ -165,7 +165,7 @@ tripsRouter.get(
 );
 
 tripsRouter.get(
-  '/feed/today',
+  '/feed/driver/today',
   ensureAuthenticated,
   async (request, response) => {
     const getUserTripsFeedService = new GetUserTripsFeedService();
@@ -176,7 +176,7 @@ tripsRouter.get(
 );
 
 tripsRouter.get(
-  '/feed/nottoday',
+  '/feed/driver/nottoday',
   ensureAuthenticated,
   async (request, response) => {
     const getUserTripsFeedService = new GetUserTripsFeedService();

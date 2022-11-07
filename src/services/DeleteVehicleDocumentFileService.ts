@@ -21,7 +21,7 @@ class DeleteVehicleDocumentFileService {
     const findVehicleDocumentsByDocumentTypeService = new FindVehicleDocumentsByDocumentTypeService();
     const vehicleDocument = await findVehicleDocumentsByDocumentTypeService.execute(vehicle_plate, document_type);
 
-    console.log(vehicleDocument)
+    // console.log(vehicleDocument)
 
     await vehicleDocumentsRepository.remove(vehicleDocument)
 
