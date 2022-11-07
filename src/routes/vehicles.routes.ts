@@ -168,7 +168,7 @@ vehiclesRouter.post('/document/search', ensureAuthenticated, async (request, res
 
   const vehicleDocument = await findVehicleDocumentsByDocumentTypeService.execute(
     vehicle_plate,
-    document_type,
+    ("" + document_type).toUpperCase(),
   );
 
   const vehicleDocumentPath = `${vehiclesRoutesDocumentPostPath}/${vehicleDocument.path}`
@@ -185,7 +185,7 @@ vehiclesRouter.patch('/document/status', ensureAdmin, async (request, response) 
   const updateVehicleDocumentStatusService = new UpdateVehicleDocumentStatusService();
 
   await updateVehicleDocumentStatusService.execute({
-    vehicle_plate, document_type, status
+    vehicle_plate, document_type: ("" + document_type).toUpperCase(), status
   });
 
   return response.json({ message: 'Status do documento do veículo atualizado com sucesso!' });
@@ -202,7 +202,7 @@ vehiclesRouter.post('/document/upload', ensureAuthenticated, uploadDocument.sing
   const uploadVehicleDocumentFileService = new UploadVehicleDocumentFileService();
   await uploadVehicleDocumentFileService.execute({
     vehicle_plate,
-    document_type,
+    document_type: ("" + document_type).toUpperCase(),
     fileName: request.file.filename,
     originalFileName: request.file.originalname
   });
@@ -219,7 +219,7 @@ vehiclesRouter.patch('/document/delete', ensureAuthenticated, async (request, re
 
   await deleteVehicleDocumentFileService.execute({
     vehicle_plate,
-    document_type,
+    document_type: ("" + document_type).toUpperCase(),
   });
 
   return response.json({
