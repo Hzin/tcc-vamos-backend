@@ -15,6 +15,8 @@ import GetItineraryTodaysTripStatusService from '../services/GetItineraryTodaysT
 import { tripStatus } from '../constants/tripStatus';
 import FindTripsServiceByItineraryId from '../services/FindTripsServiceByItineraryId';
 import FindTodaysTripByItineraryIdService from '../services/FindTodaysTripByItineraryIdService';
+import FindItineraryTrips from '../services/FindItineraryTrips';
+import AddOptionalPropertiesToItineraryObjectService from '../services/utils/AddOptionalPropertiesToObjectService';
 
 const tripsRouter = Router();
 
@@ -28,7 +30,10 @@ interface userWithoutSensitiveInfo {
 tripsRouter.get('/list', async (request, response) => {
   const tripsRepository = getRepository(Trip);
 
-  const trips = await tripsRepository.find();
+  let trips = await tripsRepository.find();
+
+  const addOptionalPropertiesToObjectService = new AddOptionalPropertiesToItineraryObjectService()
+  trips = await addOptionalPropertiesToObjectService.executeArrTrip(trips)
 
   return response.json({ data: trips });
 });
@@ -37,17 +42,34 @@ tripsRouter.get('/:id', ensureAuthenticated, async (request, response) => {
   const { id } = request.params;
 
   const findTripService = new FindTripService();
+  let trip = await findTripService.execute(id);
 
-  const trip = await findTripService.execute(id);
+  const addOptionalPropertiesToObjectService = new AddOptionalPropertiesToItineraryObjectService()
+  trip = await addOptionalPropertiesToObjectService.executeSingleTrip(trip)
 
   return response.json({ data: trip });
 });
 
-tripsRouter.get('/itinerary/:id_itinerary', ensureAuthenticated, async (request, response) => {
-  const { id_itinerary } = request.params;
+tripsRouter.get('/itinerary/:id', ensureAuthenticated, async (request, response) => {
+  const { id } = request.params;
+
+  const findItineraryTrips = new FindItineraryTrips();
+  let trips = await findItineraryTrips.execute(id);
+
+  const addOptionalPropertiesToObjectService = new AddOptionalPropertiesToItineraryObjectService()
+  trips = await addOptionalPropertiesToObjectService.executeArrTrip(trips)
+
+  return response.json({ data: trips });
+});
+
+tripsRouter.get('today/itinerary/:id', ensureAuthenticated, async (request, response) => {
+  const { id } = request.params;
 
   const findTodaysTripByItineraryIdService = new FindTodaysTripByItineraryIdService();
-  const trip = await findTodaysTripByItineraryIdService.execute(id_itinerary)
+  let trip = await findTodaysTripByItineraryIdService.execute(id)
+
+  const addOptionalPropertiesToObjectService = new AddOptionalPropertiesToItineraryObjectService()
+  trip = await addOptionalPropertiesToObjectService.executeSingleTrip(trip)
 
   return response.json({ data: trip });
 });
@@ -103,15 +125,15 @@ tripsRouter.patch('/update/status', ensureAuthenticated, async (request, respons
 
 // TODO, incluir filtros dependendo de status
 tripsRouter.get(
-  '/user/:id_user',
+  '/user/:id',
   ensureAuthenticated,
   async (request, response) => {
-    const { id_user } = request.params;
+    const { id } = request.params;
 
     const checkIfUserHasVehiclesService = new CheckIfUserHasVehiclesService();
 
     const userHasVehicles = await checkIfUserHasVehiclesService.execute({
-      id_user,
+      id_user: id,
     });
 
     return response.json({ result: userHasVehicles });
@@ -143,22 +165,60 @@ tripsRouter.get(
 );
 
 tripsRouter.get(
-  '/feed/today',
+  '/feed/driver/today',
   ensureAuthenticated,
   async (request, response) => {
     const getUserTripsFeedService = new GetUserTripsFeedService();
-    const userTripsFeed = await getUserTripsFeedService.execute(request.user.id_user, true);
+    const userTripsFeed = await getUserTripsFeedService.execute({
+      id_user: request.user.id_user,
+      tripsType: 'today',
+      userType: 'driver',
+    });
 
     return response.json({ data: userTripsFeed });
   },
 );
 
 tripsRouter.get(
-  '/feed/nottoday',
+  '/feed/driver/nottoday',
   ensureAuthenticated,
   async (request, response) => {
     const getUserTripsFeedService = new GetUserTripsFeedService();
-    const userTripsFeed = await getUserTripsFeedService.execute(request.user.id_user, false);
+    const userTripsFeed = await getUserTripsFeedService.execute({
+      id_user: request.user.id_user,
+      tripsType: 'not_today',
+      userType: 'driver',
+    });
+
+    return response.json({ data: userTripsFeed });
+  },
+);
+
+tripsRouter.get(
+  '/feed/passenger/today',
+  ensureAuthenticated,
+  async (request, response) => {
+    const getUserTripsFeedService = new GetUserTripsFeedService();
+    const userTripsFeed = await getUserTripsFeedService.execute({
+      id_user: request.user.id_user,
+      tripsType: 'today',
+      userType: 'passenger',
+    });
+
+    return response.json({ data: userTripsFeed });
+  },
+);
+
+tripsRouter.get(
+  '/feed/passenger/nottoday',
+  ensureAuthenticated,
+  async (request, response) => {
+    const getUserTripsFeedService = new GetUserTripsFeedService();
+    const userTripsFeed = await getUserTripsFeedService.execute({
+      id_user: request.user.id_user,
+      tripsType: 'not_today',
+      userType: 'passenger',
+    });
 
     return response.json({ data: userTripsFeed });
   },

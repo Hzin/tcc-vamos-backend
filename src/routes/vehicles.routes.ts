@@ -20,6 +20,7 @@ import FindVehiclesService from '../services/FindVehiclesService';
 import DeleteVehicleService from '../services/DeleteVehicleService';
 import CheckIfVehicleCanCreateItineraries from '../services/CheckIfVehicleCanCreateItineraries';
 import ensureAdmin from '../middlewares/ensureAdmin';
+import CountVehiclesPendingDocuments from '../services/CountVehiclesPendingDocuments';
 
 const vehiclesRouter = Router();
 
@@ -167,13 +168,13 @@ vehiclesRouter.post('/document/search', ensureAuthenticated, async (request, res
 
   const vehicleDocument = await findVehicleDocumentsByDocumentTypeService.execute(
     vehicle_plate,
-    document_type,
+    ("" + document_type).toUpperCase(),
   );
 
-  const vehicleDocumentPath = `${vehiclesRoutesDocumentPostPath}/${vehicleDocument.path}`
+  // const vehicleDocumentPath = `${vehiclesRoutesDocumentPostPath}/${vehicleDocument.path}`
 
   return response.json({
-    path: vehicleDocumentPath,
+    path: vehicleDocument.path,
     status: vehicleDocument.status
   });
 })
@@ -184,7 +185,7 @@ vehiclesRouter.patch('/document/status', ensureAdmin, async (request, response) 
   const updateVehicleDocumentStatusService = new UpdateVehicleDocumentStatusService();
 
   await updateVehicleDocumentStatusService.execute({
-    vehicle_plate, document_type, status
+    vehicle_plate, document_type: ("" + document_type).toUpperCase(), status
   });
 
   return response.json({ message: 'Status do documento do veículo atualizado com sucesso!' });
@@ -201,7 +202,7 @@ vehiclesRouter.post('/document/upload', ensureAuthenticated, uploadDocument.sing
   const uploadVehicleDocumentFileService = new UploadVehicleDocumentFileService();
   await uploadVehicleDocumentFileService.execute({
     vehicle_plate,
-    document_type,
+    document_type: ("" + document_type).toUpperCase(),
     fileName: request.file.filename,
     originalFileName: request.file.originalname
   });
@@ -218,7 +219,7 @@ vehiclesRouter.patch('/document/delete', ensureAuthenticated, async (request, re
 
   await deleteVehicleDocumentFileService.execute({
     vehicle_plate,
-    document_type,
+    document_type: ("" + document_type).toUpperCase(),
   });
 
   return response.json({
@@ -287,6 +288,13 @@ vehiclesRouter.get('/documents/pending', ensureAdmin, async (request, response) 
   return response.json({
     data: documents
   })
+})
+
+vehiclesRouter.get('/documents/pending/count', ensureAdmin, async (request, response) => {
+  const countVehiclesPendingDocuments = new CountVehiclesPendingDocuments()
+  const pendingVehiclesDocumentsCount = await countVehiclesPendingDocuments.execute();
+
+  return response.json({ data: pendingVehiclesDocumentsCount });
 })
 
 export default vehiclesRouter;

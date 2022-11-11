@@ -5,6 +5,9 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
+import { itineraryContractTypes } from '../constants/itineraryContractTypes';
+import { passengerStatusTypes } from '../constants/passengerStatusTypes';
+import { schoolPeriods } from '../constants/schoolPeriods';
 import Itinerary from './Itinerary';
 import User from './User';
 
@@ -27,14 +30,48 @@ class Passenger {
   @Column()
   user_id: string;
 
-  @Column()
-  address: string;
+  @Column(
+    {
+      type: "enum",
+      enum: itineraryContractTypes
+    }
+  )
+  contract_type: itineraryContractTypes;
+
+  @Column(
+    {
+      type: "enum",
+      enum: schoolPeriods
+    }
+  )
+  period: schoolPeriods;
+
+  @Column(
+    {
+      type: "enum",
+      enum: passengerStatusTypes,
+      default: passengerStatusTypes.ongoing,
+    }
+  )
+  status: passengerStatusTypes;
 
   @Column()
-  latitude_address: number;
+  lat_origin: number;
 
   @Column()
-  longitude_address: number;
+  lng_origin: number;
+
+  @Column()
+  formatted_address_origin: string;
+
+  @Column()
+  lat_destination: number;
+
+  @Column()
+  lng_destination: number;
+
+  @Column()
+  formatted_address_destination: string;
 
   @Column()
   payment_status: boolean;
@@ -44,9 +81,6 @@ class Passenger {
 
   @Column()
   end_date: Date;
-
-  @Column()
-  is_single: boolean;
 }
 
 export default Passenger;

@@ -1,47 +1,89 @@
 import { Router } from 'express';
-import { getRepository } from 'typeorm';
 
-import Itinerary from '../models/Itinerary';
-import CalculateDistanceBetweenCoords from '../services/CalculateDistanceBetweenCoords';
+import ensureAuthenticated from '../middlewares/ensureAuthenticated';
+import ensureAdmin from '../middlewares/ensureAdmin';
+
 import CreateItineraryService from '../services/CreateItineraryService';
-
-import maxRadius from '../constants/mapRadiusConfig';
-import { SortArrayOfObjects } from '../services/SortArrayOfObjects';
-
-import CreatePassengerRequest from '../services/CreatePassengerRequest';
-import CreatePassenger from '../services/CreatePassenger';
 import FindItineraryService from '../services/FindItineraryService';
-import AddOptionalPropertiesToItineraryObjectService from '../services/AddOptionalPropertiesToItineraryObjectService';
+import CreatePassengerRequestService from '../services/CreatePassengerRequestService';
+import UpdatePassengerRequestService from '../services/UpdatePassengerRequestService';
+import FindPassengerRequestServiceByFields from '../services/FindPassengerRequestServiceByFields';
+import FindUserService from '../services/FindUserService';
+import FindItinerariesByDriverUserIdService from '../services/FindItinerariesByDriverUserIdService';
+import FindItinerariesByPassengerUserIdService from '../services/FindItinerariesByPassengerUserIdService';
+import FindItineraryBySearchFiltersService from '../services/FindItineraryBySearchFiltersService';
+import FindItinerariesExceptUserss from '../services/FindItinerariesExceptUserss';
+
+import AddOptionalPropertiesToObjectService from '../services/utils/AddOptionalPropertiesToObjectService';
+import FindItineraryPendingRequests from '../services/FindItineraryPendingRequests';
+import FindDriverItinerariesOnlyWithPendingRequests from '../services/FindDriverItinerariesOnlyWithPendingRequests';
+import CountItinerariesPendingPassengerRequestsByDriverId from '../services/CountItinerariesPendingPassengerRequestsByDriverId';
 
 const itinerariesRouter = Router();
 
-itinerariesRouter.get('/', async (request, response) => {
-  const itinerariesRepository = getRepository(Itinerary);
-
-  let itineraries = await itinerariesRepository.find();
-
-  const addOptionalPropertiesToItineraryObjectService = new AddOptionalPropertiesToItineraryObjectService()
-
-  for (let i = 0; i < itineraries.length; i++) {
-    itineraries[i] = await addOptionalPropertiesToItineraryObjectService.execute(itineraries[i])
-  }
+// itinerariesRouter.get('/', ensureAdmin, async (request, response) => {
+itinerariesRouter.get('/', ensureAuthenticated, async (request, response) => {
+  const findItinerariesExceptUserss = new FindItinerariesExceptUserss()
+  const itineraries = await findItinerariesExceptUserss.execute(request.user.id_user)
 
   return response.json({ data: itineraries });
 })
 
-itinerariesRouter.get('/:id', async (request, response) => {
+itinerariesRouter.get('/:id', ensureAuthenticated, async (request, response) => {
   const { id } = request.params
 
   const findItineraryService = new FindItineraryService();
   let itinerary = await findItineraryService.execute(id)
 
-  const addOptionalPropertiesToItineraryObjectService = new AddOptionalPropertiesToItineraryObjectService()
-  itinerary = await addOptionalPropertiesToItineraryObjectService.execute(itinerary)
+  const addOptionalPropertiesToObjectService = new AddOptionalPropertiesToObjectService()
+  itinerary = await addOptionalPropertiesToObjectService.executeSingleItinerary(itinerary)
 
   return response.json({ data: itinerary });
 })
 
-itinerariesRouter.post('/', async (request, response) => {
+itinerariesRouter.post('/search/inradius', ensureAuthenticated, async (request, response) => {
+  const { coordinatesFrom, coordinatesTo, orderOption, orderBy, preference_AvulseSeat, preference_A_C, preference_PrioritySeat } = request.body;
+
+  const findItineraryBySearchFiltersService = new FindItineraryBySearchFiltersService()
+  const itineraries = await findItineraryBySearchFiltersService.execute({
+    user_id: request.user.id_user,
+    coordinatesFrom,
+    coordinatesTo,
+    orderOption,
+    orderBy,
+    preference_AvulseSeat,
+    preference_A_C,
+    preference_PrioritySeat
+  })
+
+  return response.json({ data: itineraries });
+});
+
+itinerariesRouter.get('/driver/:id', ensureAuthenticated, async (request, response) => {
+  const { id } = request.params
+
+  const findItinerariesByDriverUserIdService = new FindItinerariesByDriverUserIdService();
+  let itineraries = await findItinerariesByDriverUserIdService.execute(id)
+
+  const addOptionalPropertiesToObjectService = new AddOptionalPropertiesToObjectService()
+  itineraries = await addOptionalPropertiesToObjectService.executeArrItinerary(itineraries)
+
+  return response.json({ data: itineraries });
+})
+
+itinerariesRouter.get('/passenger/:id', ensureAuthenticated, async (request, response) => {
+  const { id } = request.params
+
+  const findItinerariesByPassengerUserIdService = new FindItinerariesByPassengerUserIdService();
+  let itineraries = await findItinerariesByPassengerUserIdService.execute(id)
+
+  const addOptionalPropertiesToObjectService = new AddOptionalPropertiesToObjectService()
+  itineraries = await addOptionalPropertiesToObjectService.executeArrItinerary(itineraries)
+
+  return response.json({ data: itineraries });
+})
+
+itinerariesRouter.post('/', ensureAuthenticated, async (request, response) => {
   const {
     vehicle_plate,
     days_of_week,
@@ -81,118 +123,90 @@ itinerariesRouter.post('/', async (request, response) => {
   return response.status(201).json({ data: itinerary, message: 'Itinerário criado com sucesso!' });
 });
 
-itinerariesRouter.post('/search/inradius', async (request, response) => {
-  const { coordinatesFrom, coordinatesTo, orderOption, orderBy, preference_AvulseSeat, preference_A_C, preference_PrioritySeat } = request.body;
-
-  const itinerariesRepository = getRepository(Itinerary);
-
-  const lat_from: number = +coordinatesFrom.lat;
-  const lng_from: number = +coordinatesFrom.lng;
-  const lat_to: number = +coordinatesTo.lat;
-  const lng_to: number = +coordinatesTo.lng;
-
-  const itineraries = await itinerariesRepository.find();
-
-  let itinerariesFiltered = itineraries.filter(itinerary => {
-    if (!itinerary.neighborhoods_served || !itinerary.destinations) return false
-
-    var distanceOrigins = 0;
-    var distanceDestinations = 0;
-
-    for (const neighborhoodServed of itinerary.neighborhoods_served) {
-      let lat2: number = +neighborhoodServed.lat;
-      let lng2: number = +neighborhoodServed.lng;
-      distanceOrigins = CalculateDistanceBetweenCoords({ lat1: lat_from, lng1: lng_from, lat2, lng2 });
-      if (distanceOrigins <= maxRadius) break;
-    }
-
-    for (const destination of itinerary.destinations) {
-      let lat2: number = +destination.lat;
-      let lng2: number = +destination.lng;
-      distanceDestinations = CalculateDistanceBetweenCoords({ lat1: lat_to, lng1: lng_to, lat2, lng2 });
-      if (distanceDestinations <= maxRadius) break;
-    }
-
-    return (distanceOrigins <= maxRadius && distanceDestinations <= maxRadius);
-  });
-
-  switch (orderOption) {
-    case "monthly_price":
-      itinerariesFiltered = SortArrayOfObjects(itinerariesFiltered, 'monthly_price', orderBy ? orderBy : 'ascending')
-      break;
-    case "daily_price":
-      itinerariesFiltered = SortArrayOfObjects(itinerariesFiltered, 'daily_price', orderBy ? orderBy : 'ascending')
-      break;
-    // case "rating":
-    //   itinerariesFiltered = SortArrayOfObjects(itinerariesFiltered, 'rating', orderBy ? orderBy : 'ascending')
-    //   break;
-    case "available_seats":
-      itinerariesFiltered = SortArrayOfObjects(itinerariesFiltered, 'available_seats', orderBy ? orderBy : 'ascending')
-      break;
-  }
-
-  const addOptionalPropertiesToItineraryObjectService = new AddOptionalPropertiesToItineraryObjectService()
-
-  for (let i = 0; i < itinerariesFiltered.length; i++) {
-    itinerariesFiltered[i] = await addOptionalPropertiesToItineraryObjectService.execute(itinerariesFiltered[i])
-  }
-
-  return response.json({ data: itinerariesFiltered });
-});
-
-itinerariesRouter.post('/request', async (request, response) => {
+// cria registro na tabela passenger_requests
+itinerariesRouter.post('/contract/:id_itinerary', ensureAuthenticated, async (request, response) => {
   const {
-    user_id,
-    itinerary_id,
-    address,
-    latitude_address,
-    longitude_address,
-    is_single,
+    period,
+    contract_type,
+    lat_origin,
+    lng_origin,
+    formatted_address_origin,
+    lat_destination,
+    lng_destination,
+    formatted_address_destination,
   } = request.body;
 
-  const solicitacao = await CreatePassengerRequest({
-    user_id,
-    itinerary_id,
-    address,
-    latitude_address,
-    longitude_address,
-    is_single,
-  });
+  const { id_itinerary } = request.params
 
-  return response.status(201).json({ data: solicitacao, message: 'Solicitação enviada com sucesso!' });
+  const createPassengerRequestService = new CreatePassengerRequestService()
+  const passengerRequest = await createPassengerRequestService.execute({
+    id_user: request.user.id_user,
+    id_itinerary: +id_itinerary,
+    contract_type,
+    period,
+    lat_origin,
+    lng_origin,
+    formatted_address_origin,
+    lat_destination,
+    lng_destination,
+    formatted_address_destination,
+  })
+
+  return response.json({ data: passengerRequest, message: 'Solicitação enviada com sucesso!' });
 });
 
-itinerariesRouter.post('/accept-user', async (request, response) => {
-  const {
-    user_id,
-    itinerary_id,
-    address,
-    latitude_address,
-    longitude_address,
-    is_single
-  } = request.body;
+itinerariesRouter.patch('/contract/status', ensureAuthenticated, async (request, response) => {
+  const { id_user, id_itinerary, status } = request.body;
 
-  const passenger = await CreatePassenger({
-    user_id,
-    itinerary_id,
-    address,
-    latitude_address,
-    longitude_address,
-    is_single,
+  const findUserService = new FindUserService()
+  const user = await findUserService.execute(id_user);
+
+  const findItineraryService = new FindItineraryService()
+  const itinerary = await findItineraryService.execute(id_itinerary);
+
+  const findPassengerRequestServiceByFields = new FindPassengerRequestServiceByFields()
+  const passengerRequest = await findPassengerRequestServiceByFields.execute({
+    user, itinerary
   });
 
-  return response.status(201).json({ data: passenger, message: 'Usuário aceito com sucesso!' });
+  // cria registro na tabela passengers se status for 'APPROVED'
+  const updatePassengerRequestService = new UpdatePassengerRequestService()
+  const { passengerRequestWithUpdatedStatus, message } = await updatePassengerRequestService.execute({
+    id_passenger_request: passengerRequest.id_passenger_request, status
+  });
+
+  return response.json({ data: passengerRequestWithUpdatedStatus, message: message });
 });
 
-itinerariesRouter.get('/:id/passengers', async (request, response) => {
+itinerariesRouter.get('/:id/contracts/pending', ensureAuthenticated, async (request, response) => {
   const { id } = request.params;
-  const itinerariesRepository = getRepository(Itinerary);
 
-  const itinerary = await itinerariesRepository.findOneOrFail(id);
+  const findItineraryPendingRequests = new FindItineraryPendingRequests()
+  let pendingRequests = await findItineraryPendingRequests.execute(id);
 
-  const passengers = itinerary.passengers;
+  const addOptionalPropertiesToObjectService = new AddOptionalPropertiesToObjectService()
+  pendingRequests = await addOptionalPropertiesToObjectService.executeArrPassengerRequest(pendingRequests)
 
-  return response.json({ data: passengers });
+  return response.json({ data: pendingRequests });
+})
+
+itinerariesRouter.get('/driver/:id/onlypendingrequests', ensureAuthenticated, async (request, response) => {
+  const { id } = request.params;
+
+  const findDriverItinerariesOnlyWithPendingRequests = new FindDriverItinerariesOnlyWithPendingRequests()
+  let itineraries = await findDriverItinerariesOnlyWithPendingRequests.execute(id);
+
+  const addOptionalPropertiesToObjectService = new AddOptionalPropertiesToObjectService()
+  itineraries = await addOptionalPropertiesToObjectService.executeArrItinerary(itineraries)
+
+  return response.json({ data: itineraries });
+})
+
+itinerariesRouter.get('/driver/contracts/pending/count', ensureAuthenticated, async (request, response) => {
+  const countItinerariesPendingPassengerRequestsByDriverId = new CountItinerariesPendingPassengerRequestsByDriverId()
+  let pendingContractsCount = await countItinerariesPendingPassengerRequestsByDriverId.execute({ id_user: request.user.id_user });
+
+  return response.json({ data: pendingContractsCount });
 })
 
 export default itinerariesRouter;

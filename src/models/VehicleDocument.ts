@@ -10,6 +10,7 @@ import {
   ManyToOne,
 } from 'typeorm';
 import { vehicleDocumentStatus } from '../constants/vehicleDocumentStatus';
+import { vehicleDocumentTypes } from '../constants/vehicleDocumentTypes';
 import Vehicle from './Vehicle';
 
 @Entity('vehicles_documents')
@@ -24,8 +25,13 @@ class VehicleDocument {
   @Column()
   vehicle_plate: string;
 
-  @Column()
-  document_type: string;
+  @Column(
+    {
+      type: "enum",
+      enum: vehicleDocumentTypes,
+    }
+  )
+  document_type: vehicleDocumentTypes;
 
   @Column({ nullable: true })
   path: string;
@@ -34,10 +40,10 @@ class VehicleDocument {
     {
       type: "enum",
       enum: vehicleDocumentStatus,
-      nullable: true
+      default: vehicleDocumentStatus.pending
     }
   )
-  status: string;
+  status: vehicleDocumentStatus;
 
   @CreateDateColumn()
   created_at: Date;

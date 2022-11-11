@@ -5,6 +5,11 @@ import {
   TableForeignKey,
   TableIndex,
 } from 'typeorm';
+import { itineraryContractTypes } from '../../constants/itineraryContractTypes';
+import { passengerStatusTypes } from '../../constants/passengerStatusTypes';
+import { schoolPeriods } from '../../constants/schoolPeriods';
+
+import Utils from '../../services/utils/Utils';
 
 export class CreatePassengers1660010452826 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -28,16 +33,44 @@ export class CreatePassengers1660010452826 implements MigrationInterface {
             type: 'uuid',
           },
           {
-            name: 'address',
+            name: 'contract_type',
+            type: 'enum',
+            enum: Utils.convertEnumValuesToStringArray(itineraryContractTypes)
+          },
+          {
+            name: 'period',
+            type: 'enum',
+            enum: Utils.convertEnumValuesToStringArray(schoolPeriods)
+          },
+          {
+            name: 'status',
+            type: 'enum',
+            enum: Utils.convertEnumValuesToStringArray(passengerStatusTypes),
+            // default: passengerStatusTypes.ongoing.toString()
+          },
+          {
+            name: 'lat_origin',
+            type: 'numeric',
+          },
+          {
+            name: 'lng_origin',
+            type: 'numeric',
+          },
+          {
+            name: 'formatted_address_origin',
             type: 'varchar',
           },
           {
-            name: 'latitude_address',
+            name: 'lat_destination',
             type: 'numeric',
           },
           {
-            name: 'longitude_address',
+            name: 'lng_destination',
             type: 'numeric',
+          },
+          {
+            name: 'formatted_address_destination',
+            type: 'varchar',
           },
           {
             name: 'payment_status',
@@ -53,10 +86,6 @@ export class CreatePassengers1660010452826 implements MigrationInterface {
             type: 'date',
             isNullable: true
           },
-          {
-            name: 'is_single',
-            type: 'boolean',
-          }
         ],
       }),
     );

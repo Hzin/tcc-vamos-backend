@@ -1,11 +1,8 @@
-export const SortArrayOfObjects = <T>(
-  data: T[],
-  keyToSort: keyof T,
-  direction: 'ascending' | 'descending' | 'none',
-) => {
+export const SortArrayOfObjects = <T>(data: T[], keyToSort: keyof T, direction: 'ascending' | 'descending' | 'none', ) => {
   if (direction === 'none') {
     return data
   }
+
   const compare = (objectA: T, objectB: T) => {
     const valueA = objectA[keyToSort]
     const valueB = objectB[keyToSort]

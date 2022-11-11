@@ -6,6 +6,12 @@ import {
   TableIndex,
 } from 'typeorm';
 
+import { itineraryContractTypes } from '../../constants/itineraryContractTypes';
+import { passengerRequestStatusTypes } from '../../constants/passengerRequestStatusTypes';
+import { schoolPeriods } from '../../constants/schoolPeriods';
+
+import Utils from '../../services/utils/Utils';
+
 export class CreatePassengersRequests1662081949950
   implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -14,7 +20,7 @@ export class CreatePassengersRequests1662081949950
         name: 'passengers_requests',
         columns: [
           {
-            name: 'id_request',
+            name: 'id_passenger_request',
             type: 'integer',
             isPrimary: true,
             isGenerated: true,
@@ -29,9 +35,20 @@ export class CreatePassengersRequests1662081949950
             type: 'uuid',
           },
           {
+            name: 'contract_type',
+            type: 'enum',
+            enum: Utils.convertEnumValuesToStringArray(itineraryContractTypes)
+          },
+          {
+            name: 'period',
+            type: 'enum',
+            enum: Utils.convertEnumValuesToStringArray(schoolPeriods)
+          },
+          {
             name: 'status',
             type: 'enum',
-            enum: ['pending', 'accepted', 'rejected'],
+            enum: Utils.convertEnumValuesToStringArray(passengerRequestStatusTypes),
+            // default: passengerRequestStatusTypes.pending.toString()
           },
           {
             name: 'created_at',
@@ -39,20 +56,28 @@ export class CreatePassengersRequests1662081949950
             default: 'now()',
           },
           {
-            name: 'address',
+            name: 'lat_origin',
+            type: 'numeric',
+          },
+          {
+            name: 'lng_origin',
+            type: 'numeric',
+          },
+          {
+            name: 'formatted_address_origin',
             type: 'varchar',
           },
           {
-            name: 'latitude_address',
+            name: 'lat_destination',
             type: 'numeric',
           },
           {
-            name: 'longitude_address',
+            name: 'lng_destination',
             type: 'numeric',
           },
           {
-            name: 'is_single',
-            type: 'boolean',
+            name: 'formatted_address_destination',
+            type: 'varchar',
           }
         ],
       }),
