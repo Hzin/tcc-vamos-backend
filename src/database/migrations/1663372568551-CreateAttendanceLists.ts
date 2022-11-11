@@ -1,21 +1,21 @@
 import { MigrationInterface, QueryRunner, Table, TableForeignKey, TableIndex } from 'typeorm';
 
 // TODO, está sem model
-export class CreateRouteHistoric1660010491828 implements MigrationInterface {
+export class CreateAttendanceLists1663372568551 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'route_historic',
+        name: 'attendance_lists',
         columns: [
           {
-            name: 'id_historic',
+            name: 'id_list',
             type: 'integer',
             isPrimary: true,
             isGenerated: true,
             generationStrategy: 'increment',
           },
           {
-            name: 'itinerary_id',
+            name: 'trip_id',
             type: 'integer',
           },
           {
@@ -30,26 +30,36 @@ export class CreateRouteHistoric1660010491828 implements MigrationInterface {
             name: 'date',
             type: 'date',
           },
+          {
+            name: 'created_at',
+            type: 'timestamp',
+            default: 'now()',
+          },
+          {
+            name: 'updated_at',
+            type: 'timestamp',
+            default: 'now()',
+          },
         ],
       }),
     );
 
     await queryRunner.createForeignKey(
-      'route_historic',
+      'attendance_lists',
       new TableForeignKey({
-        name: 'route_historic_itinerary_id_fk', // nome da FK, serve para referenciar numa exclusão pelo QueryRunner se necessário
-        columnNames: ['itinerary_id'], // coluna que vai virar FK
-        referencedColumnNames: ['id_itinerary'], // coluna PK da tabela referenciada
-        referencedTableName: 'itineraries', // nome da tabela que possui a PK
+        name: 'attendance_lists_trip_id_fk', // nome da FK, serve para referenciar numa exclusão pelo QueryRunner se necessário
+        columnNames: ['trip_id'], // coluna que vai virar FK
+        referencedColumnNames: ['id_trip'], // coluna PK da tabela referenciada
+        referencedTableName: 'trips', // nome da tabela que possui a PK
         onDelete: 'SET NULL',
         onUpdate: 'CASCADE',
       }),
     );
 
     await queryRunner.createForeignKey(
-      'route_historic',
+      'attendance_lists',
       new TableForeignKey({
-        name: 'route_historic_user_id_fk', // nome da FK, serve para referenciar numa exclusão pelo QueryRunner se necessário
+        name: 'attendance_lists_user_id_fk', // nome da FK, serve para referenciar numa exclusão pelo QueryRunner se necessário
         columnNames: ['user_id'], // coluna que vai virar FK
         referencedColumnNames: ['id_user'], // coluna PK da tabela referenciada
         referencedTableName: 'users', // nome da tabela que possui a PK
@@ -59,19 +69,19 @@ export class CreateRouteHistoric1660010491828 implements MigrationInterface {
     );
 
     await queryRunner.createIndex(
-      'route_historic',
+      'attendance_lists',
       new TableIndex({
-        name: 'itinerary_historic_idx',
-        columnNames: ['itinerary_id', 'user_id', 'is_return', 'date'],
+        name: 'attendance_lists_idx',
+        columnNames: ['trip_id', 'user_id', 'is_return', 'date'],
         isUnique: true,
       }),
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('route_historic');
-    await queryRunner.dropForeignKey('route_historic', 'route_historic_itinerary_id_fk');
-    await queryRunner.dropForeignKey('route_historic', 'route_historic_user_id_fk');
-    await queryRunner.dropIndex('route_historic', 'itinerary_historic_idx');
+    await queryRunner.dropTable('attendance_lists');
+    await queryRunner.dropForeignKey('attendance_lists', 'attendance_lists_trip_id_fk');
+    await queryRunner.dropForeignKey('attendance_lists', 'attendance_lists_user_id_fk');
+    await queryRunner.dropIndex('attendance_lists', 'attendance_lists_idx');
   }
 }

@@ -62,7 +62,18 @@ class GetUserTripsFeedService {
       if (!itinerary.is_active) continue
       if (!itinerary.days_of_week) continue
 
-      const isToday = itinerary.days_of_week.split('').at(DateUtils.getTodaysDayOfWeekAsNumberForSplitComparison()) === '1'
+      let isToday: boolean = false
+
+      // verifica dia específico
+      if (!itinerary.days_of_week || itinerary.days_of_week === '0000000') {
+        let today = new Date();
+        if (itinerary.specific_day?.setHours(0, 0, 0, 0) == today.setHours(0, 0, 0, 0)) {
+          isToday = true;
+        }
+      } else {
+        isToday = itinerary.days_of_week.split('').at(DateUtils.getTodaysDayOfWeekAsNumberForSplitComparison()) === '1'
+      }
+
       if (isToday && (tripsType !== 'today')) continue
 
       const getItineraryTodaysTripStatusService = new GetItineraryTodaysTripStatusService()

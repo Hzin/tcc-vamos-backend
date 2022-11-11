@@ -24,7 +24,7 @@ class PassengerRequest {
   @Column()
   itinerary_id: string;
 
-  @ManyToOne(() => User, user => user.passengerRequest)
+  @ManyToOne(() => User, user => user.passenger_request)
   @JoinColumn({ name: 'user_id' })
   user: User;
 

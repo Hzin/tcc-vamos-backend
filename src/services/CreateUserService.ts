@@ -34,7 +34,7 @@ class CreateUserService {
     // TODO, arrumar o formato das datas e padronizar com a equipe
 
     const user = usersRepository.create({
-      id_user: v4(), name, lastname, email, birth_date, password: hashedPassword, avatar_image: "", bio: ""
+      id_user: v4(), name, lastname, email, birth_date, password: hashedPassword, avatar_image: "https://cdn-icons-png.flaticon.com/512/3177/3177440.png", bio: ""
     });
 
     await usersRepository.save(user);
