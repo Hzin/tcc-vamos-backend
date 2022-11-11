@@ -1,11 +1,11 @@
 import { getRepository } from 'typeorm';
 
-import AppError from '../errors/AppError';
-import Itinerary from '../models/Itinerary';
-import Passenger from '../models/Passenger';
-import User from '../models/User';
+import AppError from '../../errors/AppError';
+import Itinerary from '../../models/Itinerary';
+import Passenger from '../../models/Passenger';
+import User from '../../models/User';
 
-class GetUsersItinerariesIsPassenger {
+class GetUsersItinerariesAsPassenger {
   public async execute(id_user: string): Promise<Itinerary[]> {
     const usersRepository = getRepository(User);
     const passengersRepository = getRepository(Passenger);
@@ -30,4 +30,4 @@ class GetUsersItinerariesIsPassenger {
   }
 }
 
-export default GetUsersItinerariesIsPassenger;
+export default GetUsersItinerariesAsPassenger;

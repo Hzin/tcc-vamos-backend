@@ -1,7 +1,7 @@
 import { getRepository } from "typeorm";
 
-import { passengerRequestStatusTypes } from "../constants/passengerRequestStatusTypes";
-import PassengerRequest from "../models/PassengerRequest";
+import { passengerRequestStatusTypes } from "../../constants/passengerRequestStatusTypes";
+import PassengerRequest from "../../models/PassengerRequest";
 import FindItineraryService from "./FindItineraryService";
 
 class FindItineraryPendingRequests {

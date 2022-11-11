@@ -1,11 +1,11 @@
 import { getRepository } from 'typeorm';
 
-import AppError from '../errors/AppError';
+import AppError from '../../errors/AppError';
 
-import Itinerary from '../models/Itinerary';
-import NeighborhoodServed from '../models/NeighborhoodServed';
-import Destination from '../models/Destination';
-import FindVehicleService from './FindVehicleService';
+import Itinerary from '../../models/Itinerary';
+import NeighborhoodServed from '../../models/NeighborhoodServed';
+import Destination from '../../models/Destination';
+import FindVehicleService from '../FindVehicleService';
 
 interface Request {
   vehicle_plate: string;

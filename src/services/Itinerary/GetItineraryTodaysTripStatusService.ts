@@ -1,10 +1,7 @@
 
-import Trip from '../models/Trip';
-import FindItineraryService from './FindItineraryService';
-import { tripStatus } from '../constants/tripStatus';
-import FindTripsServiceByItineraryId from './FindTripsServiceByItineraryId';
-import DateUtils from './utils/Date';
+import { tripStatus } from '../../constants/tripStatus';
 import GetItineraryTodaysTripByItineraryId from './GetItineraryTodaysTripByItineraryId';
+import AppError from '../../errors/AppError';
 
 class GetItineraryTodaysTripStatusService {
   public async execute(id_itinerary: string): Promise<tripStatus> {
@@ -18,7 +15,8 @@ class GetItineraryTodaysTripStatusService {
       return tripStatus.pending
     }
 
-    return todaysTrip.status
+    if (todaysTrip) return todaysTrip.status
+    else throw new AppError("O itinerário informado não possui viagens para hoje.")
   }
 }
 

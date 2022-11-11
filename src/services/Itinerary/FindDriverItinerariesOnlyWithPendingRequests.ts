@@ -1,5 +1,5 @@
-import { passengerRequestStatusTypes } from "../constants/passengerRequestStatusTypes";
-import Itinerary from "../models/Itinerary";
+import { passengerRequestStatusTypes } from "../../constants/passengerRequestStatusTypes";
+import Itinerary from "../../models/Itinerary";
 import FindItinerariesByDriverUserIdService from "./FindItinerariesByDriverUserIdService";
 
 class FindDriverItinerariesOnlyWithPendingRequests {

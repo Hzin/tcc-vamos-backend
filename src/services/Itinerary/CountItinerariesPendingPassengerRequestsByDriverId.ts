@@ -1,5 +1,5 @@
 import FindDriverItinerariesOnlyWithPendingRequests from './FindDriverItinerariesOnlyWithPendingRequests';
-import FindUserService from './FindUserService';
+import FindUserService from '../FindUserService';
 
 interface Request {
   id_user: string;
@@ -17,7 +17,7 @@ class CountItinerariesPendingPassengerRequestsByDriverId {
 
     itineraries.forEach(itinerary => {
       if (!itinerary.passengerRequests) return
-      
+
       count += itinerary.passengerRequests?.length
     });
 

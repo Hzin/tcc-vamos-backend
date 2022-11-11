@@ -1,12 +1,9 @@
 
-import Trip from '../models/Trip';
+import Trip from '../../models/Trip';
 import FindItineraryService from './FindItineraryService';
-import { tripStatus } from '../constants/tripStatus';
-import FindTripsServiceByItineraryId from './FindTripsServiceByItineraryId';
-import DateUtils from './utils/Date';
-import AppError from '../errors/AppError';
+import DateUtils from '../utils/Date';
+import AppError from '../../errors/AppError';
 import { getRepository } from 'typeorm';
-import Itinerary from '../models/Itinerary';
 
 class GetItineraryTodaysTripByItineraryId {
   public async execute(id_itinerary: string): Promise<Trip> {

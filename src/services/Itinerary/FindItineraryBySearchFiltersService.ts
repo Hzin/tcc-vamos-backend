@@ -1,12 +1,12 @@
 import { getRepository } from "typeorm";
 
-import Itinerary from "../models/Itinerary";
-import maxRadius from '../constants/mapRadiusConfig';
+import Itinerary from "../../models/Itinerary";
+import maxRadius from '../../constants/mapRadiusConfig';
 
-import CalculateDistanceBetweenCoords from '../services/CalculateDistanceBetweenCoords';
+import CalculateDistanceBetweenCoords from '../../services/CalculateDistanceBetweenCoords';
 
-import AddOptionalPropertiesToItineraryObjectService from "./utils/AddOptionalPropertiesToObjectService";
-import { SortArrayOfObjects } from "./utils/SortArrayOfObjects";
+import AddOptionalPropertiesToItineraryObjectService from "../utils/AddOptionalPropertiesToObjectService";
+import { SortArrayOfObjects } from "../utils/SortArrayOfObjects";
 import FindItinerariesByDriverUserIdService from "./FindItinerariesByDriverUserIdService";
 import FindItinerariesByPassengerUserIdService from "./FindItinerariesByPassengerUserIdService";
 

@@ -2,7 +2,7 @@ import { getRepository } from "typeorm";
 
 import FindItineraryService from "./FindItineraryService";
 
-import Trip from "../models/Trip";
+import Trip from "../../models/Trip";
 
 class FindItineraryTrips {
   public async execute(id_itinerary: string): Promise<Trip[]> {
