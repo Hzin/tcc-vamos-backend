@@ -6,9 +6,9 @@ import {
   JoinColumn,
   CreateDateColumn,
 } from 'typeorm';
-import { itineraryContractTypes } from '../constants/itineraryContractTypes';
-import { passengerRequestStatusTypes } from '../constants/passengerRequestStatusTypes';
-import { schoolPeriods } from '../constants/schoolPeriods';
+import { ItineraryContract } from '../enums/ItineraryContract';
+import { PassengerRequestStatus } from '../enums/PassengerRequestStatus';
+import { SchoolPeriod } from '../enums/SchoolPeriod';
 import Itinerary from './Itinerary';
 import User from './User';
 
@@ -34,27 +34,27 @@ class PassengerRequest {
   @Column(
     {
       type: "enum",
-      enum: itineraryContractTypes
+      enum: ItineraryContract
     }
   )
-  contract_type: itineraryContractTypes;
+  contract_type: ItineraryContract;
 
   @Column(
     {
       type: "enum",
-      enum: schoolPeriods
+      enum: SchoolPeriod
     }
   )
-  period: schoolPeriods;
+  period: SchoolPeriod;
 
   @Column(
     {
       type: "enum",
-      enum: passengerRequestStatusTypes,
-      default: passengerRequestStatusTypes.pending,
+      enum: PassengerRequestStatus,
+      default: PassengerRequestStatus.pending,
     }
   )
-  status: passengerRequestStatusTypes;
+  status: PassengerRequestStatus;
 
   @CreateDateColumn()
   created_at: Date;

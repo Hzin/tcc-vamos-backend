@@ -1,4 +1,4 @@
-import { passengerRequestStatusTypes } from "../../constants/passengerRequestStatusTypes";
+import { PassengerRequestStatus } from "../../enums/PassengerRequestStatus";
 import Itinerary from "../../models/Itinerary";
 import FindItinerariesByDriverUserIdService from "./FindItinerariesByDriverUserIdService";
 
@@ -9,7 +9,7 @@ class FindDriverItinerariesOnlyWithPendingRequests {
 
     itineraries.forEach(itinerary => {
       itinerary.passengerRequests = itinerary.passengerRequests?.filter(passengerRequest => {
-        if (passengerRequest.status !== passengerRequestStatusTypes.pending) return false
+        if (passengerRequest.status !== PassengerRequestStatus.pending) return false
 
         return true
       })

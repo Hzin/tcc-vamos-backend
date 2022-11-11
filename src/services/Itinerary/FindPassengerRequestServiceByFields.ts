@@ -1,5 +1,5 @@
 import { getRepository } from 'typeorm';
-import { passengerRequestStatusTypes } from '../../constants/passengerRequestStatusTypes';
+import { PassengerRequestStatus } from '../../enums/PassengerRequestStatus';
 
 import AppError from '../../errors/AppError';
 import Itinerary from '../../models/Itinerary';
@@ -10,7 +10,7 @@ import User from '../../models/User';
 interface Request {
   itinerary: Itinerary;
   user: User;
-  status?: passengerRequestStatusTypes
+  status?: PassengerRequestStatus
 }
 
 class FindPassengerRequestServiceByFields {

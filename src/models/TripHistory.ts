@@ -7,7 +7,7 @@ import {
   JoinColumn,
   ManyToOne,
 } from 'typeorm';
-import { tripStatus } from '../constants/tripStatus';
+import { TripStatus } from '../enums/TripStatus';
 import Trip from './Trip';
 
 @Entity('trips_history')
@@ -25,19 +25,19 @@ class TripHistory {
   @Column(
     {
       type: "enum",
-      enum: tripStatus,
+      enum: TripStatus,
       nullable: true
     }
   )
-  old_status: tripStatus;
+  old_status: TripStatus;
 
   @Column(
     {
       type: "enum",
-      enum: tripStatus,
+      enum: TripStatus,
     }
   )
-  new_status: tripStatus;
+  new_status: TripStatus;
 
   @Column({ nullable: true })
   description: string;

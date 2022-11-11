@@ -4,6 +4,7 @@ import { getRepository } from 'typeorm';
 import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 
 import Trip from '../models/Trip';
+import { TripStatus } from '../enums/TripStatus';
 
 import CheckIfUserHasVehiclesService from '../services/User/CheckIfUserHasVehiclesService';
 import FindTripService from '../services/Trip/FindTripService';
@@ -12,7 +13,6 @@ import UpdateTripStatusService from '../services/Trip/UpdateTripStatusService';
 import UpdateTripNicknameService from '../services/Trip/UpdateTripNicknameService';
 import GetUserTripsFeedService from '../services/Trip/GetUserTripsFeedService';
 import GetItineraryTodaysTripStatusService from '../services/Trip/GetItineraryTodaysTripStatusService';
-import { tripStatus } from '../constants/tripStatus';
 import FindTodaysTripByItineraryIdService from '../services/Trip/FindTodaysTripByItineraryIdService';
 import FindItineraryTrips from '../services/Trip/FindItineraryTrips';
 import AddOptionalPropertiesToItineraryObjectService from '../services/utils/AddOptionalPropertiesToObjectService';
@@ -80,7 +80,7 @@ tripsRouter.post('/update/confirm', async (request, response) => {
 
   const trip = await createTripService.execute(
     id_itinerary,
-    tripStatus.confirmed
+    TripStatus.confirmed
   );
 
   return response.json({ message: 'Viagem confirmada com sucesso!', data: trip });
@@ -93,7 +93,7 @@ tripsRouter.post('/update/cancel', async (request, response) => {
 
   await createTripService.execute(
     id_itinerary,
-    tripStatus.canceled
+    TripStatus.canceled
   );
 
   return response.json({ message: 'Viagem cancelada com sucesso.' });

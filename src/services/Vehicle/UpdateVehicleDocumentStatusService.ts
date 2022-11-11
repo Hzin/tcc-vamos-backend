@@ -1,5 +1,5 @@
 import { getRepository } from 'typeorm';
-import { vehicleDocumentStatus } from '../../constants/vehicleDocumentStatus';
+import { VehicleDocumentStatus } from '../../enums/VehicleDocumentStatus';
 
 
 import VehicleDocument from '../../models/VehicleDocument';
@@ -8,7 +8,7 @@ import FindVehicleDocumentsByDocumentTypeService from './FindVehicleDocumentsByD
 interface Request {
   vehicle_plate: string;
   document_type: string;
-  status: vehicleDocumentStatus;
+  status: VehicleDocumentStatus;
 }
 
 class UpdateVehicleDocumentStatusService {

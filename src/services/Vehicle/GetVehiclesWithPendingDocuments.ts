@@ -1,5 +1,5 @@
 import {  getRepository } from 'typeorm';
-import { vehicleDocumentStatus } from '../../constants/vehicleDocumentStatus';
+import { VehicleDocumentStatus } from '../../enums/VehicleDocumentStatus';
 import Vehicle from '../../models/Vehicle';
 
 interface ReturnObj {
@@ -24,7 +24,7 @@ class GetVehiclesWithPendingDocuments {
       if (vehicle.documents) {
         vehicle.documents.forEach((document) => {
           // tá escrito sem "return" porque vai dar errado
-          if (document.status === vehicleDocumentStatus.pending)  {
+          if (document.status === VehicleDocumentStatus.pending)  {
             const newElement = {
               vehicle_brand: vehicle.brand,
               vehicle_model: vehicle.model,

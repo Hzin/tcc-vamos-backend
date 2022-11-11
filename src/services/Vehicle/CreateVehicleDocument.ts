@@ -1,6 +1,6 @@
 import { getRepository } from 'typeorm';
-import { vehicleDocumentStatus } from '../../constants/vehicleDocumentStatus';
-import { vehicleDocumentTypes } from '../../constants/vehicleDocumentTypes';
+import { VehicleDocumentStatus } from '../../enums/VehicleDocumentStatus';
+import { VehicleDocumentType } from '../../enums/VehicleDocumentType';
 
 import VehicleDocument from '../../models/VehicleDocument';
 import DeleteVehicleDocumentFileService from './DeleteVehicleDocumentFileService';
@@ -33,9 +33,10 @@ class CreateVehicleDocumentService {
 
     const vehicleDocument = vehicleDocumentsRepository.create({
       vehicle,
-      document_type: document_type as vehicleDocumentTypes,
+      // TODO, quebrando
+      document_type: document_type as VehicleDocumentType,
       path,
-      status: vehicleDocumentStatus.pending
+      status: VehicleDocumentStatus.pending
     })
 
     await vehicleDocumentsRepository.save(vehicleDocument)

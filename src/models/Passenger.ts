@@ -5,9 +5,9 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { itineraryContractTypes } from '../constants/itineraryContractTypes';
-import { passengerStatusTypes } from '../constants/passengerStatusTypes';
-import { schoolPeriods } from '../constants/schoolPeriods';
+import { ItineraryContract } from '../enums/ItineraryContract';
+import { PassengerStatus } from '../enums/PassengerStatus';
+import { SchoolPeriod } from '../enums/SchoolPeriod';
 import Itinerary from './Itinerary';
 import User from './User';
 
@@ -33,27 +33,27 @@ class Passenger {
   @Column(
     {
       type: "enum",
-      enum: itineraryContractTypes
+      enum: ItineraryContract
     }
   )
-  contract_type: itineraryContractTypes;
+  contract_type: ItineraryContract;
 
   @Column(
     {
       type: "enum",
-      enum: schoolPeriods
+      enum: SchoolPeriod
     }
   )
-  period: schoolPeriods;
+  period: SchoolPeriod;
 
   @Column(
     {
       type: "enum",
-      enum: passengerStatusTypes,
-      default: passengerStatusTypes.ongoing,
+      enum: PassengerStatus,
+      default: PassengerStatus.ongoing,
     }
   )
-  status: passengerStatusTypes;
+  status: PassengerStatus;
 
   @Column()
   lat_origin: number;

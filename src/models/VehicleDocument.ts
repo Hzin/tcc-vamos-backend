@@ -4,13 +4,11 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   JoinColumn,
-  PrimaryColumn,
-  OneToOne,
   PrimaryGeneratedColumn,
   ManyToOne,
 } from 'typeorm';
-import { vehicleDocumentStatus } from '../constants/vehicleDocumentStatus';
-import { vehicleDocumentTypes } from '../constants/vehicleDocumentTypes';
+import { VehicleDocumentStatus } from '../enums/VehicleDocumentStatus';
+import { VehicleDocumentType } from '../enums/VehicleDocumentType';
 import Vehicle from './Vehicle';
 
 @Entity('vehicles_documents')
@@ -28,10 +26,10 @@ class VehicleDocument {
   @Column(
     {
       type: "enum",
-      enum: vehicleDocumentTypes,
+      enum: VehicleDocument,
     }
   )
-  document_type: vehicleDocumentTypes;
+  document_type: VehicleDocumentType;
 
   @Column({ nullable: true })
   path: string;
@@ -39,11 +37,11 @@ class VehicleDocument {
   @Column(
     {
       type: "enum",
-      enum: vehicleDocumentStatus,
-      default: vehicleDocumentStatus.pending
+      enum: VehicleDocumentStatus,
+      default: VehicleDocumentStatus.pending
     }
   )
-  status: vehicleDocumentStatus;
+  status: VehicleDocumentStatus;
 
   @CreateDateColumn()
   created_at: Date;

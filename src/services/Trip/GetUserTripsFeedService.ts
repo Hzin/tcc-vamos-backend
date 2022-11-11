@@ -2,7 +2,7 @@
 import Itinerary from '../../models/Itinerary';
 import FindVehiclesByUserIdService from '../Vehicle/FindVehiclesByUserIdService';
 import FindUserService from '../User/FindUserService';
-import { tripStatus } from '../../constants/tripStatus';
+import { TripStatus } from '../../enums/TripStatus';
 import GetItineraryTodaysTripStatusService from './GetItineraryTodaysTripStatusService';
 import DateUtils from '../utils/Date';
 import AppError from '../../errors/AppError';
@@ -12,7 +12,7 @@ import FindItinerariesByPassengerUserIdService from '../Itinerary/FindItinerarie
 
 interface Return {
   itinerary: Itinerary;
-  tripStatus: tripStatus;
+  tripStatus: TripStatus;
   tripId?: number;
 }
 

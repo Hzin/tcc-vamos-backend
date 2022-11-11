@@ -1,5 +1,5 @@
 import { getRepository } from 'typeorm';
-import { tripStatus } from '../../constants/tripStatus';
+import { TripStatus } from '../../enums/TripStatus';
 
 import AppError from '../../errors/AppError';
 
@@ -11,7 +11,7 @@ import GetItineraryTodaysTripByItineraryId from './GetItineraryTodaysTripByItine
 import DateUtils from '../utils/Date';
 
 class CreateTripService {
-  public async execute(id_itinerary: string, nextStatus: tripStatus): Promise<Trip> {
+  public async execute(id_itinerary: string, nextStatus: TripStatus): Promise<Trip> {
     const tripsRepository = getRepository(Trip);
     const tripsHistoricRepository = getRepository(TripHistory);
 
@@ -31,22 +31,22 @@ class CreateTripService {
 
     // cria viagem
     const trip = tripsRepository.create({
-      itinerary, date: DateUtils.getCurrentDate(), status: tripStatus.pending
+      itinerary, date: DateUtils.getCurrentDate(), status: TripStatus.pending
     });
 
     await tripsRepository.save(trip);
 
     // cria 1º histórico de viagem
     const tripHistory1 = tripsHistoricRepository.create({
-      trip, new_status: tripStatus.pending, description: 'Criação da viagem'
+      trip, new_status: TripStatus.pending, description: 'Criação da viagem'
     });
 
     let tripHistoryDescription = 'Confirmação da viagem'
-    if (nextStatus === tripStatus.canceled) tripHistoryDescription = 'Cancelamento da viagem'
+    if (nextStatus === TripStatus.canceled) tripHistoryDescription = 'Cancelamento da viagem'
 
     // cria 2º histórico de viagem
     const tripHistory2 = tripsHistoricRepository.create({
-      trip, old_status: tripStatus.pending, new_status: nextStatus, description: tripHistoryDescription
+      trip, old_status: TripStatus.pending, new_status: nextStatus, description: tripHistoryDescription
     });
 
     try {

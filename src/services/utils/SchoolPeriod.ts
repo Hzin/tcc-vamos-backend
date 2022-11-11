@@ -1,4 +1,4 @@
-import { schoolPeriods } from "../../constants/schoolPeriods";
+import { SchoolPeriod } from "../../enums/SchoolPeriod";
 import AppError from "../../errors/AppError";
 
 class Time {
@@ -20,33 +20,33 @@ class Time {
       : (check.isBiggerThan(start) && check.isBiggerThan(end)) || (!check.isBiggerThan(start) && !check.isBiggerThan(end));
   }
 
-  public getSchoolPeriod(timeFrom: string, timeTo: string): schoolPeriods | undefined {
+  public getSchoolPeriod(timeFrom: string, timeTo: string): SchoolPeriod | undefined {
     // se o horário de início estiver entre 05:00 e 08:00
     // e se o horário de fim estiver entre 16:00 e 18:30
     if (this.timeIsBetween(new Time('05:00'), new Time('08:00'), new Time(timeFrom))
       && this.timeIsBetween(new Time('17:00'), new Time('18:00'), new Time(timeTo))) {
-      return schoolPeriods.integral
+      return SchoolPeriod.integral
     }
 
     // se o horário de término for antes das 14:00
     if (!new Time(timeTo).isBiggerThan(new Time('14:00'))) {
-      return schoolPeriods.diurnal
+      return SchoolPeriod.diurnal
     }
 
     // se o horário de término for antes das 18:00
     if (!new Time(timeTo).isBiggerThan(new Time('18:00'))) {
-      return schoolPeriods.evening
+      return SchoolPeriod.evening
     }
 
     // se o horário de término for antes das 23:00
     if (!new Time(timeTo).isBiggerThan(new Time('23:00'))) {
-      return schoolPeriods.night
+      return SchoolPeriod.night
     }
   }
 
 }
 
-// export function CalculateSchoolPeriod(timeFrom: string, timeTo: string): schoolPeriods {
+// export function CalculateSchoolPeriod(timeFrom: string, timeTo: string): SchoolPeriod {
 //   // se o horário de início começar antes das 07:00
 //   if (!new Time(timeFrom).isBiggerThan(new Time('06:59'))) {
 //     throw new AppError("O horário de início informado é inválido!")
@@ -61,23 +61,23 @@ class Time {
 //   // e se o horário de fim estiver entre 16:00 e 18:30
 //   if (timeIsBetween(new Time('07:00'), new Time('08:00'), new Time(timeFrom))
 //   && timeIsBetween(new Time('11:30'), new Time('12:00'), new Time(timeTo))) {
-//     return schoolPeriods.diurnal
+//     return SchoolPeriod.diurnal
 //   }
 
 //   // se o horário de início estiver entre 13:00 e 14:00
 //   // e se o horário de fim estiver entre 18:00 e 19:30
 //   if (timeIsBetween(new Time('13:00'), new Time('14:00'), new Time(timeFrom))
 //   && timeIsBetween(new Time('18:00'), new Time('19:00'), new Time(timeTo))) {
-//     return schoolPeriods.evening
+//     return SchoolPeriod.evening
 //   }
 
 //   // se o horário de início estiver entre 13:00 e 14:00
 //   // e se o horário de fim estiver entre 18:00 e 19:30
 //   if (timeIsBetween(new Time('18:00'), new Time('19:00'), new Time(timeFrom))
 //   && timeIsBetween(new Time('18:00'), new Time('19:30'), new Time(timeTo))) {
-//     return schoolPeriods.night
+//     return SchoolPeriod.night
 //   }
 
-//   return schoolPeriods.integral
+//   return SchoolPeriod.integral
 // }
 

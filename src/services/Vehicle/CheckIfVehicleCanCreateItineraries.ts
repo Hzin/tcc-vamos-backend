@@ -1,5 +1,5 @@
-import { vehicleDocumentStatus } from '../../constants/vehicleDocumentStatus';
-import { vehicleDocumentTypes } from '../../constants/vehicleDocumentTypes';
+import { VehicleDocumentStatus } from '../../enums/VehicleDocumentStatus';
+import { VehicleDocumentType } from '../../enums/VehicleDocumentType';
 
 import FindVehicleService from './FindVehicleService';
 import Utils from '../utils/Utils';
@@ -16,9 +16,9 @@ class CheckIfVehicleCanCreateItineraries {
     const vehicleDocuments = vehicle.documents
 
     if (!vehicleDocuments) return false
-    if (vehicleDocuments.length !== Utils.getEnumLength(vehicleDocumentTypes)) return false
+    if (vehicleDocuments.length !== Utils.getEnumLength(VehicleDocumentType)) return false
 
-    return vehicleDocuments.every((document) => { return document.status == vehicleDocumentStatus.approved })
+    return vehicleDocuments.every((document) => { return document.status == VehicleDocumentStatus.approved })
   }
 }
 

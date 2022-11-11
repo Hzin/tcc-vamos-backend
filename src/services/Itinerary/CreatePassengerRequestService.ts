@@ -2,21 +2,21 @@ import { getRepository } from "typeorm";
 
 import AppError from "../../errors/AppError";
 
-import { passengerRequestStatusTypes } from "../../constants/passengerRequestStatusTypes";
+import { PassengerRequestStatus } from "../../enums/PassengerRequestStatus";
 
 import FindItineraryService from "./FindItineraryService";
 import FindUserService from "../User/FindUserService";
 
 import PassengerRequest from "../../models/PassengerRequest";
 import FindPassengerRequestServiceByFields from "./FindPassengerRequestServiceByFields";
-import { itineraryContractTypes } from "../../constants/itineraryContractTypes";
-import { schoolPeriods } from "../../constants/schoolPeriods";
+import { ItineraryContract } from "../../enums/ItineraryContract";
+import { SchoolPeriod } from "../../enums/SchoolPeriod";
 
 interface Request {
   id_user: string;
   id_itinerary: number;
-  contract_type: itineraryContractTypes;
-  period: schoolPeriods;
+  contract_type: ItineraryContract;
+  period: SchoolPeriod;
   lat_origin: number;
   lng_origin: number;
   formatted_address_origin: string;
@@ -41,7 +41,7 @@ class CreatePassengerRequestService {
     let passengerHasPendingRequest: PassengerRequest | undefined
     try {
       passengerHasPendingRequest = await findPassengerRequestServiceByFields.execute({
-        itinerary, user, status: passengerRequestStatusTypes.pending
+        itinerary, user, status: PassengerRequestStatus.pending
       });
     } catch { }
 
@@ -54,7 +54,7 @@ class CreatePassengerRequestService {
       user,
       period,
       contract_type,
-      status: passengerRequestStatusTypes.pending,
+      status: PassengerRequestStatus.pending,
       lat_origin,
       lng_origin,
       formatted_address_origin,

@@ -8,7 +8,7 @@ import {
   JoinColumn,
   ManyToOne,
 } from 'typeorm';
-import { tripStatus } from '../constants/tripStatus';
+import { TripStatus } from '../enums/TripStatus';
 import AttendanceList from './AttendanceList';
 import Itinerary from './Itinerary';
 import TripHistory from './TripHistory';
@@ -34,15 +34,15 @@ class Trip {
   @Column(
     {
       type: "enum",
-      enum: tripStatus,
-      default: tripStatus.pending,
+      enum: TripStatus,
+      default: TripStatus.pending,
     }
   )
-  status: tripStatus;
+  status: TripStatus;
 
   @OneToMany(() => TripHistory, tripHistory => tripHistory.trip)
   trip_histories?: TripHistory[];
-  
+
   @OneToMany(() => AttendanceList, attendanceList => attendanceList.trip)
   attendance_lists?: AttendanceList[];
 

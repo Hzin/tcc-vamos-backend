@@ -6,9 +6,9 @@ import {
   TableIndex,
 } from 'typeorm';
 
-import { itineraryContractTypes } from '../../constants/itineraryContractTypes';
-import { passengerRequestStatusTypes } from '../../constants/passengerRequestStatusTypes';
-import { schoolPeriods } from '../../constants/schoolPeriods';
+import { ItineraryContract } from '../../enums/ItineraryContract';
+import { PassengerRequestStatus } from '../../enums/PassengerRequestStatus';
+import { SchoolPeriod } from '../../enums/SchoolPeriod';
 
 import Utils from '../../services/utils/Utils';
 
@@ -37,18 +37,18 @@ export class CreatePassengersRequests1662081949950
           {
             name: 'contract_type',
             type: 'enum',
-            enum: Utils.convertEnumValuesToStringArray(itineraryContractTypes)
+            enum: Utils.convertEnumValuesToStringArray(ItineraryContract)
           },
           {
             name: 'period',
             type: 'enum',
-            enum: Utils.convertEnumValuesToStringArray(schoolPeriods)
+            enum: Utils.convertEnumValuesToStringArray(SchoolPeriod)
           },
           {
             name: 'status',
             type: 'enum',
-            enum: Utils.convertEnumValuesToStringArray(passengerRequestStatusTypes),
-            // default: passengerRequestStatusTypes.pending.toString()
+            enum: Utils.convertEnumValuesToStringArray(PassengerRequestStatus),
+            // default: PassengerRequestStatus.pending.toString()
           },
           {
             name: 'created_at',

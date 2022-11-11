@@ -1,6 +1,6 @@
 import { getRepository } from "typeorm";
 
-import { passengerRequestStatusTypes } from "../../constants/passengerRequestStatusTypes";
+import { PassengerRequestStatus } from "../../enums/PassengerRequestStatus";
 
 import PassengerRequest from "../../models/PassengerRequest";
 import FindPassengerRequestServiceById from "./FindPassengerRequestServiceById";
@@ -8,11 +8,11 @@ import FindPassengerRequestServiceById from "./FindPassengerRequestServiceById";
 import Utils from '../utils/Utils'
 import AppError from "../../errors/AppError";
 import Passenger from "../../models/Passenger";
-import { passengerStatusTypes } from "../../constants/passengerStatusTypes";
+import { PassengerStatus } from "../../enums/PassengerStatus";
 
 interface Request {
   id_passenger_request: number;
-  status: passengerRequestStatusTypes
+  status: PassengerRequestStatus
 }
 
 interface Response {
@@ -22,8 +22,8 @@ interface Response {
 
 class UpdatePassengerRequestService {
   public async execute({ id_passenger_request, status }: Request): Promise<Response> {
-    if (!Utils.stringIsInEnum(status, passengerRequestStatusTypes)) throw new AppError('O status informado é inválido')
-    if (status === passengerRequestStatusTypes.pending) throw new AppError('O status informado é inválido para a atualização de pedido de passageiro.')
+    if (!Utils.stringIsInEnum(status, PassengerRequestStatus)) throw new AppError('O status informado é inválido')
+    if (status === PassengerRequestStatus.pending) throw new AppError('O status informado é inválido para a atualização de pedido de passageiro.')
 
     const passengersRequestsRepository = getRepository(PassengerRequest);
 
@@ -34,14 +34,14 @@ class UpdatePassengerRequestService {
 
     await passengersRequestsRepository.save(passengerRequest);
 
-    if (status === passengerRequestStatusTypes.accepted) {
+    if (status === PassengerRequestStatus.accepted) {
       const passengersRepository = getRepository(Passenger)
       const passenger = passengersRepository.create({
         itinerary_id: passengerRequest.itinerary_id,
         user_id: passengerRequest.user_id,
         contract_type: passengerRequest.contract_type,
         period: passengerRequest.period,
-        status: passengerStatusTypes.ongoing,
+        status: PassengerStatus.ongoing,
         lat_origin: passengerRequest.lat_origin,
         lng_origin: passengerRequest.lng_origin,
         formatted_address_origin: passengerRequest.formatted_address_origin,

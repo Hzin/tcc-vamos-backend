@@ -1,4 +1,4 @@
-import { vehicleDocumentStatus } from "../../constants/vehicleDocumentStatus";
+import { VehicleDocumentStatus } from "../../enums/VehicleDocumentStatus";
 import FindVehiclesService from "./FindVehiclesService";
 
 class CountVehiclesPendingDocuments {
@@ -12,7 +12,7 @@ class CountVehiclesPendingDocuments {
       if (!vehicle.documents) return
 
       vehicle.documents.forEach((document) => {
-        if (document.status === vehicleDocumentStatus.pending) count++
+        if (document.status === VehicleDocumentStatus.pending) count++
       })
     })
 

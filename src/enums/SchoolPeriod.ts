@@ -1,4 +1,4 @@
-export enum schoolPeriods {
+export enum SchoolPeriod {
   diurnal = 'DIURNAL',
   evening = 'EVENING',
   integral = 'INTEGRAL',

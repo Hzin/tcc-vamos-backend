@@ -1,4 +1,4 @@
-export enum itineraryContractTypes {
+export enum ItineraryContract {
   avulse = 'AVULSE',
   recurring = 'RECURRING',
 }
