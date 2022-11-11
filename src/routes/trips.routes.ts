@@ -3,19 +3,17 @@ import { getRepository } from 'typeorm';
 
 import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 
-import CheckIfUserHasVehiclesService from '../services/CheckIfUserHasVehiclesService';
+import CheckIfUserHasVehiclesService from '../services/User/CheckIfUserHasVehiclesService';
 import Trip from '../models/Trip';
-import FindTripService from '../services/FindTripService';
-import CreateTripService from '../services/CreateTripService';
+import FindTripService from '../services/Trip/FindTripService';
+import CreateTripService from '../services/Trip/CreateTripService';
 import UpdateTripStatusService from '../services/UpdateTripStatusService';
 import UpdateTripNicknameService from '../services/UpdateTripNicknameService';
-import GetUserTripsFeedService from '../services/GetUserTripsFeedService';
-import DateUtils from '../services/utils/Date';
-import GetItineraryTodaysTripStatusService from '../services/GetItineraryTodaysTripStatusService';
+import GetUserTripsFeedService from '../services/Trip/GetUserTripsFeedService';
+import GetItineraryTodaysTripStatusService from '../services/Trip/GetItineraryTodaysTripStatusService';
 import { tripStatus } from '../constants/tripStatus';
-import FindTripsServiceByItineraryId from '../services/FindTripsServiceByItineraryId';
-import FindTodaysTripByItineraryIdService from '../services/FindTodaysTripByItineraryIdService';
-import FindItineraryTrips from '../services/FindItineraryTrips';
+import FindTodaysTripByItineraryIdService from '../services/Trip/FindTodaysTripByItineraryIdService';
+import FindItineraryTrips from '../services/Trip/FindItineraryTrips';
 import AddOptionalPropertiesToItineraryObjectService from '../services/utils/AddOptionalPropertiesToObjectService';
 
 const tripsRouter = Router();

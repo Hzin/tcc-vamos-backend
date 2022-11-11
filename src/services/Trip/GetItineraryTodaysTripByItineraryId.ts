@@ -1,6 +1,6 @@
 
 import Trip from '../../models/Trip';
-import FindItineraryService from './FindItineraryService';
+import FindItineraryService from '../Itinerary/FindItineraryService';
 import DateUtils from '../utils/Date';
 import AppError from '../../errors/AppError';
 import { getRepository } from 'typeorm';

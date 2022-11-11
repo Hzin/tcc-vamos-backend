@@ -1,15 +1,14 @@
 import { getRepository } from 'typeorm';
-import { tripStatus } from '../constants/tripStatus';
+import { tripStatus } from '../../constants/tripStatus';
 
-import AppError from '../errors/AppError';
-import Itinerary from '../models/Itinerary';
+import AppError from '../../errors/AppError';
 
-import Trip from '../models/Trip';
-import TripHistory from '../models/TripHistory';
-import FindItineraryService from './FindItineraryService';
+import Trip from '../../models/Trip';
+import TripHistory from '../../models/TripHistory';
+import FindItineraryService from '../Itinerary/FindItineraryService';
 import GetItineraryTodaysTripByItineraryId from './GetItineraryTodaysTripByItineraryId';
-import DateUtils from './utils/Date';
-import GetTodaysDate from './utils/Date';
+
+import DateUtils from '../utils/Date';
 
 class CreateTripService {
   public async execute(id_itinerary: string, nextStatus: tripStatus): Promise<Trip> {

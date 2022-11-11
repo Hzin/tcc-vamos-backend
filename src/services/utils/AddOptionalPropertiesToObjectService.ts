@@ -2,10 +2,10 @@ import Itinerary from "../../models/Itinerary";
 import Passenger from "../../models/Passenger";
 import PassengerRequest from "../../models/PassengerRequest";
 import Trip from "../../models/Trip";
-import FindItineraryService from "../FindItineraryService";
-import FindUserByVehiclePlateService from "../FindUserByVehiclePlateService";
-import FindUserService from "../FindUserService";
-import FindVehicleService from "../FindVehicleService";
+import FindItineraryService from "../Itinerary/FindItineraryService";
+import FindUserByVehiclePlateService from "../User/FindUserByVehiclePlateService";
+import FindUserService from "../User/FindUserService";
+import FindVehicleService from "../Vehicle/FindVehicleService";
 
 class AddOptionalPropertiesToItineraryObjectService {
   // Itinerary

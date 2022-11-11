@@ -3,21 +3,22 @@ import { Router } from 'express';
 import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 import ensureAdmin from '../middlewares/ensureAdmin';
 
-import CreateItineraryService from '../services/CreateItineraryService';
-import FindItineraryService from '../services/FindItineraryService';
-import CreatePassengerRequestService from '../services/CreatePassengerRequestService';
-import UpdatePassengerRequestService from '../services/UpdatePassengerRequestService';
-import FindPassengerRequestServiceByFields from '../services/FindPassengerRequestServiceByFields';
-import FindUserService from '../services/FindUserService';
-import FindItinerariesByDriverUserIdService from '../services/FindItinerariesByDriverUserIdService';
-import FindItinerariesByPassengerUserIdService from '../services/FindItinerariesByPassengerUserIdService';
-import FindItineraryBySearchFiltersService from '../services/FindItineraryBySearchFiltersService';
-import FindItinerariesExceptUserss from '../services/FindItinerariesExceptUserss';
+import CreateItineraryService from '../services/Itinerary/CreateItineraryService';
+import FindItineraryService from '../services/Itinerary/FindItineraryService';
+import CreatePassengerRequestService from '../services/Itinerary/CreatePassengerRequestService';
+import UpdatePassengerRequestService from '../services/Itinerary/UpdatePassengerRequestService';
+import FindPassengerRequestServiceByFields from '../services/Itinerary/FindPassengerRequestServiceByFields';
+import FindUserService from '../services/User/FindUserService';
+import FindItinerariesByDriverUserIdService from '../services/Itinerary/FindItinerariesByDriverUserIdService';
+import FindItinerariesByPassengerUserIdService from '../services/Itinerary/FindItinerariesByPassengerUserIdService';
+import FindItineraryBySearchFiltersService from '../services/Itinerary/FindItineraryBySearchFiltersService';
+import FindItinerariesExceptUserss from '../services/Itinerary/FindItinerariesExceptUserss';
+
+import FindItineraryPendingRequests from '../services/Itinerary/FindItineraryPendingRequests';
+import FindDriverItinerariesOnlyWithPendingRequests from '../services/Itinerary/FindDriverItinerariesOnlyWithPendingRequests';
+import CountItinerariesPendingPassengerRequestsByDriverId from '../services/Itinerary/CountItinerariesPendingPassengerRequestsByDriverId';
 
 import AddOptionalPropertiesToObjectService from '../services/utils/AddOptionalPropertiesToObjectService';
-import FindItineraryPendingRequests from '../services/FindItineraryPendingRequests';
-import FindDriverItinerariesOnlyWithPendingRequests from '../services/FindDriverItinerariesOnlyWithPendingRequests';
-import CountItinerariesPendingPassengerRequestsByDriverId from '../services/CountItinerariesPendingPassengerRequestsByDriverId';
 
 const itinerariesRouter = Router();
 

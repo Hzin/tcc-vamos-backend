@@ -1,9 +1,9 @@
 import { getRepository } from 'typeorm';
 import AppError from '../../errors/AppError';
 import User from '../../models/User';
-import FindVehiclesByUserIdService from '../FindVehiclesByUserIdService';
+import FindVehiclesByUserIdService from '../Vehicle/FindVehiclesByUserIdService';
 
-import FindVehicleService from '../FindVehicleService';
+import FindVehicleService from '../Vehicle/FindVehicleService';
 
 class FindUserByVehiclePlateService {
   public async execute(plate: string): Promise<User> {

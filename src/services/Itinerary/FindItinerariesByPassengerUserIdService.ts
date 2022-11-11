@@ -1,7 +1,7 @@
 import { getRepository } from "typeorm";
 
 import Itinerary from "../../models/Itinerary";
-import FindUserService from "../FindUserService";
+import FindUserService from "../User/FindUserService";
 
 class FindItinerariesByPassengerUserIdService {
   public async execute(id_user: string): Promise<Itinerary[]> {

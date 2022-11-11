@@ -5,7 +5,7 @@ import AppError from '../../errors/AppError';
 import Itinerary from '../../models/Itinerary';
 import NeighborhoodServed from '../../models/NeighborhoodServed';
 import Destination from '../../models/Destination';
-import FindVehicleService from '../FindVehicleService';
+import FindVehicleService from '../Vehicle/FindVehicleService';
 
 interface Request {
   vehicle_plate: string;

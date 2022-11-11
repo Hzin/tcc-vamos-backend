@@ -1,5 +1,5 @@
 import FindDriverItinerariesOnlyWithPendingRequests from './FindDriverItinerariesOnlyWithPendingRequests';
-import FindUserService from '../FindUserService';
+import FindUserService from '../User/FindUserService';
 
 interface Request {
   id_user: string;

@@ -1,16 +1,16 @@
 import { getRepository } from "typeorm";
 
-import AppError from "../errors/AppError";
+import AppError from "../../errors/AppError";
 
-import { passengerRequestStatusTypes } from "../constants/passengerRequestStatusTypes";
+import { passengerRequestStatusTypes } from "../../constants/passengerRequestStatusTypes";
 
 import FindItineraryService from "./FindItineraryService";
-import FindUserService from "./FindUserService";
+import FindUserService from "../User/FindUserService";
 
-import PassengerRequest from "../models/PassengerRequest";
+import PassengerRequest from "../../models/PassengerRequest";
 import FindPassengerRequestServiceByFields from "./FindPassengerRequestServiceByFields";
-import { itineraryContractTypes } from "../constants/itineraryContractTypes";
-import { schoolPeriods } from "../constants/schoolPeriods";
+import { itineraryContractTypes } from "../../constants/itineraryContractTypes";
+import { schoolPeriods } from "../../constants/schoolPeriods";
 
 interface Request {
   id_user: string;

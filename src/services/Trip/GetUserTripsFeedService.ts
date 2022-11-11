@@ -1,14 +1,14 @@
 
-import Itinerary from '../models/Itinerary';
-import FindVehiclesByUserIdService from './FindVehiclesByUserIdService';
-import FindUserService from './FindUserService';
-import { tripStatus } from '../constants/tripStatus';
+import Itinerary from '../../models/Itinerary';
+import FindVehiclesByUserIdService from '../Vehicle/FindVehiclesByUserIdService';
+import FindUserService from '../User/FindUserService';
+import { tripStatus } from '../../constants/tripStatus';
 import GetItineraryTodaysTripStatusService from './GetItineraryTodaysTripStatusService';
-import DateUtils from './utils/Date';
-import AppError from '../errors/AppError';
+import DateUtils from '../utils/Date';
+import AppError from '../../errors/AppError';
 import GetItineraryTodaysTripByItineraryId from './GetItineraryTodaysTripByItineraryId';
-import FindItinerariesByDriverUserIdService from './FindItinerariesByDriverUserIdService';
-import FindItinerariesByPassengerUserIdService from './FindItinerariesByPassengerUserIdService';
+import FindItinerariesByDriverUserIdService from '../Itinerary/FindItinerariesByDriverUserIdService';
+import FindItinerariesByPassengerUserIdService from '../Itinerary/FindItinerariesByPassengerUserIdService';
 
 interface Return {
   itinerary: Itinerary;

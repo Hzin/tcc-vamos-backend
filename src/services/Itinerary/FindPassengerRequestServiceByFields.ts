@@ -1,11 +1,11 @@
 import { getRepository } from 'typeorm';
-import { passengerRequestStatusTypes } from '../constants/passengerRequestStatusTypes';
+import { passengerRequestStatusTypes } from '../../constants/passengerRequestStatusTypes';
 
-import AppError from '../errors/AppError';
-import Itinerary from '../models/Itinerary';
+import AppError from '../../errors/AppError';
+import Itinerary from '../../models/Itinerary';
 
-import PassengerRequest from '../models/PassengerRequest';
-import User from '../models/User';
+import PassengerRequest from '../../models/PassengerRequest';
+import User from '../../models/User';
 
 interface Request {
   itinerary: Itinerary;

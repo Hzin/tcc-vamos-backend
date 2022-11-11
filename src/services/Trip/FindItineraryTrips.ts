@@ -1,6 +1,6 @@
 import { getRepository } from "typeorm";
 
-import FindItineraryService from "./FindItineraryService";
+import FindItineraryService from "../Itinerary/FindItineraryService";
 
 import Trip from "../../models/Trip";
 

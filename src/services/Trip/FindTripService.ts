@@ -1,8 +1,8 @@
 import { getRepository } from 'typeorm';
 
-import AppError from '../errors/AppError';
+import AppError from '../../errors/AppError';
 
-import Trip from '../models/Trip';
+import Trip from '../../models/Trip';
 
 class FindTripService {
   public async execute(id_trip: string): Promise<Trip> {

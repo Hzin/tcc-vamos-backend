@@ -1,26 +1,28 @@
 import { Router } from 'express';
 
 import ensureAuthenticated from '../middlewares/ensureAuthenticated';
-import { vehiclesRoutesDocumentPostMulter, vehiclesRoutesDocumentPostPath, vehiclesUploadPictureMulter } from '../constants/multerConfig';
-
-import FindVehicleService from '../services/FindVehicleService';
-import CreateVehicleService from '../services/CreateVehicleService';
-import UpdateVehicleService from '../services/UpdateVehicleService';
-import UpdateVehiclePlateService from '../services/UpdateVehiclePlateService';
-import FindVehicleByUserIdService from '../services/FindVehiclesByUserIdService';
-import UploadVehicleDocumentFileService from '../services/UploadVehicleDocumentFileService';
-import AppError from '../errors/AppError';
-import DeleteVehicleDocumentFileService from '../services/DeleteVehicleDocumentFileService';
-import FindVehicleDocumentsByDocumentTypeService from '../services/FindVehicleDocumentsByDocumentTypeService';
-import UpdateVehicleDocumentStatusService from '../services/UpdateVehicleDocumentStatusService';
-import UploadVehiclePictureFileService from '../services/UploadVehiclePictureFileService';
-import DeleteVehiclePictureFileService from '../services/DeleteVehiclePictureFileService';
-import GetVehiclesWithPendingDocuments from '../services/GetVehiclesWithPendingDocuments';
-import FindVehiclesService from '../services/FindVehiclesService';
-import DeleteVehicleService from '../services/DeleteVehicleService';
-import CheckIfVehicleCanCreateItineraries from '../services/Vehicle/CheckIfVehicleCanCreateItineraries';
 import ensureAdmin from '../middlewares/ensureAdmin';
-import CountVehiclesPendingDocuments from '../services/CountVehiclesPendingDocuments';
+
+import AppError from '../errors/AppError';
+
+import { vehiclesRoutesDocumentPostMulter, vehiclesUploadPictureMulter } from '../constants/multerConfig';
+
+import FindVehicleService from '../services/Vehicle/FindVehicleService';
+import CreateVehicleService from '../services/Vehicle/CreateVehicleService';
+import UpdateVehicleService from '../services/Vehicle/UpdateVehicleService';
+import UpdateVehiclePlateService from '../services/Vehicle/UpdateVehiclePlateService';
+import FindVehicleByUserIdService from '../services/Vehicle/FindVehiclesByUserIdService';
+import UploadVehicleDocumentFileService from '../services/Vehicle/UploadVehicleDocumentFileService';
+import DeleteVehicleDocumentFileService from '../services/Vehicle/DeleteVehicleDocumentFileService';
+import FindVehicleDocumentsByDocumentTypeService from '../services/Vehicle/FindVehicleDocumentsByDocumentTypeService';
+import UpdateVehicleDocumentStatusService from '../services/Vehicle/UpdateVehicleDocumentStatusService';
+import UploadVehiclePictureFileService from '../services/Vehicle/UploadVehiclePictureFileService';
+import DeleteVehiclePictureFileService from '../services/Vehicle/DeleteVehiclePictureFileService';
+import GetVehiclesWithPendingDocuments from '../services/Vehicle/GetVehiclesWithPendingDocuments';
+import FindVehiclesService from '../services/Vehicle/FindVehiclesService';
+import DeleteVehicleService from '../services/Vehicle/DeleteVehicleService';
+import CheckIfVehicleCanCreateItineraries from '../services/Vehicle/CheckIfVehicleCanCreateItineraries';
+import CountVehiclesPendingDocuments from '../services/Vehicle/CountVehiclesPendingDocuments';
 
 const vehiclesRouter = Router();
 

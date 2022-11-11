@@ -3,7 +3,7 @@ import { Router } from 'express';
 import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 import ensureAdmin from '../middlewares/ensureAdmin';
 
-import FindItineraryService from '../services/FindItineraryService';
+import FindItineraryService from '../services/Itinerary/FindItineraryService';
 import AddOptionalPropertiesToItineraryObjectService from '../services/utils/AddOptionalPropertiesToObjectService';
 
 const passengersRouter = Router();

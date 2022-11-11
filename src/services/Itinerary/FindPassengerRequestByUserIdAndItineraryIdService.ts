@@ -1,9 +1,9 @@
 import { getRepository } from 'typeorm';
-import AppError from '../errors/AppError';
+import AppError from '../../errors/AppError';
 
-import PassengerRequest from '../models/PassengerRequest';
+import PassengerRequest from '../../models/PassengerRequest';
 import FindItineraryService from './FindItineraryService';
-import FindUserService from './FindUserService';
+import FindUserService from '../User/FindUserService';
 
 interface Request {
   id_user: string;
