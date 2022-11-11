@@ -3,7 +3,7 @@ import { getRepository } from "typeorm";
 import Itinerary from "../../models/Itinerary";
 import maxRadius from '../../constants/mapRadiusConfig';
 
-import CalculateDistanceBetweenCoords from '../../services/CalculateDistanceBetweenCoords';
+import CalculateDistanceBetweenCoords from '../utils/CalculateDistanceBetweenCoords';
 
 import AddOptionalPropertiesToItineraryObjectService from "../utils/AddOptionalPropertiesToObjectService";
 import { SortArrayOfObjects } from "../utils/SortArrayOfObjects";

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import AppError from '../errors/AppError';
+import AppError from '../../errors/AppError';
 
 interface Request {
   address_to: string;

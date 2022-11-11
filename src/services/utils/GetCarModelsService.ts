@@ -1,8 +1,8 @@
 import { getRepository } from 'typeorm';
 
-import AppError from '../errors/AppError';
+import AppError from '../../errors/AppError';
 
-import CarModels from '../models/CarModels';
+import CarModels from '../../models/CarModels';
 
 class GetCarModelsService {
   public async execute(): Promise<CarModels[]> {

@@ -3,9 +3,9 @@ import { getRepository } from 'typeorm';
 import ensureAdmin from '../middlewares/ensureAdmin';
 import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 import UserSearching from '../models/UsersSearching';
-import CalculateDistanceBetweenCoords from '../services/CalculateDistanceBetweenCoords';
+import CalculateDistanceBetweenCoords from '../services/utils/CalculateDistanceBetweenCoords';
 import CreateUserSearchingService from '../services/User/CreateUserSearchingService';
-import GetCoordinatesByAddress from '../services/GetCoordinatesByAddress';
+import GetCoordinatesByAddress from '../services/utils/GetCoordinatesByAddress';
 
 const searchRoutes = Router();
 
