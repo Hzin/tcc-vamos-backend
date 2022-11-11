@@ -1,9 +1,9 @@
 import { getRepository } from 'typeorm';
 
-import AppError from '../errors/AppError';
+import AppError from '../../errors/AppError';
 
-import User from '../models/User';
-import SocialInformation from '../models/SocialInformation';
+import User from '../../models/User';
+import SocialInformation from '../../models/SocialInformation';
 
 interface Request {
   id_user: string;

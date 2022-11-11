@@ -2,10 +2,10 @@ import { getRepository } from 'typeorm';
 import { v4 } from 'uuid';
 import { hash } from 'bcryptjs';
 
-import AppError from '../errors/AppError';
+import AppError from '../../errors/AppError';
 
-import User from '../models/User';
-import Social from '../models/SocialInformation';
+import User from '../../models/User';
+// import Social from '../../models/SocialInformation';
 
 interface Request {
   name: string;
