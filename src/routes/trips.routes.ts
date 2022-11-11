@@ -7,8 +7,8 @@ import CheckIfUserHasVehiclesService from '../services/User/CheckIfUserHasVehicl
 import Trip from '../models/Trip';
 import FindTripService from '../services/Trip/FindTripService';
 import CreateTripService from '../services/Trip/CreateTripService';
-import UpdateTripStatusService from '../services/UpdateTripStatusService';
-import UpdateTripNicknameService from '../services/UpdateTripNicknameService';
+import UpdateTripStatusService from '../services/Trip/UpdateTripStatusService';
+import UpdateTripNicknameService from '../services/Trip/UpdateTripNicknameService';
 import GetUserTripsFeedService from '../services/Trip/GetUserTripsFeedService';
 import GetItineraryTodaysTripStatusService from '../services/Trip/GetItineraryTodaysTripStatusService';
 import { tripStatus } from '../constants/tripStatus';

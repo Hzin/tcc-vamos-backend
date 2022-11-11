@@ -11,7 +11,7 @@ import FindUserSocialService from '../services/User/FindUserSocialService';
 import UpdateUserSocialService from '../services/User/UpdateUserSocialService';
 import UpdateUserService from '../services/User/UpdateUserService';
 import UpdateUserAvatarService from '../services/User/UpdateUserAvatarService';
-// import UpdateUserPasswordService from '../services/User/UpdateUserPasswordService';
+import UpdateUserPasswordService from '../services/User/UpdateUserPasswordService';
 import CheckIfUserHasVehiclesService from '../services/User/CheckIfUserHasVehiclesService';
 
 import AuthenticateUserService from '../services/Session/AuthenticateUserService';
@@ -198,23 +198,23 @@ usersRouter.patch(
   },
 );
 
-// usersRouter.patch(
-//   '/edit/password',
-//   ensureAuthenticated,
-//   async (request, response) => {
-//     const { password_old, password_new } = request.body;
+usersRouter.patch(
+  '/edit/password',
+  ensureAuthenticated,
+  async (request, response) => {
+    const { password_old, password_new } = request.body;
 
-//     const updateUserPasswordService = new UpdateUserPasswordService();
+    const updateUserPasswordService = new UpdateUserPasswordService();
 
-//     await updateUserPasswordService.execute({
-//       id_user: request.user.id_user,
-//       password_old: password_old,
-//       password_new: password_new,
-//     });
+    await updateUserPasswordService.execute({
+      id_user: request.user.id_user,
+      password_old: password_old,
+      password_new: password_new,
+    });
 
-//     return response.json({ message: 'Password sucessfully updated.' });
-//   },
-// );
+    return response.json({ message: 'Password sucessfully updated.' });
+  },
+);
 
 usersRouter.get(
   '/social/:id_user',

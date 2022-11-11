@@ -5,7 +5,7 @@ import { passengerRequestStatusTypes } from "../../constants/passengerRequestSta
 import PassengerRequest from "../../models/PassengerRequest";
 import FindPassengerRequestServiceById from "./FindPassengerRequestServiceById";
 
-import Utils from '../../services/utils/Utils'
+import Utils from '../utils/Utils'
 import AppError from "../../errors/AppError";
 import Passenger from "../../models/Passenger";
 import { passengerStatusTypes } from "../../constants/passengerStatusTypes";

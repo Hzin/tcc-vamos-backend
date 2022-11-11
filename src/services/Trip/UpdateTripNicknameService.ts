@@ -1,9 +1,8 @@
 import { getRepository } from 'typeorm';
 
-import AppError from '../errors/AppError';
+import AppError from '../../errors/AppError';
 
-import Trip from '../models/Trip';
-import TripHistory from '../models/TripHistory';
+import Trip from '../../models/Trip';
 
 interface Request {
   id_trip: string;
