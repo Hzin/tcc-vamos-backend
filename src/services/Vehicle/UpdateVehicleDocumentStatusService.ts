@@ -1,8 +1,8 @@
 import { getRepository } from 'typeorm';
-import { vehicleDocumentStatus } from '../constants/vehicleDocumentStatus';
+import { vehicleDocumentStatus } from '../../constants/vehicleDocumentStatus';
 
 
-import VehicleDocument from '../models/VehicleDocument';
+import VehicleDocument from '../../models/VehicleDocument';
 import FindVehicleDocumentsByDocumentTypeService from './FindVehicleDocumentsByDocumentTypeService';
 
 interface Request {

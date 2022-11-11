@@ -1,9 +1,9 @@
 import { getRepository } from 'typeorm';
 
-import AppError from '../errors/AppError';
-import User from '../models/User';
+import AppError from '../../errors/AppError';
+import User from '../../models/User';
 
-import Vehicle from '../models/Vehicle';
+import Vehicle from '../../models/Vehicle';
 
 interface Request {
   id_user: string;
@@ -62,7 +62,6 @@ class CreateVehicleService {
       brand,
       model,
       seats_number,
-      document_status: false,
       locator_name,
       locator_address,
       locator_complement,

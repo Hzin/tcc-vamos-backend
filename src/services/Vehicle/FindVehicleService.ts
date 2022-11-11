@@ -1,9 +1,9 @@
 import { getRepository } from 'typeorm';
-import { defaultVehiclePicturePath } from '../constants/multerConfig';
+import { defaultVehiclePicturePath } from '../../constants/multerConfig';
 
-import AppError from '../errors/AppError';
+import AppError from '../../errors/AppError';
 
-import Vehicle from '../models/Vehicle';
+import Vehicle from '../../models/Vehicle';
 
 class FindVehicleService {
   public async execute(plate: string): Promise<Vehicle> {

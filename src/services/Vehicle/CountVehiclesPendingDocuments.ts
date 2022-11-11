@@ -1,4 +1,4 @@
-import { vehicleDocumentStatus } from "../constants/vehicleDocumentStatus";
+import { vehicleDocumentStatus } from "../../constants/vehicleDocumentStatus";
 import FindVehiclesService from "./FindVehiclesService";
 
 class CountVehiclesPendingDocuments {

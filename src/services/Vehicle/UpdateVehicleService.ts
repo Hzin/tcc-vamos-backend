@@ -1,8 +1,8 @@
 import { getRepository } from 'typeorm';
 
-import AppError from '../errors/AppError';
+import AppError from '../../errors/AppError';
 
-import Vehicle from '../models/Vehicle';
+import Vehicle from '../../models/Vehicle';
 
 interface Request {
   plate: string;

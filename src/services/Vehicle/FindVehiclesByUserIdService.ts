@@ -1,10 +1,10 @@
 import { getRepository } from 'typeorm';
-import { defaultVehiclePicturePath } from '../constants/multerConfig';
+import { defaultVehiclePicturePath } from '../../constants/multerConfig';
 
-import AppError from '../errors/AppError';
+import AppError from '../../errors/AppError';
 
-import User from '../models/User';
-import Vehicle from '../models/Vehicle';
+import User from '../../models/User';
+import Vehicle from '../../models/Vehicle';
 
 class FindVehiclesByUserIdService {
   public async execute(id_user: string): Promise<Vehicle[]> {

@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 
-import { basePath, vehiclesRoutesPicturesPostPath, vehiclesUploadPicturePath } from '../constants/multerConfig';
+import { basePath, vehiclesRoutesPicturesPostPath, vehiclesUploadPicturePath } from '../../constants/multerConfig';
 
 import UpdateVehiclePictureService from './UpdateVehiclePictureService';
 

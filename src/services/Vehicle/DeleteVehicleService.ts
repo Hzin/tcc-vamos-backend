@@ -1,6 +1,6 @@
 import { getRepository } from 'typeorm';
 
-import Vehicle from '../models/Vehicle';
+import Vehicle from '../../models/Vehicle';
 import FindVehicleService from './FindVehicleService';
 
 class DeleteVehicleService {

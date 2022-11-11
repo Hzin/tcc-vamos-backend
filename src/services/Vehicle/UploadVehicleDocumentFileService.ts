@@ -1,7 +1,7 @@
 import fs from 'fs'
 
-import { basePath, vehiclesRoutesDocumentPostPath } from '../constants/multerConfig';
-import VehicleDocument from '../models/VehicleDocument';
+import { basePath, vehiclesRoutesDocumentPostPath } from '../../constants/multerConfig';
+import VehicleDocument from '../../models/VehicleDocument';
 
 import CreateVehicleDocumentService from './CreateVehicleDocument';
 

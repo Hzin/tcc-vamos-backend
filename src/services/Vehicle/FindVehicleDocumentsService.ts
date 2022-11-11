@@ -1,5 +1,5 @@
-import AppError from '../errors/AppError';
-import VehicleDocument from '../models/VehicleDocument';
+import AppError from '../../errors/AppError';
+import VehicleDocument from '../../models/VehicleDocument';
 import FindVehicleService from './FindVehicleService';
 
 class FindVehicleDocumentsService {

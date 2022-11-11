@@ -1,8 +1,8 @@
-import { vehicleDocumentStatus } from '../constants/vehicleDocumentStatus';
-import { vehicleDocumentTypes } from '../constants/vehicleDocumentTypes';
+import { vehicleDocumentStatus } from '../../constants/vehicleDocumentStatus';
+import { vehicleDocumentTypes } from '../../constants/vehicleDocumentTypes';
 
 import FindVehicleService from './FindVehicleService';
-import Utils from './utils/Utils';
+import Utils from '../utils/Utils';
 
 interface Request {
   vehicle_plate: string;

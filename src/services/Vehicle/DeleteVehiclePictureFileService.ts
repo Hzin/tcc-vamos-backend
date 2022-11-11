@@ -1,11 +1,11 @@
 import fs from 'fs'
 
 import { getRepository } from 'typeorm';
-import { basePath, defaultVehiclePicturePath, vehiclesUploadPicturePath } from '../constants/multerConfig';
+import { basePath, defaultVehiclePicturePath, vehiclesUploadPicturePath } from '../../constants/multerConfig';
 
-import Vehicle from '../models/Vehicle';
+import Vehicle from '../../models/Vehicle';
 import FindVehicleService from './FindVehicleService';
-import StringUtils from './utils/String';
+import StringUtils from '../utils/String';
 
 interface Request {
   vehicle_plate: string,

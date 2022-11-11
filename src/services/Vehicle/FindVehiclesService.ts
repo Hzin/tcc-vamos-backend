@@ -1,10 +1,10 @@
 
 import { getRepository } from 'typeorm';
-import { defaultVehiclePictureFilename, vehiclesUploadPicturePath } from '../constants/multerConfig';
+import { defaultVehiclePictureFilename, vehiclesUploadPicturePath } from '../../constants/multerConfig';
 
-import AppError from '../errors/AppError';
+import AppError from '../../errors/AppError';
 
-import Vehicle from '../models/Vehicle';
+import Vehicle from '../../models/Vehicle';
 
 class FindVehiclesService {
   public async execute(): Promise<Vehicle[]> {

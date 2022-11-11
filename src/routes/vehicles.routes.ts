@@ -18,7 +18,7 @@ import DeleteVehiclePictureFileService from '../services/DeleteVehiclePictureFil
 import GetVehiclesWithPendingDocuments from '../services/GetVehiclesWithPendingDocuments';
 import FindVehiclesService from '../services/FindVehiclesService';
 import DeleteVehicleService from '../services/DeleteVehicleService';
-import CheckIfVehicleCanCreateItineraries from '../services/CheckIfVehicleCanCreateItineraries';
+import CheckIfVehicleCanCreateItineraries from '../services/Vehicle/CheckIfVehicleCanCreateItineraries';
 import ensureAdmin from '../middlewares/ensureAdmin';
 import CountVehiclesPendingDocuments from '../services/CountVehiclesPendingDocuments';
 

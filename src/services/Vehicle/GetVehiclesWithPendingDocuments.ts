@@ -1,6 +1,6 @@
 import {  getRepository } from 'typeorm';
-import { vehicleDocumentStatus } from '../constants/vehicleDocumentStatus';
-import Vehicle from '../models/Vehicle';
+import { vehicleDocumentStatus } from '../../constants/vehicleDocumentStatus';
+import Vehicle from '../../models/Vehicle';
 
 interface ReturnObj {
   vehicle_brand: string;
