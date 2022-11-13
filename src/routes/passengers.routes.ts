@@ -4,7 +4,7 @@ import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 import ensureAdmin from '../middlewares/ensureAdmin';
 
 import FindItineraryService from '../services/Itinerary/FindItineraryService';
-import AddOptionalPropertiesToItineraryObjectService from '../services/utils/AddOptionalPropertiesToObjectService';
+import AddOptionalPropertiesToItineraryObjectService from '../services/Utils/AddOptionalPropertiesToObjectService';
 
 const passengersRouter = Router();
 

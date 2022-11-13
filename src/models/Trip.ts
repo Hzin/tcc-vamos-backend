@@ -9,6 +9,7 @@ import {
   ManyToOne,
 } from 'typeorm';
 import { TripStatus } from '../enums/TripStatus';
+import { TripType } from '../enums/TripType';
 import AttendanceList from './AttendanceList';
 import Itinerary from './Itinerary';
 import TripHistory from './TripHistory';
@@ -39,6 +40,14 @@ class Trip {
     }
   )
   status: TripStatus;
+
+  @Column(
+    {
+      type: "enum",
+      enum: TripType,
+    }
+  )
+  type: TripType;
 
   @OneToMany(() => TripHistory, tripHistory => tripHistory.trip)
   trip_histories?: TripHistory[];

@@ -4,7 +4,7 @@ import Itinerary from "../../models/Itinerary";
 import FindItinerariesByDriverUserIdService from "./FindItinerariesByDriverUserIdService";
 import FindItinerariesByPassengerUserIdService from "./FindItinerariesByPassengerUserIdService";
 
-import AddOptionalPropertiesToItineraryObjectService from "../utils/AddOptionalPropertiesToObjectService";
+import AddOptionalPropertiesToItineraryObjectService from "../Utils/AddOptionalPropertiesToObjectService";
 
 class FindItinerariesExceptUserss {
   public async execute(id_user: string): Promise<Itinerary[]> {

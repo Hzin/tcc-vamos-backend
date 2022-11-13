@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner, Table, TableForeignKey } from "typeorm";
 import { TripStatus } from "../../enums/TripStatus";
 
-import Utils from '../../services/utils/Utils';
+import Utils from '../../services/Utils/Utils';
 
 export class CreateTripsHistoryTable1663372568541 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {

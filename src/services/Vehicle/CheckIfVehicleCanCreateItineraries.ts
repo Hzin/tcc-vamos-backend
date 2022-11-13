@@ -2,7 +2,7 @@ import { VehicleDocumentStatus } from '../../enums/VehicleDocumentStatus';
 import { VehicleDocumentType } from '../../enums/VehicleDocumentType';
 
 import FindVehicleService from './FindVehicleService';
-import Utils from '../utils/Utils';
+import Utils from '../Utils/Utils';
 
 interface Request {
   vehicle_plate: string;

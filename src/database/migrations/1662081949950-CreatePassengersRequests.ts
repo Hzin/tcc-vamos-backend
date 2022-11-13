@@ -10,7 +10,7 @@ import { ItineraryContract } from '../../enums/ItineraryContract';
 import { PassengerRequestStatus } from '../../enums/PassengerRequestStatus';
 import { SchoolPeriod } from '../../enums/SchoolPeriod';
 
-import Utils from '../../services/utils/Utils';
+import Utils from '../../services/Utils/Utils';
 
 export class CreatePassengersRequests1662081949950
   implements MigrationInterface {

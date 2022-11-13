@@ -2,7 +2,7 @@ import { MigrationInterface, QueryRunner, Table, TableForeignKey } from 'typeorm
 import { VehicleDocumentStatus } from '../../enums/VehicleDocumentStatus';
 import { VehicleDocumentType } from '../../enums/VehicleDocumentType';
 
-import Utils from '../../services/utils/Utils';
+import Utils from '../../services/Utils/Utils';
 
 export class CreateVehiclesDocumentsTable1655691282003 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {

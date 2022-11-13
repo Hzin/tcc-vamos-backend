@@ -43,7 +43,6 @@ class Time {
       return SchoolPeriod.night
     }
   }
-
 }
 
 // export function CalculateSchoolPeriod(timeFrom: string, timeTo: string): SchoolPeriod {

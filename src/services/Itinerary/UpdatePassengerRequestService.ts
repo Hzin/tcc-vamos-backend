@@ -5,7 +5,7 @@ import { PassengerRequestStatus } from "../../enums/PassengerRequestStatus";
 import PassengerRequest from "../../models/PassengerRequest";
 import FindPassengerRequestServiceById from "./FindPassengerRequestServiceById";
 
-import Utils from '../utils/Utils'
+import Utils from '../Utils/Utils'
 import AppError from "../../errors/AppError";
 import Passenger from "../../models/Passenger";
 import { PassengerStatus } from "../../enums/PassengerStatus";

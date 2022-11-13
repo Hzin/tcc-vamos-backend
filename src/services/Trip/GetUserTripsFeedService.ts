@@ -1,70 +1,78 @@
 
 import Itinerary from '../../models/Itinerary';
-import FindVehiclesByUserIdService from '../Vehicle/FindVehiclesByUserIdService';
 import FindUserService from '../User/FindUserService';
 import { TripStatus } from '../../enums/TripStatus';
-import GetItineraryTodaysTripStatusService from './GetItineraryTodaysTripStatusService';
-import DateUtils from '../utils/Date';
+// import GetItineraryTodaysTripStatusService from './GetItineraryTodaysTripStatusService';
+import DateUtils from '../Utils/Date';
 import AppError from '../../errors/AppError';
-import GetItineraryTodaysTripByItineraryId from './GetItineraryTodaysTripByItineraryId';
 import FindItinerariesByDriverUserIdService from '../Itinerary/FindItinerariesByDriverUserIdService';
 import FindItinerariesByPassengerUserIdService from '../Itinerary/FindItinerariesByPassengerUserIdService';
-
-interface Return {
-  itinerary: Itinerary;
-  tripStatus: TripStatus;
-  tripId?: number;
-}
+import { TripType } from '../../enums/TripType';
+import { TripDay } from '../../enums/TripDay';
+import Utils from '../Utils/Utils';
+import { TripUserType } from '../../constants/TripUserType';
+import Trip from '../../models/Trip';
+import { getRepository, ObjectLiteral } from 'typeorm';
 
 interface Request {
   id_user: string,
-  tripsType: 'today' | 'not_today',
-  userType: 'driver' | 'passenger'
+  tripDay: string,
+  tripType: string,
+  userType: string,
+}
+
+interface Return {
+  itinerary: Itinerary;
+  itineraryInfo: {
+    type: 'recurrent' | 'specific_day',
+    value: string;
+  }
+
+  trips: {
+    tripStatus: TripStatus;
+    tripType: TripType;
+    tripId?: number;
+  }[]
 }
 
 class GetUserTripsFeedService {
-  public async execute({ id_user, tripsType, userType }: Request): Promise<Return[]> {
+  public async execute({ id_user, tripDay, tripType, userType }: Request): Promise<Return[]> {
+    if (!Utils.stringIsInEnum(tripDay, TripDay)) throw new AppError("Parâmetro 'tripDay' inválido.")
+    if (!Utils.stringIsInEnum(tripType, TripType)) throw new AppError("Parâmetro 'tripType' inválido.")
+    if (!Utils.stringIsInEnum(userType, TripUserType)) throw new AppError("Parâmetro 'userType' inválido.")
+
+    const tripsRepository = getRepository(Trip)
+
+    // recupera usuário
     const findUserService = new FindUserService();
     const user = await findUserService.execute(id_user);
 
-    const findVehiclesByUserIdService = new FindVehiclesByUserIdService();
-    const vehicles = await findVehiclesByUserIdService.execute(user.id_user);
-
-    let userItineraries: Itinerary[] = []
-
+    // recupera itinerários do usuário segundo seu userType ('DRIVER', 'PASSENGER')
+    let itineraries: Itinerary[] = []
     switch (userType) {
-      case 'driver':
+      case TripUserType.driver:
         const findItinerariesByDriverUserIdService = new FindItinerariesByDriverUserIdService()
-        userItineraries = await findItinerariesByDriverUserIdService.execute(id_user)
+        itineraries = await findItinerariesByDriverUserIdService.execute(user.id_user)
         break;
-      case 'passenger':
+      case TripUserType.passenger:
         const findItinerariesByPassengerUserIdService = new FindItinerariesByPassengerUserIdService()
-        userItineraries = await findItinerariesByPassengerUserIdService.execute(id_user)
+        itineraries = await findItinerariesByPassengerUserIdService.execute(user.id_user)
         break;
       default:
-        throw new AppError('Tipo de usuário inválido para recuperar feed de viagens.')
+        throw new AppError('O tipo de usuário informado é inválido para recuperar feed de viagens.')
         break;
     }
 
-    // today's trips can have its own status
-    // like "late", "ongoing"
-    // this status can be only assigned in this filter
-
-    // TODO, acho melhor atualizar os models para colocar ? nos atributos nullable
-    // TODO, e alterar a função de criar itinerário do Hugo para não usar mais props
-
-    let todaysTrips: Return[] = []
-
-    for (let index = 0; index < userItineraries.length; index++) {
-      const itinerary = userItineraries[index];
+    // montando feed de rotas
+    let tripsFeed: Return[] = []
+    for (let index = 0; index < itineraries.length; index++) {
+      const itinerary = itineraries[index];
 
       // filtrando resultados não desejados
       if (!itinerary.is_active) continue
-      if (!itinerary.days_of_week) continue
 
+      // verifica itinerários de datas não desejadas
       let isToday: boolean = false
-
-      // verifica dia específico
       if (!itinerary.days_of_week || itinerary.days_of_week === '0000000') {
         let today = new Date();
         if (itinerary.specific_day?.setHours(0, 0, 0, 0) == today.setHours(0, 0, 0, 0)) {
@@ -73,30 +81,48 @@ class GetUserTripsFeedService {
       } else {
         isToday = itinerary.days_of_week.split('').at(DateUtils.getTodaysDayOfWeekAsNumberForSplitComparison()) === '1'
       }
+      if (isToday && (tripDay !== TripDay.today)) continue
+      if (!isToday && (tripDay !== TripDay.notToday)) continue
 
-      if (isToday && (tripsType !== 'today')) continue
+      // recuperando
+      // let whereCondition: ObjectLiteral
+      // switch (tripDay) {
+      //   case TripDay.today:
+      //     whereCondition = { itinerary, date: DateUtils.getCurrentDate() }
+      //     break;
+      //   case TripDay.notToday:
+      //     // TODO, sinal de exclamação funciona?
+      //     whereCondition = { itinerary, date: !DateUtils.getCurrentDate() }
+      //     break;
+      //   default:
+      //     break;
+      // }
+      // const trips = await tripsRepository.find({
+      //   where: { itinerary, date: DateUtils.getCurrentDate() },
+      // });
 
-      const getItineraryTodaysTripStatusService = new GetItineraryTodaysTripStatusService()
-      const tripStatus = await getItineraryTodaysTripStatusService.execute(itinerary.id_itinerary.toString())
+      // ver seguintes casos:
+      // se é notToday, exibir ida e volta (porque nada ainda vai ter acontecido)
+      // se é today...
+      // 1. viagem de ida já ainda não aconteceu
+      //    (estimated departure time < now)
+      // 2. viagem de ida está acontecendo
+      //    ((estimated departure time > now && estimated arrival time < now) || (manual confirmation by driver))
+      // 3. viagem de ida terminou
+      //    (estimated arrival time > now || manual confirmation by driver)
+      // daí informo isso no vetor Response
 
-      const getItineraryTodaysTripByItineraryId = new GetItineraryTodaysTripByItineraryId()
-      let tripId: number | undefined
-
-      try {
-        const trip = await getItineraryTodaysTripByItineraryId.execute(itinerary.id_itinerary.toString())
-        tripId = trip.id_trip
-      } catch {
-        tripId = undefined
-      }
-
-      todaysTrips.push({
-        itinerary,
-        tripStatus,
-        tripId: tripId
-      })
+      // 4. viagem de retorno já ainda não aconteceu
+      //    (estimated departure time < now)
+      // 5. viagem de retorno está acontecendo
+      //    ((estimated departure time > now && estimated arrival time < now) || (manual confirmation by driver))
+      // 6. viagem de retorno terminou
+      //    (estimated arrival time > now || manual confirmation by driver)
     }
 
-    return todaysTrips
+    // TODO, desfazer
+    let todayTripsFeed: Return[] = []
+    return todayTripsFeed
   }
 }
 

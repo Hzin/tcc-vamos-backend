@@ -5,7 +5,7 @@ import { basePath, vehiclesRoutesDocumentPostPath } from '../../constants/multer
 
 import VehicleDocument from '../../models/VehicleDocument';
 import FindVehicleDocumentsByDocumentTypeService from './FindVehicleDocumentsByDocumentTypeService';
-import StringUtils from '../utils/String';
+import StringUtils from '../Utils/String';
 
 interface Request {
   vehicle_plate: string,

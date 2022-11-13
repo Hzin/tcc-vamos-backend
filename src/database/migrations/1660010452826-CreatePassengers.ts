@@ -9,7 +9,7 @@ import { ItineraryContract } from '../../enums/ItineraryContract';
 import { PassengerStatus } from '../../enums/PassengerStatus';
 import { SchoolPeriod } from '../../enums/SchoolPeriod';
 
-import Utils from '../../services/utils/Utils';
+import Utils from '../../services/Utils/Utils';
 
 export class CreatePassengers1660010452826 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {

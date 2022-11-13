@@ -18,7 +18,7 @@ import FindItineraryPendingRequests from '../services/Itinerary/FindItineraryPen
 import FindDriverItinerariesOnlyWithPendingRequests from '../services/Itinerary/FindDriverItinerariesOnlyWithPendingRequests';
 import CountItinerariesPendingPassengerRequestsByDriverId from '../services/Itinerary/CountItinerariesPendingPassengerRequestsByDriverId';
 
-import AddOptionalPropertiesToObjectService from '../services/utils/AddOptionalPropertiesToObjectService';
+import AddOptionalPropertiesToObjectService from '../services/Utils/AddOptionalPropertiesToObjectService';
 
 const itinerariesRouter = Router();
 
@@ -89,8 +89,10 @@ itinerariesRouter.post('/', ensureAuthenticated, async (request, response) => {
     vehicle_plate,
     days_of_week,
     specific_day,
-    estimated_departure_time,
-    estimated_arrival_time,
+    estimated_departure_time_going,
+    estimated_arrival_time_going,
+    estimated_departure_time_return,
+    estimated_arrival_time_return,
     monthly_price,
     daily_price,
     accept_daily,
@@ -108,8 +110,10 @@ itinerariesRouter.post('/', ensureAuthenticated, async (request, response) => {
     vehicle_plate,
     days_of_week,
     specific_day,
-    estimated_departure_time,
-    estimated_arrival_time,
+    estimated_departure_time_going,
+    estimated_arrival_time_going,
+    estimated_departure_time_return,
+    estimated_arrival_time_return,
     monthly_price,
     daily_price,
     accept_daily,

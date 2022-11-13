@@ -3,10 +3,10 @@ import { getRepository } from "typeorm";
 import Itinerary from "../../models/Itinerary";
 import maxRadius from '../../constants/mapRadiusConfig';
 
-import CalculateDistanceBetweenCoords from '../utils/CalculateDistanceBetweenCoords';
+import CalculateDistanceBetweenCoords from '../Utils/CalculateDistanceBetweenCoords';
 
-import AddOptionalPropertiesToItineraryObjectService from "../utils/AddOptionalPropertiesToObjectService";
-import { SortArrayOfObjects } from "../utils/SortArrayOfObjects";
+import AddOptionalPropertiesToItineraryObjectService from "../Utils/AddOptionalPropertiesToObjectService";
+import { SortArrayOfObjects } from "../Utils/SortArrayOfObjects";
 import FindItinerariesByDriverUserIdService from "./FindItinerariesByDriverUserIdService";
 import FindItinerariesByPassengerUserIdService from "./FindItinerariesByPassengerUserIdService";
 

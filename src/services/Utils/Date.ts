@@ -10,6 +10,17 @@ class DateUtils {
     return dateString
   }
 
+  public static convertTimestampToTime(timestamp: number): string {
+    const date = new Date(timestamp * 1000);
+    const hours = date.getHours();
+    const minutes = "0" + date.getMinutes();
+    const seconds = "0" + date.getSeconds();
+
+    const formattedTime = hours + ':' + minutes.substring(-2) + ':' + seconds.substring(-2);
+
+    return formattedTime
+  }
+
   public static convertDateStringToTimestamp(date: string): number {
     const convertedDate = new Date(date)
     convertedDate.setHours(convertedDate.getHours() - timezoneOffset);
@@ -26,6 +37,10 @@ class DateUtils {
 
   public static getCurrentDate(): string {
     return this.convertTimestampToDate(this.getCurrentTimestamp())
+  }
+
+  public static getCurrentTime(): string {
+    return this.convertTimestampToTime(this.getCurrentTimestamp())
   }
 
   public static convertIonicDateToJSDate(ionicDate: string): string {

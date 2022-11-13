@@ -5,7 +5,7 @@ import { basePath, defaultVehiclePicturePath, vehiclesUploadPicturePath } from '
 
 import Vehicle from '../../models/Vehicle';
 import FindVehicleService from './FindVehicleService';
-import StringUtils from '../utils/String';
+import StringUtils from '../Utils/String';
 
 interface Request {
   vehicle_plate: string,
