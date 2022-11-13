@@ -47,6 +47,10 @@ interface Return {
 
 class GetUserTripsFeedService {
   public async execute({ id_user, tripDay, tripType, userType }: Request): Promise<Return[]> {
+    tripDay = tripDay.toUpperCase()
+    tripType = tripType.toUpperCase()
+    userType = userType.toUpperCase()
+
     if (!Utils.stringIsInEnum(tripDay, TripDay)) throw new AppError("Parâmetro 'tripDay' inválido.")
     if (!Utils.stringIsInEnum(tripType, TripType)) throw new AppError("Parâmetro 'tripType' inválido.")
     if (!Utils.stringIsInEnum(userType, TripUserType)) throw new AppError("Parâmetro 'userType' inválido.")
