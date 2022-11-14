@@ -26,15 +26,18 @@ interface Response {
 // assume-se today para tripDay
 class CreateTripService {
   public async execute({ id_itinerary, tripType, newTripStatus }: Request): Promise<Response> {
+    tripType = tripType.toUpperCase()
+    newTripStatus = newTripStatus.toUpperCase()
+
     if (!Utils.stringIsInEnum(tripType, TripType)) throw new AppError("Tipo de viagem inválido.")
     if (!Utils.stringIsInEnum(newTripStatus, TripStatus)) throw new AppError("Status de viagem inválido.")
 
     let newTripStatusProperty: TripStatus
     switch (newTripStatus) {
-      case 'confirm':
+      case TripStatus.confirmed:
         newTripStatusProperty = TripStatus.confirmed
         break;
-      case 'cancel':
+      case TripStatus.canceled:
         newTripStatusProperty = TripStatus.canceled
         break;
       default:
@@ -70,7 +73,7 @@ class CreateTripService {
 
     // cria viagem
     const trip = tripsRepository.create({
-      itinerary, date: DateUtils.getCurrentDate(), status: TripStatus.pending
+      itinerary, date: DateUtils.getCurrentDate(), status: TripStatus.pending, type: tripType
     });
 
     await tripsRepository.save(trip);

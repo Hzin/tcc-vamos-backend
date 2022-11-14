@@ -4,7 +4,6 @@ import { getRepository } from 'typeorm';
 import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 
 import Trip from '../models/Trip';
-import { TripStatus } from '../enums/TripStatus';
 
 import CheckIfUserHasVehiclesService from '../services/User/CheckIfUserHasVehiclesService';
 import FindTripService from '../services/Trip/FindTripService';

@@ -18,6 +18,8 @@ import Trip from '../../models/Trip';
 import User from '../../models/User';
 import CheckTodaysReturnTripIsAvailable from './CheckTodaysReturnTripIsAvailable';
 
+import AddOptionalPropertiesToObjectService from '../Utils/AddOptionalPropertiesToObjectService'
+
 interface GetFeedForDriverProps {
   itinerary: Itinerary
 }
@@ -113,6 +115,8 @@ class GetUserTripsFeedService {
         break;
     }
 
+    const addOptionalPropertiesToObjectService = new AddOptionalPropertiesToObjectService()
+
     // montando feed de rotas
     let tripsFeed: Return[] = []
     for (let index = 0; index < itineraries.length; index++) {
@@ -207,6 +211,8 @@ class GetUserTripsFeedService {
           id: todayReturnTrip ? todayReturnTrip.id_trip : undefined,
         }
       }
+
+      returnObj.itinerary = await addOptionalPropertiesToObjectService.executeSingleItinerary(returnObj.itinerary)
 
       tripsFeed.push(returnObj)
     } // for itineraries
