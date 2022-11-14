@@ -13,7 +13,7 @@ import Utils from '../Utils/Utils';
 import { TripUserType } from '../../constants/TripUserType';
 import ItineraryHasPassengersWithContractTypeByItineraryIdService from '../Itinerary/ItineraryHasPassengersWithContractTypeByItineraryIdService';
 import { ItineraryContract } from '../../enums/ItineraryContract';
-import { getRepository } from 'typeorm';
+import { getRepository, Not } from 'typeorm';
 import Trip from '../../models/Trip';
 import User from '../../models/User';
 import CheckTodaysReturnTripIsAvailable from './CheckTodaysReturnTripIsAvailable';
@@ -30,7 +30,6 @@ interface GetFeedForPassengerProps {
 interface Request {
   id_user: string,
   tripDay: string,
-  tripType: string,
   userType: string,
 }
 
@@ -85,13 +84,11 @@ class GetUserTripsFeedService {
     return passenger.contract_type.toString()
   }
 
-  public async execute({ id_user, tripDay, tripType, userType }: Request): Promise<Return[]> {
+  public async execute({ id_user, tripDay, userType }: Request): Promise<Return[]> {
     tripDay = tripDay.toUpperCase()
-    tripType = tripType.toUpperCase()
     userType = userType.toUpperCase()
 
     if (!Utils.stringIsInEnum(tripDay, TripDay)) throw new AppError("Parâmetro 'tripDay' inválido.")
-    if (!Utils.stringIsInEnum(tripType, TripType)) throw new AppError("Parâmetro 'tripType' inválido.")
     if (!Utils.stringIsInEnum(userType, TripUserType)) throw new AppError("Parâmetro 'userType' inválido.")
 
     const tripsRepository = getRepository(Trip)
@@ -162,20 +159,13 @@ class GetUserTripsFeedService {
 
       // id_user, tripDay, tripType, userType
 
-      let itineraryInfoType = ''
-      switch (userType) {
-        case TripUserType.driver:
-          itineraryInfoType = await this.getItineraryInfoTypeByItineraryPassengers(itinerary)
-          break;
-        case TripUserType.passenger:
-          itineraryInfoType = this.getItineraryInfoTypeByPassengerContractType(itinerary, user.id_user)
-          break;
-        default:
-          break;
-      }
-
       const currentDate = DateUtils.getCurrentDate()
-      const dateConsult = tripDay === TripDay.today ? currentDate : !currentDate
+      const dateConsult = tripDay === TripDay.today ? currentDate : Not(currentDate)
+
+      // console.log('currentDate: ')
+      // console.log(currentDate)
+      // console.log('dateConsult: ')
+      // console.log(dateConsult)
 
       // aí tenho que ver status da viagem de ida, se ela já existir
       const goingTrip = await tripsRepository.findOne({
@@ -184,12 +174,20 @@ class GetUserTripsFeedService {
 
       let returnObj: Return = {
         itinerary,
-        itineraryInfoDriver: itineraryInfoType,
 
         tripGoing: {
           status: goingTrip ? goingTrip.status : TripStatus.pending,
           id: goingTrip ? goingTrip.id_trip : undefined,
         }
+      }
+
+      switch (userType) {
+        case TripUserType.driver:
+          returnObj.itineraryInfoDriver = await this.getItineraryInfoTypeByItineraryPassengers(itinerary)
+          break;
+        case TripUserType.passenger:
+          returnObj.itineraryInfoPassenger = this.getItineraryInfoTypeByPassengerContractType(itinerary, user.id_user)
+          break;
       }
 
       if (this.checkItineraryHasRecurringTrips(itinerary)) {
@@ -201,14 +199,16 @@ class GetUserTripsFeedService {
           where: { itinerary, date: dateConsult, type: TripType.return },
         });
 
-        let returnTripStatus: TripStatus = TripStatus.pending
-        if (!returnTripIsAvailable) returnTripStatus = TripStatus.unavailable
+        let returnTripStatus: TripStatus = todayReturnTrip ? todayReturnTrip.status : TripStatus.pending
+        if (!returnTripIsAvailable) returnTripStatus = TripStatus.pendingGoingTrip
 
         returnObj.tripReturn = {
           status: returnTripStatus,
           id: todayReturnTrip ? todayReturnTrip.id_trip : undefined,
         }
       }
+
+      tripsFeed.push(returnObj)
     } // for itineraries
 
     return tripsFeed

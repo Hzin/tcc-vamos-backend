@@ -7,7 +7,7 @@ export enum TripStatus {
   finished = 'FINISHED_CONFIRMED',
 
   // para mostrar em rotas
-  unavailable = 'UNAVAILABLE',
+  pendingGoingTrip = 'PENDING_GOING_TRIP',
 
   // startedUnconfirmed = 'STARTED_UNCONFIRMED',
   // started = 'STARTED_CONFIRMED',

@@ -8,9 +8,13 @@ class CheckTodaysReturnTripIsAvailable {
     const itinerary = await findItineraryService.execute(id_itinerary)
 
     const findTodaysTripByItineraryIdService = new FindTodaysTripByItineraryIdService()
-    const todaysGoingTrip = await findTodaysTripByItineraryIdService.execute({ id_itinerary: "" + itinerary.id_itinerary, tripType: 'going' })
 
-    if (todaysGoingTrip.status === TripStatus.finished) return true
+    try {
+      const todaysGoingTrip = await findTodaysTripByItineraryIdService.execute({ id_itinerary: "" + itinerary.id_itinerary, tripType: 'going' })
+      if (todaysGoingTrip.status === TripStatus.finished) return true
+    } catch {
+      return false
+    }
 
     return false
   }

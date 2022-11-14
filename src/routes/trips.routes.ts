@@ -155,16 +155,15 @@ tripsRouter.get(
 // feed sempre será sobre itinerários em que o usuário está participando
 // então não necessariamente terá a ver com uma trip já criada
 tripsRouter.get(
-  '/feed/tripDay/:tripDay/tripType/:tripType/userType/:userType',
+  '/feed/tripDay/:tripDay/userType/:userType',
   ensureAuthenticated,
   async (request, response) => {
-    const { tripDay, tripType, userType } = request.params
+    const { tripDay, userType } = request.params
 
     const getUserTripsFeedService = new GetUserTripsFeedService();
     const userTripsFeed = await getUserTripsFeedService.execute({
       id_user: request.user.id_user,
       tripDay,
-      tripType,
       userType,
     });
 
