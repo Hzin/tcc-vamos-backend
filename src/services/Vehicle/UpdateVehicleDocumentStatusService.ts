@@ -13,7 +13,7 @@ interface Request {
 
 class UpdateVehicleDocumentStatusService {
   public async execute({ vehicle_plate, document_type, status }: Request): Promise<VehicleDocument> {
-    document_type = document_type.toLowerCase()
+    // document_type = document_type.toLowerCase()
 
     const vehicleDocumentsRepository = getRepository(VehicleDocument);
 

@@ -19,6 +19,8 @@ import FindDriverItinerariesOnlyWithPendingRequests from '../services/Itinerary/
 import CountItinerariesPendingPassengerRequestsByDriverId from '../services/Itinerary/CountItinerariesPendingPassengerRequestsByDriverId';
 
 import AddOptionalPropertiesToObjectService from '../services/Utils/AddOptionalPropertiesToObjectService';
+import { getRepository } from 'typeorm';
+import Itinerary from '../models/Itinerary';
 
 const itinerariesRouter = Router();
 
@@ -26,6 +28,17 @@ const itinerariesRouter = Router();
 itinerariesRouter.get('/', ensureAuthenticated, async (request, response) => {
   const findItinerariesExceptUserss = new FindItinerariesExceptUserss()
   const itineraries = await findItinerariesExceptUserss.execute(request.user.id_user)
+
+  return response.json({ data: itineraries });
+})
+
+itinerariesRouter.get('/all', ensureAdmin, async (request, response) => {
+  const itinerariesRepository = getRepository(Itinerary)
+
+  let itineraries = await itinerariesRepository.find()
+
+  const addOptionalPropertiesToObjectService = new AddOptionalPropertiesToObjectService()
+  itineraries = await addOptionalPropertiesToObjectService.executeArrItinerary(itineraries)
 
   return response.json({ data: itineraries });
 })
@@ -160,6 +173,7 @@ itinerariesRouter.post('/contract/:id_itinerary', ensureAuthenticated, async (re
   return response.json({ data: passengerRequest, message: 'Solicitação enviada com sucesso!' });
 });
 
+// se status for aprovado, aprova passengerRequest e cria registro na tabela passengers
 itinerariesRouter.patch('/contract/status', ensureAuthenticated, async (request, response) => {
   const { id_user, id_itinerary, status } = request.body;
 
@@ -174,7 +188,6 @@ itinerariesRouter.patch('/contract/status', ensureAuthenticated, async (request,
     user, itinerary
   });
 
-  // cria registro na tabela passengers se status for 'APPROVED'
   const updatePassengerRequestService = new UpdatePassengerRequestService()
   const { passengerRequestWithUpdatedStatus, message } = await updatePassengerRequestService.execute({
     id_passenger_request: passengerRequest.id_passenger_request, status
