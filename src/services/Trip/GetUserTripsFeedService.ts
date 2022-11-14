@@ -16,14 +16,15 @@ import { ItineraryContract } from '../../enums/ItineraryContract';
 import { getRepository } from 'typeorm';
 import Trip from '../../models/Trip';
 import User from '../../models/User';
+import CheckTodaysReturnTripIsAvailable from './CheckTodaysReturnTripIsAvailable';
 
 interface GetFeedForDriverProps {
-  itinerary: Itinerary,
+  itinerary: Itinerary
 }
 
 interface GetFeedForPassengerProps {
   itinerary: Itinerary,
-  user: User,
+  user: User
 }
 
 interface Request {
@@ -33,6 +34,11 @@ interface Request {
   userType: string,
 }
 
+interface TripInfo {
+  status: TripStatus;
+  id?: number; // é opcional porque a viagem pode ainda não ter sido criada
+}
+
 interface Return {
   itinerary: Itinerary;
   // itineraryInfoDriver?: 'recurring' | 'specific_day' | 'both' | undefined;
@@ -40,12 +46,45 @@ interface Return {
   itineraryInfoDriver?: string,
   itineraryInfoPassenger?: string,
 
-  tripStatus: TripStatus;
-  tripType: TripType;
-  tripId?: number; // é opcional porque a viagem pode ainda não ter sido criada
+  tripGoing: TripInfo,
+  tripReturn?: TripInfo
 }
 
 class GetUserTripsFeedService {
+  private checkItineraryHasRecurringTrips(itinerary: Itinerary): boolean {
+    if (!itinerary.days_of_week || itinerary.days_of_week === '0000000') {
+      return false
+    }
+
+    return true
+  }
+
+  // se feed for para driver
+  private async getItineraryInfoTypeByItineraryPassengers(itinerary: Itinerary): Promise<string> {
+    const itineraryHasPassengersWithContractTypeByItineraryIdService = new ItineraryHasPassengersWithContractTypeByItineraryIdService()
+
+    const itineraryHasRecurringPassengers = await itineraryHasPassengersWithContractTypeByItineraryIdService.execute({ id_itinerary: "" + itinerary.id_itinerary, contract_type: ItineraryContract.recurring })
+    const itineraryHasAvulsePassengers = await itineraryHasPassengersWithContractTypeByItineraryIdService.execute({ id_itinerary: "" + itinerary.id_itinerary, contract_type: ItineraryContract.avulse })
+
+    let itineraryInfoType = ''
+    if (itineraryHasRecurringPassengers && itineraryHasAvulsePassengers) itineraryInfoType = 'BOTH'
+    else {
+      if (itineraryHasRecurringPassengers) itineraryInfoType = 'RECURRENT'
+      if (itineraryHasAvulsePassengers) itineraryInfoType = 'AVULSE'
+    }
+
+    return itineraryInfoType
+  }
+
+  // se feed for para passenger
+  private getItineraryInfoTypeByPassengerContractType(itinerary: Itinerary, id_user: string): string {
+    const passenger = itinerary.passengers.find((passenger) => passenger.user_id === id_user)
+
+    if (!passenger) throw new AppError("Erro.")
+
+    return passenger.contract_type.toString()
+  }
+
   public async execute({ id_user, tripDay, tripType, userType }: Request): Promise<Return[]> {
     tripDay = tripDay.toUpperCase()
     tripType = tripType.toUpperCase()
@@ -54,6 +93,8 @@ class GetUserTripsFeedService {
     if (!Utils.stringIsInEnum(tripDay, TripDay)) throw new AppError("Parâmetro 'tripDay' inválido.")
     if (!Utils.stringIsInEnum(tripType, TripType)) throw new AppError("Parâmetro 'tripType' inválido.")
     if (!Utils.stringIsInEnum(userType, TripUserType)) throw new AppError("Parâmetro 'userType' inválido.")
+
+    const tripsRepository = getRepository(Trip)
 
     // recupera usuário
     const findUserService = new FindUserService();
@@ -85,14 +126,15 @@ class GetUserTripsFeedService {
 
       // verifica itinerários de datas não desejadas
       let isToday: boolean = false
-      if (!itinerary.days_of_week || itinerary.days_of_week === '0000000') {
+      if (this.checkItineraryHasRecurringTrips(itinerary)) {
         let today = new Date();
         if (itinerary.specific_day?.setHours(0, 0, 0, 0) == today.setHours(0, 0, 0, 0)) {
           isToday = true;
         }
-      } else {
+      } else if (itinerary.days_of_week) {
         isToday = itinerary.days_of_week.split('').at(DateUtils.getTodaysDayOfWeekAsNumberForSplitComparison()) === '1'
       }
+
       if (isToday && (tripDay !== TripDay.today)) continue
       if (!isToday && (tripDay !== TripDay.notToday)) continue
 
@@ -120,174 +162,54 @@ class GetUserTripsFeedService {
 
       // id_user, tripDay, tripType, userType
 
-      switch (tripDay) {
-        case TripDay.today:
-          if (userType === TripUserType.driver) {
-            tripsFeed = tripsFeed.concat(await this.getFeedForDriverToday({ itinerary }))
-          }
-
-          if (userType === TripUserType.passenger) {
-            tripsFeed = tripsFeed.concat(await this.getFeedForPassengerToday({ user, itinerary }))
-          }
+      let itineraryInfoType = ''
+      switch (userType) {
+        case TripUserType.driver:
+          itineraryInfoType = await this.getItineraryInfoTypeByItineraryPassengers(itinerary)
           break;
-
-        case TripDay.notToday:
-          if (userType === TripUserType.driver) {
-            tripsFeed = tripsFeed.concat(await this.getFeedForDriverNotToday({ itinerary }))
-          }
-
-          if (userType === TripUserType.passenger) {
-            tripsFeed = tripsFeed.concat(await this.getFeedForPassengerNotToday({ user, itinerary }))
-          }
+        case TripUserType.passenger:
+          itineraryInfoType = this.getItineraryInfoTypeByPassengerContractType(itinerary, user.id_user)
           break;
-
         default:
-          throw new AppError("Dia de viagem inválido.")
           break;
       }
+
+      const currentDate = DateUtils.getCurrentDate()
+      const dateConsult = tripDay === TripDay.today ? currentDate : !currentDate
+
+      // aí tenho que ver status da viagem de ida, se ela já existir
+      const goingTrip = await tripsRepository.findOne({
+        where: { itinerary, date: dateConsult, type: TripType.going },
+      });
+
+      let returnObj: Return = {
+        itinerary,
+        itineraryInfoDriver: itineraryInfoType,
+
+        tripGoing: {
+          status: goingTrip ? goingTrip.status : TripStatus.pending,
+          id: goingTrip ? goingTrip.id_trip : undefined,
+        }
+      }
+
+      if (this.checkItineraryHasRecurringTrips(itinerary)) {
+        const checkTodaysReturnTripIsAvailable = new CheckTodaysReturnTripIsAvailable()
+        const returnTripIsAvailable = await checkTodaysReturnTripIsAvailable.execute("" +itinerary.id_itinerary)
+
+        // aí tenho que ver status da viagem de retorno, se ela já existir
+        const todayReturnTrip = await tripsRepository.findOne({
+          where: { itinerary, date: dateConsult, type: TripType.return },
+        });
+
+        let returnTripStatus: TripStatus = TripStatus.pending
+        if (!returnTripIsAvailable) returnTripStatus = TripStatus.unavailable
+
+        returnObj.tripReturn = {
+          status: returnTripStatus,
+          id: todayReturnTrip ? todayReturnTrip.id_trip : undefined,
+        }
+      }
     } // for itineraries
-
-    return tripsFeed
-  }
-
-  // se feed for para driver
-  private async getItineraryInfoTypeByItineraryPassengers(itinerary: Itinerary): Promise<string> {
-    const itineraryHasPassengersWithContractTypeByItineraryIdService = new ItineraryHasPassengersWithContractTypeByItineraryIdService()
-
-    const itineraryHasRecurringPassengers = await itineraryHasPassengersWithContractTypeByItineraryIdService.execute({ id_itinerary: "" + itinerary.id_itinerary, contract_type: ItineraryContract.recurring })
-    const itineraryHasAvulsePassengers = await itineraryHasPassengersWithContractTypeByItineraryIdService.execute({ id_itinerary: "" + itinerary.id_itinerary, contract_type: ItineraryContract.avulse })
-
-    let itineraryInfoType = ''
-    if (itineraryHasRecurringPassengers && itineraryHasAvulsePassengers) itineraryInfoType = 'both'
-    else {
-      if (itineraryHasRecurringPassengers) itineraryInfoType = 'recurrent'
-      if (itineraryHasAvulsePassengers) itineraryInfoType = 'specific_day'
-    }
-
-    return itineraryInfoType
-  }
-
-  // se feed for para passenger
-  private getItineraryInfoTypeByPassengerContractType(itinerary: Itinerary, id_user: string): string {
-    const passenger = itinerary.passengers.find((passenger) => passenger.user_id === id_user)
-
-    if (!passenger) throw new AppError("Erro.")
-
-    return passenger.contract_type.toString().toLowerCase()
-  }
-
-  private async getFeedForDriverToday({ itinerary }: GetFeedForDriverProps): Promise<Return[]> {
-    let tripsFeed: Return[] = []
-
-    const tripsRepository = getRepository(Trip)
-
-    const itineraryInfoType = await this.getItineraryInfoTypeByItineraryPassengers(itinerary)
-
-    // aí tenho que ver status da viagem de ida, se ela já existir
-    const todayGoingTrip = await tripsRepository.findOne({
-      where: { itinerary, date: DateUtils.getCurrentDate(), type: TripType.going },
-    });
-    tripsFeed.push({
-      itinerary,
-      itineraryInfoDriver: itineraryInfoType,
-
-      tripType: TripType.going,
-      tripStatus: todayGoingTrip ? todayGoingTrip.status : TripStatus.pending
-    })
-
-    // aí tenho que ver status da viagem de retorno, se ela já existir
-    const todayReturnTrip = await tripsRepository.findOne({
-      where: { itinerary, date: DateUtils.getCurrentDate(), type: TripType.return },
-    });
-    tripsFeed.push({
-      itinerary,
-      itineraryInfoDriver: itineraryInfoType,
-
-      tripType: TripType.return,
-      tripStatus: todayReturnTrip ? todayReturnTrip.status : TripStatus.pending
-    })
-
-    return tripsFeed
-  }
-
-  private async getFeedForDriverNotToday({ itinerary }: GetFeedForDriverProps): Promise<Return[]> {
-    let tripsFeed: Return[] = []
-
-    const itineraryInfoType = await this.getItineraryInfoTypeByItineraryPassengers(itinerary)
-
-    tripsFeed.push({
-      itinerary,
-      itineraryInfoDriver: itineraryInfoType,
-
-      tripType: TripType.going,
-      tripStatus: TripStatus.pending
-    })
-
-    tripsFeed.push({
-      itinerary,
-      itineraryInfoDriver: itineraryInfoType,
-
-      tripType: TripType.return,
-      tripStatus: TripStatus.pending
-    })
-
-    return tripsFeed
-  }
-
-  private async getFeedForPassengerToday({ itinerary, user }: GetFeedForPassengerProps): Promise<Return[]> {
-    let tripsFeed: Return[] = []
-
-    const tripsRepository = getRepository(Trip)
-
-    const itineraryInfoType = this.getItineraryInfoTypeByPassengerContractType(itinerary, user.id_user)
-
-    // aí tenho que ver status da viagem de ida, se ela já existir
-    const todayGoingTrip = await tripsRepository.findOne({
-      where: { itinerary, date: DateUtils.getCurrentDate(), type: TripType.going },
-    });
-    tripsFeed.push({
-      itinerary,
-      itineraryInfoPassenger: itineraryInfoType,
-
-      tripType: TripType.going,
-      tripStatus: todayGoingTrip ? todayGoingTrip.status : TripStatus.pending
-    })
-
-    // aí tenho que ver status da viagem de retorno, se ela já existir
-    const todayReturnTrip = await tripsRepository.findOne({
-      where: { itinerary, date: DateUtils.getCurrentDate(), type: TripType.return },
-    });
-    tripsFeed.push({
-      itinerary,
-      itineraryInfoPassenger: itineraryInfoType,
-
-      tripType: TripType.return,
-      tripStatus: todayReturnTrip ? todayReturnTrip.status : TripStatus.pending
-    })
-
-    return tripsFeed
-  }
-
-  private async getFeedForPassengerNotToday({ itinerary, user }: GetFeedForPassengerProps): Promise<Return[]> {
-    let tripsFeed: Return[] = []
-
-    const itineraryInfoType = this.getItineraryInfoTypeByPassengerContractType(itinerary, user.id_user)
-
-    tripsFeed.push({
-      itinerary,
-      itineraryInfoPassenger: itineraryInfoType,
-
-      tripType: TripType.going,
-      tripStatus: TripStatus.pending
-    })
-
-    tripsFeed.push({
-      itinerary,
-      itineraryInfoPassenger: itineraryInfoType,
-
-      tripType: TripType.return,
-      tripStatus: TripStatus.pending
-    })
 
     return tripsFeed
   }
