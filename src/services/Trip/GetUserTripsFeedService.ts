@@ -9,7 +9,7 @@ import FindItinerariesByDriverUserIdService from '../Itinerary/FindItinerariesBy
 import FindItinerariesByPassengerUserIdService from '../Itinerary/FindItinerariesByPassengerUserIdService';
 import { TripType } from '../../enums/TripType';
 import { TripDay } from '../../enums/TripDay';
-import Utils from '../Utils/Utils';
+import EnumUtils from '../../services/Utils/EnumUtils';
 import { TripUserType } from '../../constants/TripUserType';
 import ItineraryHasPassengersWithContractTypeByItineraryIdService from '../Itinerary/ItineraryHasPassengersWithContractTypeByItineraryIdService';
 import { ItineraryContract } from '../../enums/ItineraryContract';
@@ -90,8 +90,8 @@ class GetUserTripsFeedService {
     tripDay = tripDay.toUpperCase()
     userType = userType.toUpperCase()
 
-    if (!Utils.stringIsInEnum(tripDay, TripDay)) throw new AppError("Parâmetro 'tripDay' inválido.")
-    if (!Utils.stringIsInEnum(userType, TripUserType)) throw new AppError("Parâmetro 'userType' inválido.")
+    if (!EnumUtils.stringIsInEnum(tripDay, TripDay)) throw new AppError("Parâmetro 'tripDay' inválido.")
+    if (!EnumUtils.stringIsInEnum(userType, TripUserType)) throw new AppError("Parâmetro 'userType' inválido.")
 
     const tripsRepository = getRepository(Trip)
 

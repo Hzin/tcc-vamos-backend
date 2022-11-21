@@ -5,7 +5,8 @@ import { PassengerRequestStatus } from "../../enums/PassengerRequestStatus";
 import PassengerRequest from "../../models/PassengerRequest";
 import FindPassengerRequestServiceById from "./FindPassengerRequestServiceById";
 
-import Utils from '../Utils/Utils'
+import EnumUtils from '../../services/Utils/EnumUtils';
+
 import AppError from "../../errors/AppError";
 import Passenger from "../../models/Passenger";
 import { PassengerStatus } from "../../enums/PassengerStatus";
@@ -22,7 +23,7 @@ interface Response {
 
 class UpdatePassengerRequestService {
   public async execute({ id_passenger_request, status }: Request): Promise<Response> {
-    if (!Utils.stringIsInEnum(status, PassengerRequestStatus)) throw new AppError('O status informado é inválido')
+    if (!EnumUtils.stringIsInEnum(status, PassengerRequestStatus)) throw new AppError('O status informado é inválido')
     if (status === PassengerRequestStatus.pending) throw new AppError('O status informado é inválido para a atualização de pedido de passageiro.')
 
     const passengersRequestsRepository = getRepository(PassengerRequest);

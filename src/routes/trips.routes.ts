@@ -17,7 +17,7 @@ import AddOptionalPropertiesToItineraryObjectService from '../services/Utils/Add
 
 const tripsRouter = Router();
 
-tripsRouter.get('/', async (request, response) => {
+tripsRouter.get('/list', async (request, response) => {
   const tripsRepository = getRepository(Trip);
 
   let trips = await tripsRepository.find();
@@ -85,30 +85,33 @@ tripsRouter.post('/tripType/:tripType/update/status/:newStatus', async (request,
 });
 
 
-tripsRouter.patch('/update/nickname', ensureAuthenticated, async (request, response) => {
-  const { id_trip, nickname } = request.body;
+tripsRouter.patch('/:id/nickname', ensureAuthenticated, async (request, response) => {
+  const { id } = request.params;
+  const { nickname } = request.body;
 
   const updateTripNicknameService = new UpdateTripNicknameService();
 
   await updateTripNicknameService.execute({
-    id_trip, nickname
+    id_trip: id, nickname
   });
 
   return response.json({ message: 'Apelido da viagem atualizado com sucesso!' });
 });
 
-tripsRouter.patch('/update/status', ensureAuthenticated, async (request, response) => {
-  const { id_trip, new_status, description } = request.body;
+tripsRouter.patch('/:id/status/:new_status', ensureAuthenticated, async (request, response) => {
+  const { id, new_status } = request.params;
+  const { description } = request.body;
 
   const updateTripStatusService = new UpdateTripStatusService();
   await updateTripStatusService.execute({
-    id_trip, new_status, description
+    id_trip: id, new_status, description
   });
 
   return response.json({ message: 'Status da viagem atualizado com sucesso!' });
 });
 
 // TODO, incluir filtros dependendo de status
+// TODO, onde está sendo usado???
 tripsRouter.get(
   '/user/:id',
   ensureAuthenticated,

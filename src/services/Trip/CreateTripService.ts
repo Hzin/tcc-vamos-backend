@@ -7,7 +7,7 @@ import Trip from '../../models/Trip';
 import TripHistory from '../../models/TripHistory';
 import FindItineraryService from '../Itinerary/FindItineraryService';
 
-import Utils from '../../services/Utils/Utils';
+import EnumUtils from '../../services/Utils/EnumUtils';
 import DateUtils from '../Utils/Date';
 
 import { TripType } from '../../enums/TripType';
@@ -29,8 +29,8 @@ class CreateTripService {
     tripType = tripType.toUpperCase()
     newTripStatus = newTripStatus.toUpperCase()
 
-    if (!Utils.stringIsInEnum(tripType, TripType)) throw new AppError("Tipo de viagem inválido.")
-    if (!Utils.stringIsInEnum(newTripStatus, TripStatus)) throw new AppError("Status de viagem inválido.")
+    if (!EnumUtils.stringIsInEnum(tripType, TripType)) throw new AppError("Tipo de viagem inválido.")
+    if (!EnumUtils.stringIsInEnum(newTripStatus, TripStatus)) throw new AppError("Status de viagem inválido.")
 
     let newTripStatusProperty: TripStatus
     switch (newTripStatus) {

@@ -9,7 +9,7 @@ import { ItineraryContract } from '../../enums/ItineraryContract';
 import { PassengerStatus } from '../../enums/PassengerStatus';
 import { SchoolPeriod } from '../../enums/SchoolPeriod';
 
-import Utils from '../../services/Utils/Utils';
+import EnumUtils from '../../services/Utils/EnumUtils';
 
 export class CreatePassengers1660010452826 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -35,17 +35,17 @@ export class CreatePassengers1660010452826 implements MigrationInterface {
           {
             name: 'contract_type',
             type: 'enum',
-            enum: Utils.convertEnumValuesToStringArray(ItineraryContract),
+            enum: EnumUtils.convertEnumValuesToStringArray(ItineraryContract),
           },
           {
             name: 'period',
             type: 'enum',
-            enum: Utils.convertEnumValuesToStringArray(SchoolPeriod),
+            enum: EnumUtils.convertEnumValuesToStringArray(SchoolPeriod),
           },
           {
             name: 'status',
             type: 'enum',
-            enum: Utils.convertEnumValuesToStringArray(PassengerStatus),
+            enum: EnumUtils.convertEnumValuesToStringArray(PassengerStatus),
             // default: PassengerStatus.ongoing
           },
           {

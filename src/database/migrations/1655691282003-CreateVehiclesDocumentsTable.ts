@@ -2,7 +2,7 @@ import { MigrationInterface, QueryRunner, Table, TableForeignKey } from 'typeorm
 import { VehicleDocumentStatus } from '../../enums/VehicleDocumentStatus';
 import { VehicleDocumentType } from '../../enums/VehicleDocumentType';
 
-import Utils from '../../services/Utils/Utils';
+import EnumUtils from '../../services/Utils/EnumUtils';
 
 export class CreateVehiclesDocumentsTable1655691282003 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -24,7 +24,7 @@ export class CreateVehiclesDocumentsTable1655691282003 implements MigrationInter
           {
             name: 'document_type',
             type: 'enum',
-            enum: Utils.convertEnumValuesToStringArray(VehicleDocumentType)
+            enum: EnumUtils.convertEnumValuesToStringArray(VehicleDocumentType)
           },
           {
             name: 'path',
@@ -34,7 +34,7 @@ export class CreateVehiclesDocumentsTable1655691282003 implements MigrationInter
           {
             name: 'status',
             type: 'enum',
-            enum: Utils.convertEnumValuesToStringArray(VehicleDocumentStatus),
+            enum: EnumUtils.convertEnumValuesToStringArray(VehicleDocumentStatus),
             // default: VehicleDocumentStatus.pending
           },
           {

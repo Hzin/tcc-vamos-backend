@@ -10,7 +10,7 @@ import { ItineraryContract } from '../../enums/ItineraryContract';
 import { PassengerRequestStatus } from '../../enums/PassengerRequestStatus';
 import { SchoolPeriod } from '../../enums/SchoolPeriod';
 
-import Utils from '../../services/Utils/Utils';
+import EnumUtils from '../../services/Utils/EnumUtils';
 
 export class CreatePassengersRequests1662081949950
   implements MigrationInterface {
@@ -37,17 +37,17 @@ export class CreatePassengersRequests1662081949950
           {
             name: 'contract_type',
             type: 'enum',
-            enum: Utils.convertEnumValuesToStringArray(ItineraryContract)
+            enum: EnumUtils.convertEnumValuesToStringArray(ItineraryContract)
           },
           {
             name: 'period',
             type: 'enum',
-            enum: Utils.convertEnumValuesToStringArray(SchoolPeriod)
+            enum: EnumUtils.convertEnumValuesToStringArray(SchoolPeriod)
           },
           {
             name: 'status',
             type: 'enum',
-            enum: Utils.convertEnumValuesToStringArray(PassengerRequestStatus),
+            enum: EnumUtils.convertEnumValuesToStringArray(PassengerRequestStatus),
             // default: PassengerRequestStatus.pending.toString()
           },
           {
