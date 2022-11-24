@@ -49,10 +49,10 @@ class Trip {
   )
   type: TripType;
 
-  @OneToMany(() => TripHistory, tripHistory => tripHistory.trip)
+  @OneToMany(() => TripHistory, tripHistory => tripHistory.trip, { eager: true, cascade: true, nullable: true })
   trip_histories?: TripHistory[];
 
-  @OneToMany(() => AttendanceList, attendanceList => attendanceList.trip)
+  @OneToMany(() => AttendanceList, attendanceList => attendanceList.trip, { eager: true, cascade: true, nullable: true })
   attendance_lists?: AttendanceList[];
 
   @CreateDateColumn()

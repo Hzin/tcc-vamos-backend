@@ -15,6 +15,7 @@ import FindTodaysTripByItineraryIdService from '../services/Trip/FindTodaysTripB
 import FindItineraryTrips from '../services/Trip/FindItineraryTrips';
 import AddOptionalPropertiesToItineraryObjectService from '../services/Utils/AddOptionalPropertiesToObjectService';
 import UndoLastStatusChangeService from '../services/Trip/UndoLastStatusChangeService';
+import FindTripHistoricService from '../services/Trip/FindTripHistoricService';
 
 const tripsRouter = Router();
 
@@ -118,6 +119,15 @@ tripsRouter.patch('/:id/status/undo', ensureAuthenticated, async (request, respo
   const tripHistory = await undoLastStatusChangeService.execute({ id_trip: id });
 
   return response.json({ message: 'Status da viagem atualizado com sucesso!', data: tripHistory });
+});
+
+tripsRouter.get('/:id/status/history', ensureAuthenticated, async (request, response) => {
+  const { id } = request.params;
+
+  const findTripHistoricService = new FindTripHistoricService();
+  const tripHistory = await findTripHistoricService.execute({ id_trip: id });
+
+  return response.json({ data: tripHistory });
 });
 
 // TODO, incluir filtros dependendo de status
