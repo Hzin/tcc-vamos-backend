@@ -1,4 +1,6 @@
-import AppError from "../../errors/AppError";
+import { EnumType } from 'typescript';
+import { TripStatus } from '../../enums/TripStatus';
+import AppError from '../../errors/AppError';
 
 class EnumUtils {
   public static getEnumLength(enumObj: any): number {
@@ -13,14 +15,31 @@ class EnumUtils {
     return Object.values(enumObj).includes(string);
   }
 
-  public static convertStringToEnum(string: string, enumObj: any, variableName: string, enumName: string): any {
-    // const typedString = string as keyof typeof enumObj;
-    // return typedString
+  public static getTripStatusEnumPropertyByValue(tripStatusStr: string): TripStatus {
+    const keys = Object.keys(TripStatus);
+    const values = Object.values(TripStatus);
+    let valuesAsString: string[] = [];
+    values.forEach((element, index) => {
+      valuesAsString.push('' + element);
+    });
 
-    const typedString = enumObj[string as keyof typeof enumObj]
+    if (keys.length !== values.length) throw new AppError(`O enum "TripStatus" está inválido.`);
 
-    if (!typedString) throw new AppError(`O parâmetro "${string}" não existe no Enum "${enumName}".`)
-    return typedString
+    // procurando string pelas keys do Enum
+    const indexKeys = keys.indexOf(tripStatusStr);
+    const enumPropertyByKeys = values.at(indexKeys)
+    console.log('enumPropertyByKeys: ' + enumPropertyByKeys)
+
+    if (enumPropertyByKeys) return enumPropertyByKeys
+
+    // procurando string pelas values do Enum
+    const indexValues = valuesAsString.indexOf(tripStatusStr);
+    const enumPropertyByValues = values.at(indexValues);
+
+    if (enumPropertyByValues) return enumPropertyByValues
+
+    // se não encontrou...
+    throw new AppError(`O parâmetro "${tripStatusStr}" não existe no Enum TripStatus.`)
   }
 }
 
