@@ -26,16 +26,18 @@ class UpdateTripStatusService {
       throw new AppError('A viagem informada não existe.', 200);
     }
 
-    const newStatus = EnumUtils.convertStringToEnum(new_status, TripStatus, 'new_status', 'TripStatus')
-
-    const newTripRecord = tripsHistoricRepository.create({
-      trip, old_status: trip.status, new_status: newStatus, description, 
-    });
-
+    const oldStatus = trip.status
+    const newStatus = EnumUtils.getTripStatusEnumPropertyByValue(new_status)
+    
     trip.status = newStatus
     await tripsRepository.save(trip)
 
+    const newTripRecord = tripsHistoricRepository.create({
+      trip, old_status: oldStatus, new_status: newStatus, description, 
+    });
     await tripsHistoricRepository.save(newTripRecord);
+
+    
 
     return newTripRecord;
   }

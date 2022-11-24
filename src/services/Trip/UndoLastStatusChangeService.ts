@@ -1,9 +1,13 @@
 import { getRepository } from 'typeorm';
+import { TripStatus } from '../../enums/TripStatus';
 
 import AppError from '../../errors/AppError';
 
 import Trip from '../../models/Trip';
 import TripHistory from '../../models/TripHistory';
+import UpdateTripStatusService from './UpdateTripStatusService';
+
+import EnumUtils from '../../services/Utils/EnumUtils';
 
 interface Request {
   id_trip: string;
@@ -21,7 +25,7 @@ class UndoLastStatusChangeService {
     if (!trip) throw new AppError('A viagem informada não existe.', 200);
 
     const tripHistories = await tripsHistoriesRepository.find({
-      where: { trip_id: id_trip },
+      where: { trip },
     });
 
     if (!tripHistories || (tripHistories && tripHistories.length <= 2)) {
@@ -32,12 +36,10 @@ class UndoLastStatusChangeService {
     }
 
     const lastTripHistory = tripHistories[tripHistories.length - 2]
-    trip.status = lastTripHistory.new_status
+    const updateTripStatusService = new UpdateTripStatusService()
+    const tripHistory = await updateTripStatusService.execute({ id_trip, new_status: lastTripHistory.new_status, description: 'Desfazendo o cancelamento da viagem' })
 
-    await tripsHistoriesRepository.remove(tripHistories[tripHistories.length - 1]);
-    await tripsRepository.save(trip);
-
-    return tripHistories[tripHistories.length - 1];
+    return tripHistory
   }
 }
 

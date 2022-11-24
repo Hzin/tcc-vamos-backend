@@ -10,8 +10,6 @@ class FindTripHistoricService {
     const findTripService = new FindTripService();
     const trip = await findTripService.execute(id_trip);
 
-    console.log(trip)
-
     if (!trip.trip_histories) return []
     return trip.trip_histories;
   }

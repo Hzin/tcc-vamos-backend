@@ -19,7 +19,7 @@ class EnumUtils {
     const keys = Object.keys(TripStatus);
     const values = Object.values(TripStatus);
     let valuesAsString: string[] = [];
-    values.forEach((element, index) => {
+    values.forEach((element) => {
       valuesAsString.push('' + element);
     });
 
@@ -28,15 +28,18 @@ class EnumUtils {
     // procurando string pelas keys do Enum
     const indexKeys = keys.indexOf(tripStatusStr);
     const enumPropertyByKeys = values.at(indexKeys)
+    console.log('indexKeys: ' + indexKeys)
     console.log('enumPropertyByKeys: ' + enumPropertyByKeys)
 
-    if (enumPropertyByKeys) return enumPropertyByKeys
+    if (indexKeys !== -1 && enumPropertyByKeys) return enumPropertyByKeys
 
     // procurando string pelas values do Enum
     const indexValues = valuesAsString.indexOf(tripStatusStr);
     const enumPropertyByValues = values.at(indexValues);
+    console.log('indexValues: ' + indexValues)
+    console.log('enumPropertyByValues: ' + enumPropertyByValues)
 
-    if (enumPropertyByValues) return enumPropertyByValues
+    if (indexValues !== -1 && enumPropertyByValues) return enumPropertyByValues
 
     // se não encontrou...
     throw new AppError(`O parâmetro "${tripStatusStr}" não existe no Enum TripStatus.`)
