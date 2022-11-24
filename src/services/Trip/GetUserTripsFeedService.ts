@@ -131,9 +131,10 @@ class GetUserTripsFeedService {
         let today = new Date();
         if (itinerary.specific_day?.setHours(0, 0, 0, 0) == today.setHours(0, 0, 0, 0)) {
           isToday = true;
+        } else if (itinerary.days_of_week) {
+          console.log('itinerary.days_of_week: ' + itinerary.days_of_week)
+          isToday = itinerary.days_of_week.split('').at(DateUtils.getTodaysDayOfWeekAsNumberForSplitComparison()) === '1'
         }
-      } else if (itinerary.days_of_week) {
-        isToday = itinerary.days_of_week.split('').at(DateUtils.getTodaysDayOfWeekAsNumberForSplitComparison()) === '1'
       }
 
       if (isToday && (tripDay !== TripDay.today)) continue
@@ -166,6 +167,11 @@ class GetUserTripsFeedService {
       const currentDate = DateUtils.getCurrentDate()
       const dateConsult = tripDay === TripDay.today ? currentDate : Not(currentDate)
 
+      // console.log('tripDay: ')
+      // console.log(tripDay)
+      // console.log('TripDay.today: ')
+      // console.log(TripDay.today)
+
       // console.log('currentDate: ')
       // console.log(currentDate)
       // console.log('dateConsult: ')
@@ -175,6 +181,9 @@ class GetUserTripsFeedService {
       const goingTrip = await tripsRepository.findOne({
         where: { itinerary, date: dateConsult, type: TripType.going },
       });
+
+      // console.log('goingTrip:')
+      // console.log(goingTrip)
 
       let returnObj: Return = {
         itinerary,
