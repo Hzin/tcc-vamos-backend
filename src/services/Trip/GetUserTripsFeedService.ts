@@ -205,7 +205,7 @@ class GetUserTripsFeedService {
 
       if (this.checkItineraryHasRecurringTrips(itinerary)) {
         const checkTodaysReturnTripIsAvailable = new CheckTodaysReturnTripIsAvailable()
-        const returnTripIsAvailable = await checkTodaysReturnTripIsAvailable.execute("" +itinerary.id_itinerary)
+        const returnTripIsAvailable = await checkTodaysReturnTripIsAvailable.execute("" + itinerary.id_itinerary)
 
         // aí tenho que ver status da viagem de retorno, se ela já existir
         const todayReturnTrip = await tripsRepository.findOne({
