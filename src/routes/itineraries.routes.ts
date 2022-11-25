@@ -21,6 +21,7 @@ import CountItinerariesPendingPassengerRequestsByDriverId from '../services/Itin
 import AddOptionalPropertiesToObjectService from '../services/Utils/AddOptionalPropertiesToObjectService';
 import { getRepository } from 'typeorm';
 import Itinerary from '../models/Itinerary';
+import ensureObjectOwnership from '../middlewares/ensureObjectOwnership';
 
 const itinerariesRouter = Router();
 
@@ -174,7 +175,7 @@ itinerariesRouter.post('/contract/:id_itinerary', ensureAuthenticated, async (re
 });
 
 // se status for aprovado, aprova passengerRequest e cria registro na tabela passengers
-itinerariesRouter.patch('/contract/status', ensureAuthenticated, async (request, response) => {
+itinerariesRouter.patch('/contract/status', ensureObjectOwnership, async (request, response) => {
   const { id_user, id_itinerary, status } = request.body;
 
   const findUserService = new FindUserService()
@@ -196,7 +197,7 @@ itinerariesRouter.patch('/contract/status', ensureAuthenticated, async (request,
   return response.json({ data: passengerRequestWithUpdatedStatus, message: message });
 });
 
-itinerariesRouter.get('/:id/contracts/pending', ensureAuthenticated, async (request, response) => {
+itinerariesRouter.get('/:id/contracts/pending', ensureObjectOwnership, async (request, response) => {
   const { id } = request.params;
 
   const findItineraryPendingRequests = new FindItineraryPendingRequests()
@@ -208,7 +209,7 @@ itinerariesRouter.get('/:id/contracts/pending', ensureAuthenticated, async (requ
   return response.json({ data: pendingRequests });
 })
 
-itinerariesRouter.get('/driver/:id/onlypendingrequests', ensureAuthenticated, async (request, response) => {
+itinerariesRouter.get('/driver/:id/onlypendingrequests', ensureObjectOwnership, async (request, response) => {
   const { id } = request.params;
 
   const findDriverItinerariesOnlyWithPendingRequests = new FindDriverItinerariesOnlyWithPendingRequests()
