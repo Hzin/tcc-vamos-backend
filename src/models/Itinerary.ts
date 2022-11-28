@@ -29,19 +29,25 @@ class Itinerary {
   vehicle_plate: string;
 
   @Column()
+  is_active: boolean;
+
+  @Column()
   days_of_week?: string;
 
   @Column()
   specific_day?: Date;
 
   @Column()
-  estimated_departure_time: string;
+  estimated_departure_time_going: string;
 
   @Column()
-  is_active: boolean;
+  estimated_arrival_time_going: string;
 
   @Column()
-  estimated_arrival_time: string;
+  estimated_departure_time_return: string;
+
+  @Column()
+  estimated_arrival_time_return: string;
 
   @Column()
   available_seats: number;

@@ -2,9 +2,9 @@ import { Router } from 'express';
 
 import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 
-import AddOptionalPropertiesToItineraryObjectService from '../services/utils/AddOptionalPropertiesToObjectService';
-import FindPassengerRequestServiceById from '../services/FindPassengerRequestServiceById';
-import FindPassengerRequestByUserIdAndItineraryIdService from '../services/FindPassengerRequestByUserIdAndItineraryIdService';
+import AddOptionalPropertiesToItineraryObjectService from '../services/Utils/AddOptionalPropertiesToObjectService';
+import FindPassengerRequestServiceById from '../services/Itinerary/FindPassengerRequestServiceById';
+import FindPassengerRequestByUserIdAndItineraryIdService from '../services/Itinerary/FindPassengerRequestByUserIdAndItineraryIdService';
 
 const passengerRequestsRouter = Router();
 

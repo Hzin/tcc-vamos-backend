@@ -1,7 +1,8 @@
 import { MigrationInterface, QueryRunner, Table, TableForeignKey } from "typeorm";
-import { tripStatus } from "../../constants/tripStatus";
+import { TripStatus } from "../../enums/TripStatus";
+import { TripType } from "../../enums/TripType";
 
-import Utils from '../../services/utils/Utils';
+import EnumUtils from '../../services/Utils/EnumUtils';
 
 export class CreateTripsTable1663371092720 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -30,10 +31,15 @@ export class CreateTripsTable1663371092720 implements MigrationInterface {
             type: 'varchar',
           },
           {
+            name: 'type',
+            type: 'enum',
+            enum: EnumUtils.convertEnumValuesToStringArray(TripType),
+          },
+          {
             name: 'status',
             type: 'enum',
-            enum: Utils.convertEnumValuesToStringArray(tripStatus),
-            // default: tripStatus.pending.toString()
+            enum: EnumUtils.convertEnumValuesToStringArray(TripStatus),
+            // default: TripStatus.pending.toString()
           },
           {
             name: 'created_at',

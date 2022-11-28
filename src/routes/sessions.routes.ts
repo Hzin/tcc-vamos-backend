@@ -4,7 +4,7 @@ import { sign, verify } from 'jsonwebtoken';
 import authConfig from '../config/auth';
 import AppError from '../errors/AppError';
 
-import AuthenticateUserService from '../services/AuthenticateUserService';
+import AuthenticateUserService from '../services/Session/AuthenticateUserService';
 
 const sessionsRouter = Router();
 

@@ -24,6 +24,11 @@ export class CreateItineraries1659404395471 implements MigrationInterface {
             type: 'varchar',
           },
           {
+            name: 'is_active',
+            type: 'boolean',
+            default: true,
+          },
+          {
             name: 'days_of_week',
             type: 'varchar',
             isNullable: true,
@@ -34,16 +39,19 @@ export class CreateItineraries1659404395471 implements MigrationInterface {
             isNullable: true,
           },
           {
-            name: 'estimated_departure_time',
+            name: 'estimated_departure_time_going',
             type: 'time',
           },
           {
-            name: 'is_active',
-            type: 'boolean',
-            default: true,
+            name: 'estimated_arrival_time_going',
+            type: 'time',
           },
           {
-            name: 'estimated_arrival_time',
+            name: 'estimated_departure_time_return',
+            type: 'time',
+          },
+          {
+            name: 'estimated_arrival_time_return',
             type: 'time',
           },
           {
@@ -113,7 +121,7 @@ export class CreateItineraries1659404395471 implements MigrationInterface {
           'vehicle_plate',
           'days_of_week',
           'specific_day',
-          'estimated_departure_time',
+          'estimated_departure_time_going',
           'is_active',
         ],
         isUnique: true,
