@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner, Table, TableForeignKey, TableIndex } from 'typeorm';
 import { attendanceListStatus } from '../../constants/attendanceListStatus';
-import Utils from '../../services/utils/Utils';
+import Utils from '../../services/Utils/EnumUtils';
 
 export class CreateAttendanceLists1663372568551 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {

@@ -172,49 +172,16 @@ tripsRouter.get(
   ensureAuthenticated,
   async (request, response) => {
     const { id } = request.params;
-tripsRouter.get('/user/:id', ensureAuthenticated, async (request, response) => {
-  const { id } = request.params;
+    const checkIfUserHasVehiclesService = new CheckIfUserHasVehiclesService();
 
-  const checkIfUserHasVehiclesService = new CheckIfUserHasVehiclesService();
+    const userHasVehicles = await checkIfUserHasVehiclesService.execute({
+      id_user: id,
+    });
 
-  const userHasVehicles = await checkIfUserHasVehiclesService.execute({
-    id_user: id,
-  });
+    return response.json({ result: userHasVehicles });
+  }
+);
 
-  return response.json({ result: userHasVehicles });
-});
-
-// get trip info about an itinerary
-// should ask the driver if they want to confirm or cancel the trip for the day
-// you can confirm the trip if trip's status is 'pending'
-// you can cancel the trip if trip's status is 'pending' or 'confirmed'
-// if a trip is confirmed, then a trip registry for the itinerary for the day should be created and its status updated
-// if a trip is canceled, then a existing trip registry for the itinerary for the day should have its status updated
-
-// how to inform front that the user can do certain actions?
-// knowing the trip's status, the front can show specific buttons that will trigger the route that update the its status
-// and the trip card can always show the trip status. It will be delivered by this route
-// valid statuses: 'pending', 'confirmed'
-// TODO, será usado?
-// tripsRouter.get(
-//   '/tripDay/:tripDay/status/itinerary/:id_itinerary',
-//   ensureAuthenticated,
-//   async (request, response) => {
-//     const { tripDay, id_itinerary } = request.params;
-
-//     TODO, service está incompleto
-//     const findTodaysTripByItineraryIdService =
-      // new FindTodaysTripByItineraryIdService();
-//     const tripStatus = await findTodaysTripByItineraryIdService.execute(
-    //   { id_itinerary,
-    // , tripDay });
-
-//     return response.json({ data: tripStatus });
-//   },
-// );
-
-// feed sempre será sobre itinerários em que o usuário está participando
-// então não necessariamente terá a ver com uma trip já criada
 tripsRouter.get(
   '/feed/tripDay/:tripDay/userType/:userType',
   ensureAuthenticated,
@@ -229,19 +196,7 @@ tripsRouter.get(
     });
 
     return response.json({ data: userTripsFeed });
-  },
-);
-
-    const getUserTripsFeedService = new GetUserTripsFeedService();
-    const userTripsFeed = await getUserTripsFeedService.execute({
-      id_user: request.user.id_user,
-      tripsType: 'not_today',
-      userType: 'driver',
-    });
-
-    return response.json({ data: userTripsFeed });
-  },
-);
+});
 
 tripsRouter.get(
   '/:id_trip/attendance-list',
