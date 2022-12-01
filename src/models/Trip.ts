@@ -8,7 +8,8 @@ import {
   JoinColumn,
   ManyToOne,
 } from 'typeorm';
-import { tripStatus } from '../constants/tripStatus';
+import { TripStatus } from '../enums/TripStatus';
+import { TripType } from '../enums/TripType';
 import AttendanceList from './AttendanceList';
 import Itinerary from './Itinerary';
 import TripHistory from './TripHistory';
@@ -34,16 +35,24 @@ class Trip {
   @Column(
     {
       type: "enum",
-      enum: tripStatus,
-      default: tripStatus.pending,
+      enum: TripStatus,
+      default: TripStatus.pending,
     }
   )
-  status: tripStatus;
+  status: TripStatus;
 
-  @OneToMany(() => TripHistory, tripHistory => tripHistory.trip)
+  @Column(
+    {
+      type: "enum",
+      enum: TripType,
+    }
+  )
+  type: TripType;
+
+  @OneToMany(() => TripHistory, tripHistory => tripHistory.trip, { eager: true, cascade: true, nullable: true })
   trip_histories?: TripHistory[];
-  
-  @OneToMany(() => AttendanceList, attendanceList => attendanceList.trip)
+
+  @OneToMany(() => AttendanceList, attendanceList => attendanceList.trip, { eager: true, cascade: true, nullable: true })
   attendance_lists?: AttendanceList[];
 
   @CreateDateColumn()

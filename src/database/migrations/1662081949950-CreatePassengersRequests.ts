@@ -6,11 +6,11 @@ import {
   TableIndex,
 } from 'typeorm';
 
-import { itineraryContractTypes } from '../../constants/itineraryContractTypes';
-import { passengerRequestStatusTypes } from '../../constants/passengerRequestStatusTypes';
-import { schoolPeriods } from '../../constants/schoolPeriods';
+import { ItineraryContract } from '../../enums/ItineraryContract';
+import { PassengerRequestStatus } from '../../enums/PassengerRequestStatus';
+import { SchoolPeriod } from '../../enums/SchoolPeriod';
 
-import Utils from '../../services/utils/Utils';
+import EnumUtils from '../../services/Utils/EnumUtils';
 
 export class CreatePassengersRequests1662081949950
   implements MigrationInterface {
@@ -37,18 +37,18 @@ export class CreatePassengersRequests1662081949950
           {
             name: 'contract_type',
             type: 'enum',
-            enum: Utils.convertEnumValuesToStringArray(itineraryContractTypes)
+            enum: EnumUtils.convertEnumValuesToStringArray(ItineraryContract)
           },
           {
             name: 'period',
             type: 'enum',
-            enum: Utils.convertEnumValuesToStringArray(schoolPeriods)
+            enum: EnumUtils.convertEnumValuesToStringArray(SchoolPeriod)
           },
           {
             name: 'status',
             type: 'enum',
-            enum: Utils.convertEnumValuesToStringArray(passengerRequestStatusTypes),
-            // default: passengerRequestStatusTypes.pending.toString()
+            enum: EnumUtils.convertEnumValuesToStringArray(PassengerRequestStatus),
+            // default: PassengerRequestStatus.pending.toString()
           },
           {
             name: 'created_at',

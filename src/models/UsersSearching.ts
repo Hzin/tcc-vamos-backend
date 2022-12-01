@@ -19,7 +19,7 @@ class UserSearching {
   user: User;
 
   @Column()
-  user_id: number;
+  user_id: string;
 
   @Column()
   latitude_from: number;

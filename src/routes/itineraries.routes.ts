@@ -3,21 +3,25 @@ import { Router } from 'express';
 import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 import ensureAdmin from '../middlewares/ensureAdmin';
 
-import CreateItineraryService from '../services/CreateItineraryService';
-import FindItineraryService from '../services/FindItineraryService';
-import CreatePassengerRequestService from '../services/CreatePassengerRequestService';
-import UpdatePassengerRequestService from '../services/UpdatePassengerRequestService';
-import FindPassengerRequestServiceByFields from '../services/FindPassengerRequestServiceByFields';
-import FindUserService from '../services/FindUserService';
-import FindItinerariesByDriverUserIdService from '../services/FindItinerariesByDriverUserIdService';
-import FindItinerariesByPassengerUserIdService from '../services/FindItinerariesByPassengerUserIdService';
-import FindItineraryBySearchFiltersService from '../services/FindItineraryBySearchFiltersService';
-import FindItinerariesExceptUserss from '../services/FindItinerariesExceptUserss';
+import CreateItineraryService from '../services/Itinerary/CreateItineraryService';
+import FindItineraryService from '../services/Itinerary/FindItineraryService';
+import CreatePassengerRequestService from '../services/Itinerary/CreatePassengerRequestService';
+import UpdatePassengerRequestService from '../services/Itinerary/UpdatePassengerRequestService';
+import FindPassengerRequestServiceByFields from '../services/Itinerary/FindPassengerRequestServiceByFields';
+import FindUserService from '../services/User/FindUserService';
+import FindItinerariesByDriverUserIdService from '../services/Itinerary/FindItinerariesByDriverUserIdService';
+import FindItinerariesByPassengerUserIdService from '../services/Itinerary/FindItinerariesByPassengerUserIdService';
+import FindItineraryBySearchFiltersService from '../services/Itinerary/FindItineraryBySearchFiltersService';
+import FindItinerariesExceptUserss from '../services/Itinerary/FindItinerariesExceptUserss';
 
-import AddOptionalPropertiesToObjectService from '../services/utils/AddOptionalPropertiesToObjectService';
-import FindItineraryPendingRequests from '../services/FindItineraryPendingRequests';
-import FindDriverItinerariesOnlyWithPendingRequests from '../services/FindDriverItinerariesOnlyWithPendingRequests';
-import CountItinerariesPendingPassengerRequestsByDriverId from '../services/CountItinerariesPendingPassengerRequestsByDriverId';
+import FindItineraryPendingRequests from '../services/Itinerary/FindItineraryPendingRequests';
+import FindDriverItinerariesOnlyWithPendingRequests from '../services/Itinerary/FindDriverItinerariesOnlyWithPendingRequests';
+import CountItinerariesPendingPassengerRequestsByDriverId from '../services/Itinerary/CountItinerariesPendingPassengerRequestsByDriverId';
+
+import AddOptionalPropertiesToObjectService from '../services/Utils/AddOptionalPropertiesToObjectService';
+import { getRepository } from 'typeorm';
+import Itinerary from '../models/Itinerary';
+import ensureObjectOwnership from '../middlewares/ensureObjectOwnership';
 
 const itinerariesRouter = Router();
 
@@ -25,6 +29,17 @@ const itinerariesRouter = Router();
 itinerariesRouter.get('/', ensureAuthenticated, async (request, response) => {
   const findItinerariesExceptUserss = new FindItinerariesExceptUserss()
   const itineraries = await findItinerariesExceptUserss.execute(request.user.id_user)
+
+  return response.json({ data: itineraries });
+})
+
+itinerariesRouter.get('/all', ensureAdmin, async (request, response) => {
+  const itinerariesRepository = getRepository(Itinerary)
+
+  let itineraries = await itinerariesRepository.find()
+
+  const addOptionalPropertiesToObjectService = new AddOptionalPropertiesToObjectService()
+  itineraries = await addOptionalPropertiesToObjectService.executeArrItinerary(itineraries)
 
   return response.json({ data: itineraries });
 })
@@ -88,8 +103,10 @@ itinerariesRouter.post('/', ensureAuthenticated, async (request, response) => {
     vehicle_plate,
     days_of_week,
     specific_day,
-    estimated_departure_time,
-    estimated_arrival_time,
+    estimated_departure_time_going,
+    estimated_arrival_time_going,
+    estimated_departure_time_return,
+    estimated_arrival_time_return,
     monthly_price,
     daily_price,
     accept_daily,
@@ -107,8 +124,10 @@ itinerariesRouter.post('/', ensureAuthenticated, async (request, response) => {
     vehicle_plate,
     days_of_week,
     specific_day,
-    estimated_departure_time,
-    estimated_arrival_time,
+    estimated_departure_time_going,
+    estimated_arrival_time_going,
+    estimated_departure_time_return,
+    estimated_arrival_time_return,
     monthly_price,
     daily_price,
     accept_daily,
@@ -155,7 +174,8 @@ itinerariesRouter.post('/contract/:id_itinerary', ensureAuthenticated, async (re
   return response.json({ data: passengerRequest, message: 'Solicitação enviada com sucesso!' });
 });
 
-itinerariesRouter.patch('/contract/status', ensureAuthenticated, async (request, response) => {
+// se status for aprovado, aprova passengerRequest e cria registro na tabela passengers
+itinerariesRouter.patch('/contract/status', ensureObjectOwnership, async (request, response) => {
   const { id_user, id_itinerary, status } = request.body;
 
   const findUserService = new FindUserService()
@@ -169,7 +189,6 @@ itinerariesRouter.patch('/contract/status', ensureAuthenticated, async (request,
     user, itinerary
   });
 
-  // cria registro na tabela passengers se status for 'APPROVED'
   const updatePassengerRequestService = new UpdatePassengerRequestService()
   const { passengerRequestWithUpdatedStatus, message } = await updatePassengerRequestService.execute({
     id_passenger_request: passengerRequest.id_passenger_request, status
@@ -178,7 +197,7 @@ itinerariesRouter.patch('/contract/status', ensureAuthenticated, async (request,
   return response.json({ data: passengerRequestWithUpdatedStatus, message: message });
 });
 
-itinerariesRouter.get('/:id/contracts/pending', ensureAuthenticated, async (request, response) => {
+itinerariesRouter.get('/:id/contracts/pending', ensureObjectOwnership, async (request, response) => {
   const { id } = request.params;
 
   const findItineraryPendingRequests = new FindItineraryPendingRequests()
@@ -190,7 +209,7 @@ itinerariesRouter.get('/:id/contracts/pending', ensureAuthenticated, async (requ
   return response.json({ data: pendingRequests });
 })
 
-itinerariesRouter.get('/driver/:id/onlypendingrequests', ensureAuthenticated, async (request, response) => {
+itinerariesRouter.get('/driver/:id/onlypendingrequests', ensureObjectOwnership, async (request, response) => {
   const { id } = request.params;
 
   const findDriverItinerariesOnlyWithPendingRequests = new FindDriverItinerariesOnlyWithPendingRequests()

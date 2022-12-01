@@ -5,7 +5,7 @@ import AppError from '../errors/AppError';
 
 import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 
-import GetCarModelsService from '../services/GetCarModelsService';
+// import GetCarModelsService from '../services/utils/GetCarModelsService';
 
 const carsRouter = Router();
 
@@ -29,7 +29,7 @@ type GetModelsResponse = {
   modelos: Model[];
 };
 
-carsRouter.get('/brands/list', async (request, response) => {
+carsRouter.get('/brands/list', ensureAuthenticated, async (request, response) => {
   // const getCarModelsService = new GetCarModelsService();
   // const carModels = await getCarModelsService.execute();
 
@@ -49,7 +49,7 @@ carsRouter.get('/brands/list', async (request, response) => {
   return response.json({ data: data });
 });
 
-carsRouter.get('/models/list/:id', async (request, response) => {
+carsRouter.get('/models/list/:id', ensureAuthenticated, async (request, response) => {
   const { id } = request.params;
 
   const { data, status } = await axios.get<GetModelsResponse>(

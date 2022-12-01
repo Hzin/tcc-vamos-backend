@@ -3,9 +3,9 @@ import { getRepository } from 'typeorm';
 import ensureAdmin from '../middlewares/ensureAdmin';
 import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 import UserSearching from '../models/UsersSearching';
-import CalculateDistanceBetweenCoords from '../services/CalculateDistanceBetweenCoords';
-import CreateUserSearchingService from '../services/CreateUserSearchingService';
-import GetCoordinatesByAddress from '../services/GetCoordinatesByAddress';
+import CalculateDistanceBetweenCoords from '../services/Utils/CalculateDistanceBetweenCoords';
+import CreateUserSearchingService from '../services/User/CreateUserSearchingService';
+import GetCoordinatesByAddress from '../services/Utils/GetCoordinatesByAddress';
 
 const searchRoutes = Router();
 
@@ -48,11 +48,12 @@ searchRoutes.post('/', ensureAuthenticated, async (request, response) => {
   const createUserSearching = new CreateUserSearchingService();
 
   const search = await createUserSearching.execute({
-    id_user:request.user.id_user,
+    id_user: request.user.id_user,
     latitude_from,
     longitude_from,
     latitude_to,
     longitude_to,
+    address_to
   });
 
   return response.json({ data: search, message: 'Busca de usuário criada.' });
@@ -67,13 +68,13 @@ searchRoutes.post('/inraio', async (request, response) => {
   const searches = await usersSearchingRepository.find();
   var searchesFiltered;
 
-  let lat1:number = +latitude;
-  let lng1:number = +longitude;
+  let lat1: number = +latitude;
+  let lng1: number = +longitude;
 
   searchesFiltered = searches.filter(x => {
-    let lat2:number = +x.latitude_from;
-    let lng2:number = +x.longitude_from;
-    let distance = CalculateDistanceBetweenCoords({lat1, lng1, lat2, lng2});
+    let lat2: number = +x.latitude_from;
+    let lng2: number = +x.longitude_from;
+    let distance = CalculateDistanceBetweenCoords({ lat1, lng1, lat2, lng2 });
     return distance <= 2.75;
   });
 
