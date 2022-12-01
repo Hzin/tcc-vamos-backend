@@ -22,8 +22,16 @@ import AddOptionalPropertiesToObjectService from '../services/Utils/AddOptionalP
 import { getRepository } from 'typeorm';
 import Itinerary from '../models/Itinerary';
 import ensureObjectOwnership from '../middlewares/ensureObjectOwnership';
+import FinditinerariesService from '../services/Itinerary/FinditinerariesService';
 
 const itinerariesRouter = Router();
+
+itinerariesRouter.get('/list', ensureAdmin, async (request, response) => {
+  const findItinerariesService = new FinditinerariesService()
+  const itineraries = await findItinerariesService.execute()
+
+  return response.json({ data: itineraries });
+})
 
 // itinerariesRouter.get('/', ensureAdmin, async (request, response) => {
 itinerariesRouter.get('/', ensureAuthenticated, async (request, response) => {
@@ -207,7 +215,7 @@ itinerariesRouter.get('/:id/contracts/pending', ensureObjectOwnership, async (re
   return response.json({ data: pendingRequests });
 })
 
-itinerariesRouter.get('/driver/:id/onlypendingrequests', ensureObjectOwnership, async (request, response) => {
+itinerariesRouter.get('/driver/:id/onlypendingrequests', ensureAdmin, async (request, response) => {
   const { id } = request.params;
 
   const findDriverItinerariesOnlyWithPendingRequests = new FindDriverItinerariesOnlyWithPendingRequests()

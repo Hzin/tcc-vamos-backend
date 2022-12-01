@@ -9,6 +9,7 @@ import vehiclesRouter from './vehicles.routes';
 import tripsRouter from './trips.routes';
 import passengersRouter from './passengers.routes';
 import passengersRequestsRouter from './passengersRequests.routes';
+import attendanceListsRouter from './attendanceLists.routes';
 
 const routes = Router();
 
@@ -21,5 +22,6 @@ routes.use('/vehicles', vehiclesRouter);
 routes.use('/trips', tripsRouter);
 routes.use('/passengersrequests', passengersRequestsRouter);
 routes.use('/passengers', passengersRouter);
+routes.use('/attendance', attendanceListsRouter);
 
 export default routes;
