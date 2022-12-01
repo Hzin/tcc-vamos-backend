@@ -103,10 +103,8 @@ itinerariesRouter.post('/', ensureAuthenticated, async (request, response) => {
     vehicle_plate,
     days_of_week,
     specific_day,
-    estimated_departure_time_going,
-    estimated_arrival_time_going,
-    estimated_departure_time_return,
-    estimated_arrival_time_return,
+    estimated_departure_time,
+    estimated_arrival_time,
     monthly_price,
     daily_price,
     accept_daily,
@@ -118,16 +116,16 @@ itinerariesRouter.post('/', ensureAuthenticated, async (request, response) => {
     destinations
   } = request.body;
 
+  console.log(request.body)
+
   const createItineraryService = new CreateItineraryService();
 
   const itinerary = await createItineraryService.execute({
     vehicle_plate,
     days_of_week,
     specific_day,
-    estimated_departure_time_going,
-    estimated_arrival_time_going,
-    estimated_departure_time_return,
-    estimated_arrival_time_return,
+    estimated_departure_time,
+    estimated_arrival_time,
     monthly_price,
     daily_price,
     accept_daily,

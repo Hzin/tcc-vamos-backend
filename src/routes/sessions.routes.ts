@@ -5,6 +5,7 @@ import authConfig from '../config/auth';
 import AppError from '../errors/AppError';
 
 import AuthenticateUserService from '../services/Session/AuthenticateUserService';
+import FindUserService from '../services/User/FindUserService';
 
 const sessionsRouter = Router();
 
@@ -41,6 +42,10 @@ sessionsRouter.post('/refresh', async(request, response) => {
   }
 
   sub = decoded as TokenPayload;
+
+  // verificando se o usuário existe
+  const findUserService = new FindUserService;
+  await findUserService.execute(sub.sub)
 
   return response.json({ "status": "success", "userId": sub.sub });
 })

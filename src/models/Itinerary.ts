@@ -38,16 +38,10 @@ class Itinerary {
   specific_day?: Date;
 
   @Column()
-  estimated_departure_time_going: string;
+  estimated_departure_time: string;
 
   @Column()
-  estimated_arrival_time_going: string;
-
-  @Column()
-  estimated_departure_time_return: string;
-
-  @Column()
-  estimated_arrival_time_return: string;
+  estimated_arrival_time: string;
 
   @Column()
   available_seats: number;

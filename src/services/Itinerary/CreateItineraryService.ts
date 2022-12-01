@@ -11,10 +11,8 @@ interface Request {
   vehicle_plate: string;
   days_of_week?: string;
   specific_day?: string;
-  estimated_departure_time_going: string;
-  estimated_arrival_time_going: string;
-  estimated_departure_time_return: string;
-  estimated_arrival_time_return: string;
+  estimated_departure_time: string;
+  estimated_arrival_time: string;
   // available_seats: number;
   monthly_price: number;
   daily_price?: number;
@@ -40,7 +38,7 @@ class CreateItineraryService {
         vehicle,
         days_of_week: props.days_of_week ? props.days_of_week : null,
         specific_day: props.specific_day ? props.specific_day : null,
-        estimated_departure_time_going: props.estimated_departure_time_going,
+        estimated_departure_time: props.estimated_departure_time,
         is_active: true
       },
     });
