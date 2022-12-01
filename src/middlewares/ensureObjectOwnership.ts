@@ -2,13 +2,9 @@ import { Request, Response, NextFunction } from 'express';
 
 import ensureAuthenticated from './ensureAuthenticated';
 
-import admin from '../config/admin';
-import AppError from '../errors/AppError';
 import StringUtils from '../services/Utils/String';
 import FindUserService from '../services/User/FindUserService';
 import FindVehicleService from '../services/Vehicle/FindVehicleService';
-import User from '../models/User';
-import Vehicle from '../models/Vehicle';
 import FindItinerariesByDriverUserIdService from '../services/Itinerary/FindItinerariesByDriverUserIdService';
 import FindItineraryService from '../services/Itinerary/FindItineraryService';
 
@@ -27,12 +23,18 @@ export default function ensureObjectOwnership(
     let middlewareFailedFlag = undefined
     try {
       const findUserService = new FindUserService();
+      
       const user = await findUserService.execute(request.user.id_user);
 
       const objectName = StringUtils.replaceAll(request.baseUrl, '/', '');
-      console.log('objectName: ' + objectName)
       switch (objectName) {
         case 'vehicles':
+          console.log('loucura')
+          console.log('request.params')
+          console.log(request.params)
+          console.log('request.body')
+          console.log(request.body)
+          
           const vehiclePlate = findExistingParam(
             [
               request.params.plate,
@@ -41,10 +43,17 @@ export default function ensureObjectOwnership(
             ]
           )          
 
+          console.log('vehiclePlate')
+          console.log(vehiclePlate)
           const findVehicleService = new FindVehicleService();
           const vehicle = await findVehicleService.execute(vehiclePlate);
 
-          if (vehicle.user_id !== user.id_user) middlewareFailedFlag = 'Você não é o proprietário deste veículo.'
+          console.log('vehicle.user_id')
+          console.log(vehicle.user_id)
+          console.log('user.id_user')
+          console.log(user.id_user)
+
+          if (vehicle.user_id != user.id_user) middlewareFailedFlag = 'Você não é o proprietário deste veículo.'
           break;
         case 'itineraries':
           const itineraryId = findExistingParam(
@@ -72,7 +81,8 @@ export default function ensureObjectOwnership(
           break;
       }
     } catch (err) {
-      middlewareFailedFlag = 'Invalid JWT token (ensureObjectOwnership)'
+      // middlewareFailedFlag = 'Invalid JWT token (ensureObjectOwnership)'
+      middlewareFailedFlag = err
     }
 
     if (middlewareFailedFlag) return response.json({ message: middlewareFailedFlag, statusCode: 401})

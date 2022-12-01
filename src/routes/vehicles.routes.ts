@@ -24,6 +24,7 @@ import DeleteVehicleService from '../services/Vehicle/DeleteVehicleService';
 import CheckIfVehicleCanCreateItineraries from '../services/Vehicle/CheckIfVehicleCanCreateItineraries';
 import CountVehiclesPendingDocuments from '../services/Vehicle/CountVehiclesPendingDocuments';
 import ensureObjectOwnership from '../middlewares/ensureObjectOwnership';
+import GetUserVehiclesThatCanCreateItinerariesService from '../services/Vehicle/GetUserVehiclesThatCanCreateItinerariesService';
 
 const vehiclesRouter = Router();
 
@@ -195,7 +196,7 @@ vehiclesRouter.patch('/document/status', ensureAdmin, async (request, response) 
 });
 
 const uploadDocument = vehiclesRoutesDocumentPostMulter
-vehiclesRouter.post('/document/upload', ensureObjectOwnership, uploadDocument.single('file'), async (request, response) => {
+vehiclesRouter.post('/document/upload', ensureAuthenticated, uploadDocument.single('file'), async (request, response) => {
   const { vehicle_plate, document_type } = request.body
 
   if (!request.file) {
@@ -231,6 +232,17 @@ vehiclesRouter.patch('/document/delete', ensureObjectOwnership, async (request, 
 })
 
 vehiclesRouter.get(
+  '/can_create_itineraries',
+  ensureAuthenticated,
+  async (request, response) => {
+    const getUserVehiclesThatCanCreateItinerariesService = new GetUserVehiclesThatCanCreateItinerariesService();
+    const userVehicles = await getUserVehiclesThatCanCreateItinerariesService.execute({ id_user: request.user.id_user });
+
+    return response.json({ data: userVehicles });
+  },
+);
+
+vehiclesRouter.get(
   '/can_create_itineraries/:plate',
   ensureObjectOwnership,
   async (request, response) => {
@@ -249,8 +261,9 @@ vehiclesRouter.get(
   },
 );
 
+// obs.: colocar middleware ensureObjectOwnership em rotas que precisam de multipart formdata não dá certo
 const uploadPicture = vehiclesUploadPictureMulter
-vehiclesRouter.patch('/picture/update', ensureObjectOwnership, uploadPicture.single('file'), async (request, response) => {
+vehiclesRouter.patch('/picture/update', ensureAuthenticated, uploadPicture.single('file'), async (request, response) => {
   const { vehicle_plate } = request.body
 
   if (!request.file) {
