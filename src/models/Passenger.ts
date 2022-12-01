@@ -4,10 +4,12 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   JoinColumn,
+  OneToMany
 } from 'typeorm';
 import { itineraryContractTypes } from '../constants/itineraryContractTypes';
 import { passengerStatusTypes } from '../constants/passengerStatusTypes';
 import { schoolPeriods } from '../constants/schoolPeriods';
+import AttendanceList from './AttendanceList';
 import Itinerary from './Itinerary';
 import User from './User';
 
@@ -81,6 +83,9 @@ class Passenger {
 
   @Column()
   end_date: Date;
+
+  @OneToMany(() => AttendanceList, attendanceList => attendanceList.passenger, { eager: false, cascade: true, nullable: true })
+  attendance_lists?: AttendanceList[];
 }
 
 export default Passenger;

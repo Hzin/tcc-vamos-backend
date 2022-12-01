@@ -7,6 +7,8 @@ import {
   JoinColumn,
   ManyToOne,
 } from 'typeorm';
+import { attendanceListStatus } from '../constants/attendanceListStatus';
+import Passenger from './Passenger';
 import Trip from './Trip';
 import User from './User';
 
@@ -19,15 +21,21 @@ class AttendanceList {
   @JoinColumn({ name: 'trip_id' })
   trip: Trip;
 
-  @ManyToOne(() => User, user => user.attendance_lists)
-  @JoinColumn({ name: 'user_id' })
-  user: User;
+  @ManyToOne(() => Passenger, passenger => passenger.attendance_lists, {eager: true})
+  @JoinColumn({ name: 'passenger_id' })
+  passenger: Passenger;
 
   @Column()
   is_return: boolean;
 
   @Column()
   date: Date;
+
+  @Column({
+    type: 'enum',
+    enum: attendanceListStatus,
+  })
+  status: attendanceListStatus;
 
   @CreateDateColumn()
   created_at: Date;

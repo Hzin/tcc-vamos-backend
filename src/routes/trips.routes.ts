@@ -17,6 +17,8 @@ import FindTripsServiceByItineraryId from '../services/FindTripsServiceByItinera
 import FindTodaysTripByItineraryIdService from '../services/FindTodaysTripByItineraryIdService';
 import FindItineraryTrips from '../services/FindItineraryTrips';
 import AddOptionalPropertiesToItineraryObjectService from '../services/utils/AddOptionalPropertiesToObjectService';
+import GetTripsTodaysAttendanceList from '../services/GetTripsTodaysAttendanceList';
+import UpdateUserTripPresenceService from '../services/UpdateUserTripPresence';
 
 const tripsRouter = Router();
 
@@ -32,8 +34,9 @@ tripsRouter.get('/list', async (request, response) => {
 
   let trips = await tripsRepository.find();
 
-  const addOptionalPropertiesToObjectService = new AddOptionalPropertiesToItineraryObjectService()
-  trips = await addOptionalPropertiesToObjectService.executeArrTrip(trips)
+  const addOptionalPropertiesToObjectService =
+    new AddOptionalPropertiesToItineraryObjectService();
+  trips = await addOptionalPropertiesToObjectService.executeArrTrip(trips);
 
   return response.json({ data: trips });
 });
@@ -44,35 +47,47 @@ tripsRouter.get('/:id', ensureAuthenticated, async (request, response) => {
   const findTripService = new FindTripService();
   let trip = await findTripService.execute(id);
 
-  const addOptionalPropertiesToObjectService = new AddOptionalPropertiesToItineraryObjectService()
-  trip = await addOptionalPropertiesToObjectService.executeSingleTrip(trip)
+  const addOptionalPropertiesToObjectService =
+    new AddOptionalPropertiesToItineraryObjectService();
+  trip = await addOptionalPropertiesToObjectService.executeSingleTrip(trip);
 
   return response.json({ data: trip });
 });
 
-tripsRouter.get('/itinerary/:id', ensureAuthenticated, async (request, response) => {
-  const { id } = request.params;
+tripsRouter.get(
+  '/itinerary/:id',
+  ensureAuthenticated,
+  async (request, response) => {
+    const { id } = request.params;
 
-  const findItineraryTrips = new FindItineraryTrips();
-  let trips = await findItineraryTrips.execute(id);
+    const findItineraryTrips = new FindItineraryTrips();
+    let trips = await findItineraryTrips.execute(id);
 
-  const addOptionalPropertiesToObjectService = new AddOptionalPropertiesToItineraryObjectService()
-  trips = await addOptionalPropertiesToObjectService.executeArrTrip(trips)
+    const addOptionalPropertiesToObjectService =
+      new AddOptionalPropertiesToItineraryObjectService();
+    trips = await addOptionalPropertiesToObjectService.executeArrTrip(trips);
 
-  return response.json({ data: trips });
-});
+    return response.json({ data: trips });
+  },
+);
 
-tripsRouter.get('today/itinerary/:id', ensureAuthenticated, async (request, response) => {
-  const { id } = request.params;
+tripsRouter.get(
+  'today/itinerary/:id',
+  ensureAuthenticated,
+  async (request, response) => {
+    const { id } = request.params;
 
-  const findTodaysTripByItineraryIdService = new FindTodaysTripByItineraryIdService();
-  let trip = await findTodaysTripByItineraryIdService.execute(id)
+    const findTodaysTripByItineraryIdService =
+      new FindTodaysTripByItineraryIdService();
+    let trip = await findTodaysTripByItineraryIdService.execute(id);
 
-  const addOptionalPropertiesToObjectService = new AddOptionalPropertiesToItineraryObjectService()
-  trip = await addOptionalPropertiesToObjectService.executeSingleTrip(trip)
+    const addOptionalPropertiesToObjectService =
+      new AddOptionalPropertiesToItineraryObjectService();
+    trip = await addOptionalPropertiesToObjectService.executeSingleTrip(trip);
 
-  return response.json({ data: trip });
-});
+    return response.json({ data: trip });
+  },
+);
 
 tripsRouter.post('/update/confirm', async (request, response) => {
   const { id_itinerary } = request.body;
@@ -81,10 +96,13 @@ tripsRouter.post('/update/confirm', async (request, response) => {
 
   const trip = await createTripService.execute(
     id_itinerary,
-    tripStatus.confirmed
+    tripStatus.confirmed,
   );
 
-  return response.json({ message: 'Viagem confirmada com sucesso!', data: trip });
+  return response.json({
+    message: 'Viagem confirmada com sucesso!',
+    data: trip,
+  });
 });
 
 tripsRouter.post('/update/cancel', async (request, response) => {
@@ -92,53 +110,61 @@ tripsRouter.post('/update/cancel', async (request, response) => {
 
   const createTripService = new CreateTripService();
 
-  await createTripService.execute(
-    id_itinerary,
-    tripStatus.canceled
-  );
+  await createTripService.execute(id_itinerary, tripStatus.canceled);
 
   return response.json({ message: 'Viagem cancelada com sucesso.' });
 });
 
-tripsRouter.patch('/update/nickname', ensureAuthenticated, async (request, response) => {
-  const { id_trip, nickname } = request.body;
-
-  const updateTripNicknameService = new UpdateTripNicknameService();
-
-  await updateTripNicknameService.execute({
-    id_trip, nickname
-  });
-
-  return response.json({ message: 'Apelido da viagem atualizado com sucesso!' });
-});
-
-tripsRouter.patch('/update/status', ensureAuthenticated, async (request, response) => {
-  const { id_trip, new_status, description } = request.body;
-
-  const updateTripStatusService = new UpdateTripStatusService();
-  await updateTripStatusService.execute({
-    id_trip, new_status, description
-  });
-
-  return response.json({ message: 'Status da viagem atualizado com sucesso!' });
-});
-
-// TODO, incluir filtros dependendo de status
-tripsRouter.get(
-  '/user/:id',
+tripsRouter.patch(
+  '/update/nickname',
   ensureAuthenticated,
   async (request, response) => {
-    const { id } = request.params;
+    const { id_trip, nickname } = request.body;
 
-    const checkIfUserHasVehiclesService = new CheckIfUserHasVehiclesService();
+    const updateTripNicknameService = new UpdateTripNicknameService();
 
-    const userHasVehicles = await checkIfUserHasVehiclesService.execute({
-      id_user: id,
+    await updateTripNicknameService.execute({
+      id_trip,
+      nickname,
     });
 
-    return response.json({ result: userHasVehicles });
+    return response.json({
+      message: 'Apelido da viagem atualizado com sucesso!',
+    });
   },
 );
+
+tripsRouter.patch(
+  '/update/status',
+  ensureAuthenticated,
+  async (request, response) => {
+    const { id_trip, new_status, description } = request.body;
+
+    const updateTripStatusService = new UpdateTripStatusService();
+    await updateTripStatusService.execute({
+      id_trip,
+      new_status,
+      description,
+    });
+
+    return response.json({
+      message: 'Status da viagem atualizado com sucesso!',
+    });
+  },
+);
+
+// TODO, incluir filtros dependendo de status
+tripsRouter.get('/user/:id', ensureAuthenticated, async (request, response) => {
+  const { id } = request.params;
+
+  const checkIfUserHasVehiclesService = new CheckIfUserHasVehiclesService();
+
+  const userHasVehicles = await checkIfUserHasVehiclesService.execute({
+    id_user: id,
+  });
+
+  return response.json({ result: userHasVehicles });
+});
 
 // get trip info about an itinerary
 // should ask the driver if they want to confirm or cancel the trip for the day
@@ -157,8 +183,11 @@ tripsRouter.get(
   async (request, response) => {
     const { id_itinerary } = request.params;
 
-    const getItineraryTodaysTripStatusService = new GetItineraryTodaysTripStatusService()
-    const tripStatus = await getItineraryTodaysTripStatusService.execute(id_itinerary)
+    const getItineraryTodaysTripStatusService =
+      new GetItineraryTodaysTripStatusService();
+    const tripStatus = await getItineraryTodaysTripStatusService.execute(
+      id_itinerary,
+    );
 
     return response.json({ data: tripStatus });
   },
@@ -221,6 +250,38 @@ tripsRouter.get(
     });
 
     return response.json({ data: userTripsFeed });
+  },
+);
+
+tripsRouter.get(
+  '/:id_trip/attendance-list',
+  ensureAuthenticated,
+  async (request, response) => {
+    const { id_trip } = request.params;
+    //convert to number
+    const id_trip_number = Number(id_trip);
+
+    const getTripsTodaysAttendanceListService = new GetTripsTodaysAttendanceList();
+    const attendanceList = await getTripsTodaysAttendanceListService.execute(id_trip_number);
+
+    return response.json({ data: attendanceList });
+  },
+);
+
+tripsRouter.patch(
+  '/presence',
+  ensureAuthenticated,
+  async (request, response) => {
+    const { id_user, id_trip, status } = request.body;
+
+    const updateUserTripPresenceService = new UpdateUserTripPresenceService();
+    const updateResponse = await updateUserTripPresenceService.execute({
+      id_user,
+      id_trip,
+      status
+    });
+
+    return response.json({ message: updateResponse });
   },
 );
 

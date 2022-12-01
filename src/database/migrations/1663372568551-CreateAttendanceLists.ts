@@ -1,6 +1,7 @@
 import { MigrationInterface, QueryRunner, Table, TableForeignKey, TableIndex } from 'typeorm';
+import { attendanceListStatus } from '../../constants/attendanceListStatus';
+import Utils from '../../services/utils/Utils';
 
-// TODO, está sem model
 export class CreateAttendanceLists1663372568551 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
@@ -19,8 +20,8 @@ export class CreateAttendanceLists1663372568551 implements MigrationInterface {
             type: 'integer',
           },
           {
-            name: 'user_id',
-            type: 'uuid',
+            name: 'passenger_id',
+            type: 'integer',
           },
           {
             name: 'is_return',
@@ -29,6 +30,11 @@ export class CreateAttendanceLists1663372568551 implements MigrationInterface {
           {
             name: 'date',
             type: 'date',
+          },
+          {
+            name: 'status',
+            type: 'enum',
+            enum: Utils.convertEnumValuesToStringArray(attendanceListStatus),
           },
           {
             name: 'created_at',
@@ -59,10 +65,10 @@ export class CreateAttendanceLists1663372568551 implements MigrationInterface {
     await queryRunner.createForeignKey(
       'attendance_lists',
       new TableForeignKey({
-        name: 'attendance_lists_user_id_fk', // nome da FK, serve para referenciar numa exclusão pelo QueryRunner se necessário
-        columnNames: ['user_id'], // coluna que vai virar FK
-        referencedColumnNames: ['id_user'], // coluna PK da tabela referenciada
-        referencedTableName: 'users', // nome da tabela que possui a PK
+        name: 'attendance_lists_passenger_id_fk', // nome da FK, serve para referenciar numa exclusão pelo QueryRunner se necessário
+        columnNames: ['passenger_id'], // coluna que vai virar FK
+        referencedColumnNames: ['id_passenger'], // coluna PK da tabela referenciada
+        referencedTableName: 'passengers', // nome da tabela que possui a PK
         onDelete: 'SET NULL',
         onUpdate: 'CASCADE',
       }),
@@ -72,7 +78,7 @@ export class CreateAttendanceLists1663372568551 implements MigrationInterface {
       'attendance_lists',
       new TableIndex({
         name: 'attendance_lists_idx',
-        columnNames: ['trip_id', 'user_id', 'is_return', 'date'],
+        columnNames: ['trip_id', 'passenger_id', 'is_return', 'date'],
         isUnique: true,
       }),
     );
@@ -81,7 +87,7 @@ export class CreateAttendanceLists1663372568551 implements MigrationInterface {
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.dropTable('attendance_lists');
     await queryRunner.dropForeignKey('attendance_lists', 'attendance_lists_trip_id_fk');
-    await queryRunner.dropForeignKey('attendance_lists', 'attendance_lists_user_id_fk');
+    await queryRunner.dropForeignKey('attendance_lists', 'attendance_lists_passenger_id_fk');
     await queryRunner.dropIndex('attendance_lists', 'attendance_lists_idx');
   }
 }
