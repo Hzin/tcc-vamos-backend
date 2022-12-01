@@ -20,8 +20,8 @@ class GetTripsTodaysAttendanceList {
     }
 
     //Verifica se a viagem já foi realizada
-    const hour = trip.itinerary.estimated_arrival_time.split(':')[0] as unknown as number;
-    const minute = trip.itinerary.estimated_arrival_time.split(':')[1] as unknown as number;
+    const hour = trip.itinerary.estimated_arrival_time_going.split(':')[0] as unknown as number;
+    const minute = trip.itinerary.estimated_arrival_time_going.split(':')[1] as unknown as number;
     const date = new Date();
     const tripDate = new Date(trip.date);
     const tripHour = new Date(
