@@ -36,14 +36,14 @@ searchRoutes.get('/list', ensureAdmin, async (request, response) => {
 });
 
 searchRoutes.post('/', ensureAuthenticated, async (request, response) => {
-  const { latitude_from, longitude_from, address_to } = request.body;
+  const { latitude_from, longitude_from, latitude_to, longitude_to, address_to } = request.body;
 
   const getCoordinates = new GetCoordinatesByAddress();
 
-  const coordinates = await getCoordinates.execute({ address_to });
+  // const coordinates = await getCoordinates.execute({ address_to });
 
-  const latitude_to = coordinates[0].lat;
-  const longitude_to = coordinates[0].lon;
+  // const latitude_to = coordinates[0].lat;
+  // const longitude_to = coordinates[0].lon;
 
   const createUserSearching = new CreateUserSearchingService();
 
