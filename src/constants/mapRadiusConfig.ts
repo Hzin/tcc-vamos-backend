@@ -1,3 +1,3 @@
-const maxRadius = 10
+const maxRadius = 5
 
 export default maxRadius
