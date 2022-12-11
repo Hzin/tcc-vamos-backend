@@ -14,8 +14,8 @@ class UserSearching {
   @PrimaryGeneratedColumn('increment')
   id_search: string;
 
-  @ManyToOne(() => User, user => user.users_searching)
-  @JoinColumn({ name: 'user_id' })
+  @ManyToOne(() => User, {eager: true})
+  @JoinColumn({ name: 'user_id', referencedColumnName: 'id_user' })
   user: User;
 
   @Column()
